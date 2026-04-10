@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   })
 
   if (authError) {
-    return NextResponse.redirect(new URL(`/cadastro?error=${authError.message}`, request.url))
+    return NextResponse.redirect(new URL(`/cadastro?error=${authError.message}`, request.url), { status: 303 })
   }
 
   if (authData.user && tipo !== 'dpo') {
@@ -35,5 +35,5 @@ export async function POST(request: NextRequest) {
     })
   }
 
-  return NextResponse.redirect(new URL('/dashboard', request.url))
+  return NextResponse.redirect(new URL('/dashboard', request.url), { status: 303 })
 }

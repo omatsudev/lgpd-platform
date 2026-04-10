@@ -10,8 +10,8 @@ export async function POST(request: NextRequest) {
   const { error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
-    return NextResponse.redirect(new URL('/login?error=invalid_credentials', request.url))
+    return NextResponse.redirect(new URL('/login?error=invalid_credentials', request.url), { status: 303 })
   }
 
-  return NextResponse.redirect(new URL('/dashboard', request.url))
+  return NextResponse.redirect(new URL('/dashboard', request.url), { status: 303 })
 }
