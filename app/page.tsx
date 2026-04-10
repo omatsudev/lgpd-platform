@@ -179,7 +179,7 @@ export default function HomePage() {
       <footer className="border-t border-gray-100 py-8" style={{ background: '#0f2d5e' }}>
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <Image src="/logo.jpg" alt="Serra Privacy" width={110} height={40} className="object-contain rounded-lg" />
-          <p className="text-sm text-blue-200">© 2024 Serra Privacy. Todos os direitos reservados.</p>
+          <p className="text-sm text-blue-200">© 2026 Serra Privacy. Todos os direitos reservados.</p>
           <div className="flex gap-6 text-sm text-blue-300">
             <Link href="/privacidade" className="hover:text-white transition-colors">Privacidade</Link>
             <Link href="/termos" className="hover:text-white transition-colors">Termos</Link>
