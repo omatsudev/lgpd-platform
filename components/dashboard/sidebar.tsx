@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import {
   LayoutDashboard, Database, GraduationCap, AlertTriangle,
   Users, Building2, Settings, ScrollText, Bell, LogOut, Menu, X,
-  ShieldAlert, FileText, ClipboardCheck, Truck, ClipboardList, Cookie, TriangleAlert,
+  ShieldAlert, FileText, ClipboardCheck, Truck, ClipboardList, Cookie, TriangleAlert, BarChart2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -17,6 +17,7 @@ const navItems = [
   { href: '/cookies', label: 'Verificador de Site', icon: Cookie },
   { href: '/inventario', label: 'Inventário de Dados', icon: Database },
   { href: '/riscos', label: 'Gestão de Riscos', icon: TriangleAlert },
+  { href: '/relatorio', label: 'Relatório LGPD', icon: BarChart2 },
   { href: '/incidentes', label: 'Gestão de Incidentes', icon: ShieldAlert },
   { href: '/documentos', label: 'Documentos', icon: FileText },
   { href: '/consentimentos', label: 'Consentimentos', icon: ClipboardCheck },
