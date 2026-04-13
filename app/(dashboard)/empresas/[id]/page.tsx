@@ -1,13 +1,30 @@
 import { ArrowLeft, Building2 } from 'lucide-react'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
+import { getUserEmpresa } from '@/lib/supabase/queries'
+import { salvarEmpresa } from '@/app/actions/empresas'
 
-export default function EmpresaFormPage({ params }: { params: { id: string } }) {
-  const isNew = params.id === 'novo'
+export default async function EmpresaFormPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const isNew = id === 'novo'
+  const { supabase } = await getUserEmpresa()
+
+  let empresa: any = null
+  if (!isNew) {
+    const { data } = await supabase
+      .from('empresas')
+      .select('*')
+      .eq('id', id)
+      .single()
+    empresa = data
+    if (!empresa) notFound()
+  }
+
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-4">
@@ -15,47 +32,50 @@ export default function EmpresaFormPage({ params }: { params: { id: string } }) 
           <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Nova Empresa' : 'Tech Solutions Ltda'}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Nova Empresa' : empresa?.nome}</h1>
           <p className="text-sm text-gray-500">{isNew ? 'Cadastrar empresa para gerenciar' : 'Gerenciar adequação LGPD'}</p>
         </div>
       </div>
 
-      {!isNew && (
+      {!isNew && empresa && (
         <Card className="border-blue-200 bg-blue-50">
           <CardContent className="pt-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold text-blue-800">Adequação LGPD</span>
-              <span className="text-xl font-bold text-blue-600">75%</span>
+              <span className="text-xl font-bold text-blue-600">{empresa.percentual_adequacao ?? 0}%</span>
             </div>
-            <Progress value={75} />
+            <Progress value={empresa.percentual_adequacao ?? 0} />
           </CardContent>
         </Card>
       )}
 
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2"><Building2 className="h-5 w-5" /> Dados da Empresa</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Razão Social</Label>
-              <Input defaultValue={isNew ? '' : 'Tech Solutions Ltda'} placeholder="Nome da empresa" />
+        <CardContent>
+          <form action={salvarEmpresa} className="space-y-4">
+            <input type="hidden" name="id" value={isNew ? '' : id} />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Razão Social</Label>
+                <Input name="nome" defaultValue={empresa?.nome ?? ''} placeholder="Nome da empresa" required />
+              </div>
+              <div className="space-y-2">
+                <Label>CNPJ</Label>
+                <Input name="cnpj" defaultValue={empresa?.cnpj ?? ''} placeholder="00.000.000/0001-00" />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>CNPJ</Label>
-              <Input defaultValue={isNew ? '' : '12.345.678/0001-90'} placeholder="00.000.000/0001-00" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Setor</Label>
+                <Input name="setor" defaultValue={empresa?.setor ?? ''} placeholder="Ex: Saúde, Varejo..." />
+              </div>
+              <div className="space-y-2">
+                <Label>Slug (URL pública)</Label>
+                <Input name="slug" defaultValue={empresa?.slug ?? ''} placeholder="nome-da-empresa" required />
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Setor</Label>
-              <Input defaultValue={isNew ? '' : 'Tecnologia'} placeholder="Ex: Saúde, Varejo..." />
-            </div>
-            <div className="space-y-2">
-              <Label>Slug (URL pública)</Label>
-              <Input defaultValue={isNew ? '' : 'tech-solutions'} placeholder="nome-da-empresa" />
-            </div>
-          </div>
-          <Button>{isNew ? 'Criar Empresa' : 'Salvar Alterações'}</Button>
+            <Button type="submit">{isNew ? 'Criar Empresa' : 'Salvar Alterações'}</Button>
+          </form>
         </CardContent>
       </Card>
 

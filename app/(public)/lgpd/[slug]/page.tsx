@@ -1,104 +1,107 @@
-import { Shield, Mail, Phone, QrCode, FileText, AlertTriangle, Users } from 'lucide-react'
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+import { Mail, Phone, QrCode, FileText, AlertTriangle, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { createClient } from '@/lib/supabase/server'
 
-// Em produção, esses dados virão do Supabase via params.slug
-const empresaData = {
-  nome: 'Empresa Exemplo',
-  cnpj: '12.345.678/0001-90',
-  dpo_nome: 'João Silva',
-  dpo_email: 'dpo@empresa.com',
-  dpo_telefone: '(11) 99999-0000',
-  politica_url: '/politica-de-privacidade.pdf',
-}
+export default async function LGPDPublicaPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const supabase = await createClient()
 
-export default function LGPDPublicaPage({ params }: { params: { slug: string } }) {
+  const { data: empresa } = await supabase
+    .from('empresas')
+    .select('id, nome, cnpj, dpo_nome, dpo_email, dpo_telefone, politica_privacidade_url')
+    .eq('slug', slug)
+    .single()
+
+  if (!empresa) notFound()
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center">
-              <Shield className="h-6 w-6 text-white" />
+            <Image src="/logo.jpg" alt="Serra Privacy" width={100} height={36} className="object-contain rounded-lg" />
+            <div className="border-l border-gray-200 pl-3">
+              <p className="font-bold text-gray-900 text-sm">{empresa.nome}</p>
+              <p className="text-xs text-gray-400">Portal de Privacidade</p>
             </div>
-            <div>
-              <p className="font-bold text-gray-900">{empresaData.nome}</p>
-              <p className="text-xs text-gray-400">Portal de Privacidade e LGPD</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <Shield className="h-3.5 w-3.5 text-green-500" />
-            <span>Adequado à LGPD</span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Hero */}
-        <div className="text-center space-y-3">
-          <h1 className="text-3xl font-bold text-gray-900">Portal de Privacidade</h1>
-          <p className="text-gray-500 max-w-2xl mx-auto">
-            A {empresaData.nome} respeita sua privacidade e está comprometida com a proteção dos seus dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (LGPD – Lei 13.709/2018).
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Portal de Privacidade</h1>
+          <p className="text-gray-500 max-w-2xl mx-auto text-sm md:text-base">
+            A {empresa.nome} respeita sua privacidade e está comprometida com a proteção dos seus dados, em conformidade com a LGPD.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4">
-          {/* DPO Info */}
+        {/* Info cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Users className="h-4 w-4 text-blue-600" />
-                Encarregado (DPO)
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Users className="h-4 w-4 text-blue-600" /> Encarregado (DPO)
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p className="font-medium text-gray-900">{empresaData.dpo_nome}</p>
-              <div className="flex items-center gap-2 text-gray-500">
-                <Mail className="h-3.5 w-3.5" />
-                <a href={`mailto:${empresaData.dpo_email}`} className="hover:text-blue-600">{empresaData.dpo_email}</a>
-              </div>
-              <div className="flex items-center gap-2 text-gray-500">
-                <Phone className="h-3.5 w-3.5" />
-                <span>{empresaData.dpo_telefone}</span>
-              </div>
+            <CardContent className="space-y-1.5 text-sm">
+              {empresa.dpo_nome ? (
+                <>
+                  <p className="font-medium text-gray-900">{empresa.dpo_nome}</p>
+                  {empresa.dpo_email && (
+                    <a href={`mailto:${empresa.dpo_email}`} className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 break-all">
+                      <Mail className="h-3.5 w-3.5 flex-shrink-0" />{empresa.dpo_email}
+                    </a>
+                  )}
+                  {empresa.dpo_telefone && (
+                    <div className="flex items-center gap-1.5 text-gray-500">
+                      <Phone className="h-3.5 w-3.5 flex-shrink-0" />{empresa.dpo_telefone}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-gray-400 text-xs">DPO não configurado</p>
+              )}
             </CardContent>
           </Card>
 
-          {/* Política */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <FileText className="h-4 w-4 text-green-600" />
-                Política de Privacidade
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <FileText className="h-4 w-4 text-green-600" /> Política de Privacidade
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-gray-500">Consulte como tratamos seus dados pessoais.</p>
-              <Button variant="outline" size="sm" className="w-full" asChild>
-                <a href={empresaData.politica_url} target="_blank" rel="noopener noreferrer">
-                  Acessar Política
-                </a>
-              </Button>
+              {empresa.politica_privacidade_url ? (
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <a href={empresa.politica_privacidade_url} target="_blank" rel="noopener noreferrer">Acessar Política</a>
+                </Button>
+              ) : (
+                <p className="text-xs text-gray-400">Em elaboração</p>
+              )}
             </CardContent>
           </Card>
 
-          {/* QR Code */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <QrCode className="h-4 w-4 text-purple-600" />
-                QR Code LGPD
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <QrCode className="h-4 w-4 text-purple-600" /> QR Code LGPD
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="text-sm text-gray-500">Compartilhe este portal com QR Code.</p>
+              <p className="text-sm text-gray-500">Compartilhe este portal.</p>
               <div className="flex justify-center">
-                <div className="h-20 w-20 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <QrCode className="h-12 w-12 text-gray-400" />
+                <div className="h-20 w-20 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                  <QrCode className="h-10 w-10 text-gray-400" />
                 </div>
               </div>
             </CardContent>
@@ -106,35 +109,29 @@ export default function LGPDPublicaPage({ params }: { params: { slug: string } }
         </div>
 
         {/* Formulários */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Direitos do Titular */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Titular */}
           <Card id="titular">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-blue-600" />
-                Exercer meus Direitos
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Users className="h-5 w-5 text-blue-600" /> Exercer meus Direitos
               </CardTitle>
-              <p className="text-sm text-gray-500">Solicite acesso, correção, exclusão ou portabilidade dos seus dados. Prazo de resposta: 15 dias úteis.</p>
+              <p className="text-sm text-gray-500">Prazo de resposta: 15 dias úteis.</p>
             </CardHeader>
             <CardContent>
-              <form className="space-y-4" action="/api/titulares/public" method="POST">
-                <input type="hidden" name="empresa_slug" value={params.slug} />
-                <div className="space-y-2">
-                  <Label htmlFor="titular-nome">Nome completo</Label>
-                  <Input id="titular-nome" name="nome" placeholder="Seu nome" required />
+              <form className="space-y-3" action="/api/titulares/public" method="POST">
+                <input type="hidden" name="empresa_slug" value={slug} />
+                <div className="space-y-1.5">
+                  <Label>Nome completo</Label>
+                  <Input name="nome" placeholder="Seu nome" required />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="titular-email">Email</Label>
-                  <Input id="titular-email" name="email" type="email" placeholder="seu@email.com" required />
+                <div className="space-y-1.5">
+                  <Label>Email</Label>
+                  <Input name="email" type="email" placeholder="seu@email.com" required />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="titular-tipo">Tipo de solicitação</Label>
-                  <select
-                    id="titular-tipo"
-                    name="tipo"
-                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  >
+                <div className="space-y-1.5">
+                  <Label>Tipo de solicitação</Label>
+                  <select name="tipo" className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <option value="">Selecione...</option>
                     <option value="acesso">Acesso aos dados</option>
                     <option value="correcao">Correção de dados</option>
@@ -143,48 +140,40 @@ export default function LGPDPublicaPage({ params }: { params: { slug: string } }
                     <option value="oposicao">Oposição ao tratamento</option>
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="titular-descricao">Descrição</Label>
-                  <Textarea id="titular-descricao" name="descricao" placeholder="Descreva sua solicitação..." required />
+                <div className="space-y-1.5">
+                  <Label>Descrição</Label>
+                  <Textarea name="descricao" placeholder="Descreva sua solicitação..." required />
                 </div>
                 <Button type="submit" className="w-full">Enviar Solicitação</Button>
               </form>
             </CardContent>
           </Card>
 
-          {/* Canal de Denúncia */}
+          {/* Denúncia */}
           <Card id="denuncia">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-orange-500" />
-                Canal de Denúncia
+              <CardTitle className="flex items-center gap-2 text-base">
+                <AlertTriangle className="h-5 w-5 text-orange-500" /> Canal de Denúncia
               </CardTitle>
-              <p className="text-sm text-gray-500">Reporte violações de privacidade ou uso indevido de dados. Pode ser feito de forma anônima.</p>
+              <p className="text-sm text-gray-500">Pode ser feito de forma anônima.</p>
             </CardHeader>
             <CardContent>
-              <form className="space-y-4" action="/api/denuncias/public" method="POST">
-                <input type="hidden" name="empresa_slug" value={params.slug} />
-                <div className="space-y-2">
+              <form className="space-y-3" action="/api/denuncias/public" method="POST">
+                <input type="hidden" name="empresa_slug" value={slug} />
+                <div className="space-y-1.5">
                   <Label>Identificação</Label>
-                  <div className="flex items-center gap-3">
+                  <div className="flex gap-4">
                     <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input type="radio" name="anonimo" value="true" defaultChecked />
-                      <span>Anônimo</span>
+                      <input type="radio" name="anonimo" value="true" defaultChecked /> Anônimo
                     </label>
                     <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input type="radio" name="anonimo" value="false" />
-                      <span>Identificado</span>
+                      <input type="radio" name="anonimo" value="false" /> Identificado
                     </label>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="denuncia-tipo">Tipo de denúncia</Label>
-                  <select
-                    id="denuncia-tipo"
-                    name="tipo"
-                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  >
+                <div className="space-y-1.5">
+                  <Label>Tipo de denúncia</Label>
+                  <select name="tipo" className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <option value="">Selecione...</option>
                     <option value="Vazamento de dados">Vazamento de dados</option>
                     <option value="Uso indevido de dados">Uso indevido de dados</option>
@@ -193,9 +182,9 @@ export default function LGPDPublicaPage({ params }: { params: { slug: string } }
                     <option value="Outro">Outro</option>
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="denuncia-descricao">Descrição</Label>
-                  <Textarea id="denuncia-descricao" name="descricao" placeholder="Descreva o ocorrido..." rows={4} required />
+                <div className="space-y-1.5">
+                  <Label>Descrição</Label>
+                  <Textarea name="descricao" placeholder="Descreva o ocorrido..." rows={4} required />
                 </div>
                 <Button type="submit" variant="outline" className="w-full border-orange-300 text-orange-700 hover:bg-orange-50">
                   Enviar Denúncia
@@ -206,9 +195,9 @@ export default function LGPDPublicaPage({ params }: { params: { slug: string } }
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400">
-        <p>Este portal é mantido pela {empresaData.nome} (CNPJ: {empresaData.cnpj})</p>
-        <p className="mt-1">Desenvolvido com <a href="/" className="text-blue-500 hover:underline">LGPD Platform</a></p>
+      <footer className="border-t border-gray-200 mt-10 py-5 text-center text-xs text-gray-400 px-4">
+        <p>{empresa.nome}{empresa.cnpj ? ` — CNPJ: ${empresa.cnpj}` : ''}</p>
+        <p className="mt-1">Desenvolvido com <a href="/" className="text-blue-500 hover:underline">Serra Privacy</a></p>
       </footer>
     </div>
   )

@@ -1,96 +1,99 @@
-import { Plus, Search, Send } from 'lucide-react'
+import { Plus, Send } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
+import { SearchInput } from '@/components/ui/search-input'
+import { getUserEmpresa } from '@/lib/supabase/queries'
 
-const treinamentosMock = [
-  {
-    id: '1',
-    titulo: 'Introdução à LGPD',
-    descricao: 'Conceitos básicos da Lei Geral de Proteção de Dados',
-    total_colaboradores: 20,
-    concluidos: 12,
-    em_andamento: 5,
-    nao_iniciados: 3,
-  },
-  {
-    id: '2',
-    titulo: 'Segurança da Informação',
-    descricao: 'Boas práticas de segurança no tratamento de dados',
-    total_colaboradores: 20,
-    concluidos: 8,
-    em_andamento: 4,
-    nao_iniciados: 8,
-  },
-]
+export default async function TreinamentosPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const { empresaId, supabase } = await getUserEmpresa()
+  const { q } = await searchParams
 
-export default function TreinamentosPage() {
+  let query = supabase
+    .from('treinamentos')
+    .select('*, treinamento_colaboradores(status)')
+    .eq('empresa_id', empresaId ?? '')
+  if (q) query = query.or(`titulo.ilike.%${q}%,descricao.ilike.%${q}%`)
+
+  const { data } = empresaId
+    ? await query.order('created_at', { ascending: false })
+    : { data: [] }
+
+  const treinamentos = (data ?? []).map((t: any) => {
+    const colabs = t.treinamento_colaboradores ?? []
+    return {
+      ...t,
+      total_colaboradores: colabs.length,
+      concluidos: colabs.filter((c: any) => c.status === 'concluido').length,
+      em_andamento: colabs.filter((c: any) => c.status === 'em_andamento').length,
+      nao_iniciados: colabs.filter((c: any) => c.status === 'nao_iniciado').length,
+    }
+  })
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Treinamentos</h1>
-          <p className="text-sm text-gray-500 mt-1">Gerencie treinamentos e acompanhe a evolução dos colaboradores</p>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Treinamentos</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Gerencie treinamentos e acompanhe colaboradores</p>
         </div>
         <Link href="/treinamentos/novo">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Novo Treinamento
-          </Button>
+          <Button><Plus className="h-4 w-4 mr-1" /> Novo Treinamento</Button>
         </Link>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input placeholder="Buscar treinamentos..." className="pl-9" />
-      </div>
+      <SearchInput defaultValue={q ?? ''} placeholder="Buscar por título ou descrição..." />
 
-      <div className="grid gap-4">
-        {treinamentosMock.map((t) => {
-          const progresso = Math.round((t.concluidos / t.total_colaboradores) * 100)
-          return (
-            <Card key={t.id}>
-              <CardContent className="pt-6">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1 flex-1">
-                    <h3 className="font-semibold text-gray-900">{t.titulo}</h3>
-                    <p className="text-sm text-gray-500">{t.descricao}</p>
-
-                    <div className="flex items-center gap-4 pt-3">
-                      <div className="flex items-center gap-1.5">
+      {treinamentos.length === 0 ? (
+        <Card>
+          <CardContent className="pt-8 pb-8 text-center">
+            <p className="text-gray-500 font-medium">Nenhum treinamento cadastrado</p>
+            <p className="text-sm text-gray-400 mt-1">Clique em "+ Novo Treinamento" para começar</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4">
+          {treinamentos.map((t: any) => {
+            const progresso = t.total_colaboradores > 0 ? Math.round((t.concluidos / t.total_colaboradores) * 100) : 0
+            return (
+              <Card key={t.id}>
+                <CardContent className="pt-5">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div className="space-y-2 flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900">{t.titulo}</h3>
+                      {t.descricao && <p className="text-sm text-gray-500">{t.descricao}</p>}
+                      <div className="flex flex-wrap gap-2">
                         <Badge variant="success">{t.concluidos} concluídos</Badge>
                         <Badge variant="warning">{t.em_andamento} em andamento</Badge>
                         <Badge variant="secondary">{t.nao_iniciados} não iniciados</Badge>
                       </div>
+                      {t.total_colaboradores > 0 && (
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>Progresso geral</span>
+                            <span>{progresso}%</span>
+                          </div>
+                          <Progress value={progresso} />
+                        </div>
+                      )}
                     </div>
-
-                    <div className="pt-3 space-y-1">
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>Progresso geral</span>
-                        <span>{progresso}%</span>
-                      </div>
-                      <Progress value={progresso} />
+                    <div className="flex sm:flex-col gap-2 flex-shrink-0">
+                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none" disabled>
+                        <Send className="h-3 w-3 mr-1" /> WhatsApp
+                      </Button>
+                      <Link href={`/treinamentos/${t.id}`} className="flex-1 sm:flex-none">
+                        <Button size="sm" className="w-full">Gerenciar</Button>
+                      </Link>
                     </div>
                   </div>
-
-                  <div className="flex gap-2 ml-4">
-                    <Button variant="outline" size="sm">
-                      <Send className="h-3 w-3 mr-1" />
-                      Enviar WhatsApp
-                    </Button>
-                    <Link href={`/treinamentos/${t.id}`}>
-                      <Button size="sm">Gerenciar</Button>
-                    </Link>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

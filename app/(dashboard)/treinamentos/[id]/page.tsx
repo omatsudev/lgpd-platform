@@ -1,5 +1,6 @@
-import { ArrowLeft, Send, Download, Upload } from 'lucide-react'
+import { ArrowLeft, Send, Download } from 'lucide-react'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -7,28 +8,41 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-
-const isNew = false
-
-const colaboradores = [
-  { id: '1', nome: 'Ana Paula', whatsapp: '11999990001', status: 'concluido', progresso: 100 },
-  { id: '2', nome: 'Bruno Costa', whatsapp: '11999990002', status: 'em_andamento', progresso: 60 },
-  { id: '3', nome: 'Carla Dias', whatsapp: '11999990003', status: 'nao_iniciado', progresso: 0 },
-]
+import { getUserEmpresa } from '@/lib/supabase/queries'
+import { salvarTreinamento, adicionarColaborador } from '@/app/actions/treinamentos'
 
 const statusMap: Record<string, 'success' | 'warning' | 'secondary'> = {
-  concluido: 'success',
-  em_andamento: 'warning',
-  nao_iniciado: 'secondary',
+  concluido: 'success', em_andamento: 'warning', nao_iniciado: 'secondary',
 }
 const statusLabel: Record<string, string> = {
-  concluido: 'Concluído',
-  em_andamento: 'Em andamento',
-  nao_iniciado: 'Não iniciado',
+  concluido: 'Concluído', em_andamento: 'Em andamento', nao_iniciado: 'Não iniciado',
 }
 
-export default function TreinamentoFormPage({ params }: { params: { id: string } }) {
-  const isNew = params.id === 'novo'
+export default async function TreinamentoFormPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const isNew = id === 'novo'
+  const { empresaId, supabase } = await getUserEmpresa()
+
+  let treinamento: any = null
+  let colaboradores: any[] = []
+
+  if (!isNew) {
+    const { data: t } = await supabase
+      .from('treinamentos')
+      .select('*')
+      .eq('id', id)
+      .single()
+    if (!t) notFound()
+    treinamento = t
+
+    const { data: colabs } = await supabase
+      .from('treinamento_colaboradores')
+      .select('*')
+      .eq('treinamento_id', id)
+      .order('created_at', { ascending: false })
+    colaboradores = colabs ?? []
+  }
+
   return (
     <div className="space-y-6 max-w-4xl">
       <div className="flex items-center gap-4">
@@ -36,7 +50,7 @@ export default function TreinamentoFormPage({ params }: { params: { id: string }
           <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Novo Treinamento' : 'Introdução à LGPD'}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Novo Treinamento' : treinamento?.titulo}</h1>
           <p className="text-sm text-gray-500">Gerencie conteúdo e acompanhe colaboradores</p>
         </div>
       </div>
@@ -45,77 +59,98 @@ export default function TreinamentoFormPage({ params }: { params: { id: string }
         {/* Conteúdo */}
         <Card>
           <CardHeader><CardTitle>Conteúdo do Treinamento</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Título</Label>
-              <Input defaultValue={isNew ? '' : 'Introdução à LGPD'} placeholder="Nome do treinamento" />
-            </div>
-            <div className="space-y-2">
-              <Label>Descrição</Label>
-              <Textarea rows={2} defaultValue={isNew ? '' : 'Conceitos básicos da Lei Geral de Proteção de Dados'} />
-            </div>
-            <div className="space-y-2">
-              <Label>Vídeo (URL YouTube/Vimeo)</Label>
-              <Input placeholder="https://youtube.com/..." />
-            </div>
-            <div className="space-y-2">
-              <Label>Material PDF</Label>
-              <div className="flex items-center gap-2">
-                <Input placeholder="URL do PDF ou faça upload" />
-                <Button variant="outline" size="icon"><Upload className="h-4 w-4" /></Button>
+          <CardContent>
+            <form action={salvarTreinamento} className="space-y-4">
+              <input type="hidden" name="id" value={isNew ? '' : id} />
+              <input type="hidden" name="empresa_id" value={empresaId ?? ''} />
+              <div className="space-y-2">
+                <Label>Título</Label>
+                <Input name="titulo" defaultValue={treinamento?.titulo ?? ''} placeholder="Nome do treinamento" required />
               </div>
-            </div>
-            <Button className="w-full">Salvar Treinamento</Button>
+              <div className="space-y-2">
+                <Label>Descrição</Label>
+                <Textarea name="descricao" rows={2} defaultValue={treinamento?.descricao ?? ''} placeholder="Descrição do treinamento" />
+              </div>
+              <div className="space-y-2">
+                <Label>Vídeo (URL YouTube/Vimeo)</Label>
+                <Input name="video_url" defaultValue={treinamento?.video_url ?? ''} placeholder="https://youtube.com/..." />
+              </div>
+              <div className="space-y-2">
+                <Label>Material PDF (URL)</Label>
+                <Input name="pdf_url" defaultValue={treinamento?.pdf_url ?? ''} placeholder="https://..." />
+              </div>
+              <Button type="submit" className="w-full">Salvar Treinamento</Button>
+            </form>
           </CardContent>
         </Card>
 
-        {/* Envio WhatsApp */}
+        {/* Adicionar Colaborador */}
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2"><Send className="h-4 w-4 text-green-600" /> Enviar via WhatsApp</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-gray-500">O sistema gera um link único por colaborador e envia via WhatsApp automaticamente.</p>
-            <div className="space-y-2">
-              <Label>Mensagem personalizada</Label>
-              <Textarea rows={3} defaultValue="Olá {nome}, você recebeu um treinamento obrigatório sobre LGPD. Acesse: {link}" />
-            </div>
-            <Button className="w-full bg-green-600 hover:bg-green-700">
-              <Send className="h-4 w-4 mr-2" />
-              Enviar para todos (3)
-            </Button>
-            <Button variant="outline" className="w-full">
-              <Send className="h-4 w-4 mr-2" />
-              Enviar apenas para pendentes
-            </Button>
+          <CardHeader><CardTitle>Adicionar Colaborador</CardTitle></CardHeader>
+          <CardContent>
+            {isNew ? (
+              <p className="text-sm text-gray-500">Salve o treinamento primeiro para adicionar colaboradores.</p>
+            ) : (
+              <form action={adicionarColaborador} className="space-y-4">
+                <input type="hidden" name="treinamento_id" value={id} />
+                <div className="space-y-2">
+                  <Label>Nome *</Label>
+                  <Input name="nome" placeholder="Nome do colaborador" required />
+                </div>
+                <div className="space-y-2">
+                  <Label>Email</Label>
+                  <Input name="email" type="email" placeholder="colaborador@empresa.com" />
+                </div>
+                <div className="space-y-2">
+                  <Label>WhatsApp</Label>
+                  <Input name="whatsapp" placeholder="11999990000" />
+                </div>
+                <Button type="submit" className="w-full">Adicionar Colaborador</Button>
+              </form>
+            )}
           </CardContent>
         </Card>
       </div>
 
       {/* Progresso dos colaboradores */}
-      {!isNew && (
+      {!isNew && colaboradores.length > 0 && (
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Progresso dos Colaboradores</CardTitle>
-              <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1" /> Exportar</Button>
+              <CardTitle>Progresso dos Colaboradores ({colaboradores.length})</CardTitle>
+              <Button variant="outline" size="sm" disabled><Download className="h-4 w-4 mr-1" /> Exportar</Button>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {colaboradores.map((c) => (
+              {colaboradores.map((c: any) => (
                 <div key={c.id} className="flex items-center gap-4 p-3 rounded-lg border border-gray-100">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-900">{c.nome}</span>
-                      <Badge variant={statusMap[c.status]}>{statusLabel[c.status]}</Badge>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1 gap-2">
+                      <div className="min-w-0">
+                        <span className="text-sm font-medium text-gray-900 truncate block">{c.colaborador_nome}</span>
+                        {c.colaborador_whatsapp && (
+                          <span className="text-xs text-gray-400">{c.colaborador_whatsapp}</span>
+                        )}
+                      </div>
+                      <Badge variant={statusMap[c.status] ?? 'secondary'}>{statusLabel[c.status] ?? c.status}</Badge>
                     </div>
-                    <Progress value={c.progresso} className="h-1.5" />
+                    <Progress value={c.progresso ?? 0} className="h-1.5" />
                   </div>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" disabled title="WhatsApp não configurado">
                     <Send className="h-3 w-3" />
                   </Button>
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {!isNew && colaboradores.length === 0 && (
+        <Card>
+          <CardContent className="pt-6 pb-6 text-center">
+            <p className="text-gray-500 text-sm">Nenhum colaborador adicionado ainda</p>
           </CardContent>
         </Card>
       )}

@@ -27,12 +27,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(new URL(`/cadastro?error=${authError.message}`, request.url), { status: 303 })
   }
 
-  if (authData.user && tipo !== 'dpo') {
-    await supabase.from('empresas').insert({
-      nome: empresa_nome,
-      owner_id: authData.user.id,
-      slug: empresa_nome.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
-    })
+  if (authData.user && tipo !== 'dpo' && empresa_nome) {
+    const slug = empresa_nome
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+
+    const { data: empresa } = await supabase
+      .from('empresas')
+      .insert({ nome: empresa_nome, owner_id: authData.user.id, slug })
+      .select('id')
+      .single()
+
+    if (empresa) {
+      await supabase.from('user_empresas').insert({
+        user_id: authData.user.id,
+        empresa_id: empresa.id,
+        role: 'admin',
+      })
+    }
   }
 
   return NextResponse.redirect(new URL('/dashboard', request.url), { status: 303 })

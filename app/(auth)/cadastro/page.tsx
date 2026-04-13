@@ -20,26 +20,25 @@ export default function CadastroPage() {
             <CardDescription>Comece sua adequação à LGPD hoje</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <label className="cursor-pointer">
-                <input type="radio" name="tipo" value="empresa" className="sr-only peer" defaultChecked />
-                <div className="border-2 border-gray-200 peer-checked:border-blue-800 peer-checked:bg-blue-50 rounded-xl p-4 text-center space-y-2 transition-colors hover:border-blue-300">
-                  <Building2 className="h-7 w-7 mx-auto" style={{ color: '#0f2d5e' }} />
-                  <p className="font-semibold text-sm text-gray-900">Empresa</p>
-                  <p className="text-xs text-gray-500">Quero adequar minha empresa</p>
-                </div>
-              </label>
-              <label className="cursor-pointer">
-                <input type="radio" name="tipo" value="dpo" className="sr-only peer" />
-                <div className="border-2 border-gray-200 peer-checked:border-cyan-500 peer-checked:bg-cyan-50 rounded-xl p-4 text-center space-y-2 transition-colors hover:border-cyan-300">
-                  <UserCheck className="h-7 w-7 mx-auto" style={{ color: '#0097a7' }} />
-                  <p className="font-semibold text-sm text-gray-900">DPO / Advogado</p>
-                  <p className="text-xs text-gray-500">Gerencio múltiplas empresas</p>
-                </div>
-              </label>
-            </div>
-
             <form className="space-y-4" action="/api/auth/register" method="POST">
+              <div className="grid grid-cols-2 gap-3">
+                <label className="cursor-pointer">
+                  <input type="radio" name="tipo" value="empresa" className="sr-only peer" defaultChecked />
+                  <div className="border-2 border-gray-200 peer-checked:border-blue-800 peer-checked:bg-blue-50 rounded-xl p-4 text-center space-y-2 transition-colors hover:border-blue-300">
+                    <Building2 className="h-7 w-7 mx-auto" style={{ color: '#0f2d5e' }} />
+                    <p className="font-semibold text-sm text-gray-900">Empresa</p>
+                    <p className="text-xs text-gray-500">Quero adequar minha empresa</p>
+                  </div>
+                </label>
+                <label className="cursor-pointer">
+                  <input type="radio" name="tipo" value="dpo" className="sr-only peer" />
+                  <div className="border-2 border-gray-200 peer-checked:border-cyan-500 peer-checked:bg-cyan-50 rounded-xl p-4 text-center space-y-2 transition-colors hover:border-cyan-300">
+                    <UserCheck className="h-7 w-7 mx-auto" style={{ color: '#0097a7' }} />
+                    <p className="font-semibold text-sm text-gray-900">DPO / Advogado</p>
+                    <p className="text-xs text-gray-500">Gerencio múltiplas empresas</p>
+                  </div>
+                </label>
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome completo</Label>
@@ -47,7 +46,7 @@ export default function CadastroPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="empresa_nome">Nome da empresa</Label>
-                  <Input id="empresa_nome" name="empresa_nome" placeholder="Razão social" required />
+                  <Input id="empresa_nome" name="empresa_nome" placeholder="Razão social" />
                 </div>
               </div>
               <div className="space-y-2">
