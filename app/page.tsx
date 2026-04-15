@@ -4,6 +4,7 @@ import { Database, GraduationCap, AlertTriangle, Users, CheckCircle, ArrowRight,
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { AnimatedBadges } from '@/components/home/animated-badges'
+import { ShieldIllustration } from '@/components/home/shield-illustration'
 import { Logo } from '@/components/logo'
 
 const features = [
@@ -111,14 +112,9 @@ export default function HomePage() {
 
           {/* Right — shield illustration */}
           <div className="flex-shrink-0 flex items-center justify-center">
-            <div className="relative flex items-center justify-center" style={{ width: 260, height: 260 }}>
-              {/* Outer glow ring */}
-              <div className="absolute inset-0 rounded-full opacity-20 blur-2xl" style={{ background: 'radial-gradient(circle, #00bcd4, transparent 70%)' }} />
-              {/* Shield emoji as large illustration */}
-              <div className="relative flex flex-col items-center justify-center rounded-full"
-                style={{ width: 220, height: 220, background: 'radial-gradient(circle at 40% 35%, #1e4fa8, #0a1f42)' }}>
-                <span style={{ fontSize: 110, lineHeight: 1, filter: 'drop-shadow(0 8px 24px rgba(0,188,212,0.4))' }}>🛡️</span>
-              </div>
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full opacity-30 blur-3xl" style={{ background: 'radial-gradient(circle, #00bcd4, transparent 70%)' }} />
+              <ShieldIllustration />
             </div>
           </div>
         </div>
