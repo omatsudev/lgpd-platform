@@ -95,13 +95,13 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
-              <Link href="/cadastro">
-                <Button size="lg" className="gap-2 font-semibold text-white px-8" style={{ background: 'linear-gradient(90deg, #00bcd4, #0097a7)', border: 'none' }}>
+              <Link href="/cadastro" className="cursor-pointer">
+                <Button size="lg" className="gap-2 font-semibold text-white px-8 cursor-pointer" style={{ background: 'linear-gradient(90deg, #00bcd4, #0097a7)', border: 'none' }}>
                   Começar grátis <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="#features">
-                <Button size="lg" variant="outline" className="text-white hover:bg-white/10" style={{ borderColor: 'rgba(255,255,255,0.6)', background: 'transparent', color: 'white' }}>
+              <Link href="#features" className="cursor-pointer">
+                <Button size="lg" variant="outline" className="text-white hover:bg-white/10 cursor-pointer" style={{ borderColor: 'rgba(255,255,255,0.6)', background: 'transparent', color: 'white' }}>
                   Ver funcionalidades
                 </Button>
               </Link>
