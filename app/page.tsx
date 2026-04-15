@@ -4,7 +4,7 @@ import { BarChart2, GraduationCap, UserCheck, FolderOpen, AlertOctagon, Clipboar
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { AnimatedBadges } from '@/components/home/animated-badges'
-import { ShieldIllustration } from '@/components/home/shield-illustration'
+
 import { Logo } from '@/components/logo'
 
 const features = [
@@ -113,12 +113,9 @@ export default function HomePage() {
             <p className="text-xs text-blue-400">Sem cartão de crédito • 14 dias grátis</p>
           </div>
 
-          {/* Right — shield illustration */}
+          {/* Right — padlock */}
           <div className="flex-shrink-0 flex items-center justify-center">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-full opacity-30 blur-3xl" style={{ background: 'radial-gradient(circle, #00bcd4, transparent 70%)' }} />
-              <ShieldIllustration />
-            </div>
+            <Image src="/padlock-transparent.png" alt="Padlock" width={280} height={340} className="object-contain drop-shadow-2xl" />
           </div>
         </div>
       </section>
