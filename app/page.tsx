@@ -56,7 +56,7 @@ export default function HomePage() {
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
           <Link href="/" className="flex-shrink-0">
-            <Logo size="md" />
+            <Logo width={148} />
           </Link>
 
           <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-700">
@@ -248,7 +248,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-gray-100 py-8" style={{ background: '#0f2d5e' }}>
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <Logo size="sm" light />
+          <Logo width={120} light />
           <p className="text-sm text-blue-200">© 2026 Serra Privacy. Todos os direitos reservados.</p>
           <div className="flex gap-6 text-sm text-blue-300">
             <Link href="/privacidade" className="hover:text-white transition-colors">Privacidade</Link>
