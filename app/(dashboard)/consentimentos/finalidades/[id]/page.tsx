@@ -2,19 +2,19 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { FinalidadeForm } from '@/components/consentimentos/finalidade-form'
 
 export default async function FinalidadeFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'nova'
 
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
 
   let item: any = null
-  if (!isNew && empresaId) {
+  if (!isNew && companyId) {
     const { data } = await supabase
-      .from('consentimento_finalidades')
+      .from('consent_purposes')
       .select('*')
       .eq('id', id)
       .single()
@@ -38,7 +38,7 @@ export default async function FinalidadeFormPage({ params }: { params: Promise<{
         </div>
       </div>
 
-      <FinalidadeForm empresaId={empresaId ?? ''} id={isNew ? undefined : id} initialData={item} />
+      <FinalidadeForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
     </div>
   )
 }

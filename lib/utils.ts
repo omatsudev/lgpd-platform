@@ -33,9 +33,9 @@ export function generateSlug(name: string) {
     .replace(/\s+/g, '-')
 }
 
-export function generateUniqueLink(empresaId: string, colaboradorId: string) {
+export function generateUniqueLink(companyId: string, employeeId: string) {
   const timestamp = Date.now().toString(36)
-  return `${empresaId.slice(0, 8)}-${colaboradorId.slice(0, 8)}-${timestamp}`
+  return `${companyId.slice(0, 8)}-${employeeId.slice(0, 8)}-${timestamp}`
 }
 
 export const BASE_LEGAL_OPTIONS = [

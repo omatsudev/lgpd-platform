@@ -1,46 +1,46 @@
--- Políticas de INSERT público para formulários externos (sem autenticação)
--- Denúncias e solicitações de titulares podem ser enviadas por qualquer pessoa
+-- Public INSERT policies for external forms (unauthenticated)
+-- Complaints and data subject requests can be submitted by anyone
 
--- Formulário público: qualquer pessoa pode criar uma denúncia
-create policy "public_can_insert_denuncias" on public.denuncias
+-- Public form: anyone can create a complaint
+create policy "public_can_insert_complaints" on public.complaints
   for insert with check (true);
 
--- Formulário público: qualquer pessoa pode criar solicitação de titular
-create policy "public_can_insert_titulares" on public.solicitacoes_titulares
+-- Public form: anyone can create a data subject request
+create policy "public_can_insert_data_subject_requests" on public.data_subject_requests
   for insert with check (true);
 
--- RLS para treinamentos: usuários da empresa podem gerenciar
-create policy "user_can_manage_treinamentos" on public.treinamentos
+-- RLS for trainings: company users can manage
+create policy "user_can_manage_trainings" on public.trainings
   for all using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
--- RLS para treinamento_colaboradores: usuários da empresa podem gerenciar
-create policy "user_can_manage_treinamento_colaboradores" on public.treinamento_colaboradores
+-- RLS for training_employees: company users can manage
+create policy "user_can_manage_training_employees" on public.training_employees
   for all using (
-    treinamento_id in (
-      select t.id from public.treinamentos t
-      join public.user_empresas ue on ue.empresa_id = t.empresa_id
-      where ue.user_id = auth.uid()
+    training_id in (
+      select t.id from public.trainings t
+      join public.user_companies uc on uc.company_id = t.company_id
+      where uc.user_id = auth.uid()
     )
   );
 
--- RLS para empresas: INSERT para usuários autenticados (para criar nova empresa)
-create policy "user_can_insert_empresas" on public.empresas
+-- RLS for companies: INSERT for authenticated users (to create a new company)
+create policy "user_can_insert_companies" on public.companies
   for insert with check (owner_id = auth.uid());
 
--- RLS para user_empresas: INSERT para usuários autenticados
-create policy "user_can_insert_user_empresas" on public.user_empresas
+-- RLS for user_companies: INSERT for authenticated users
+create policy "user_can_insert_user_companies" on public.user_companies
   for insert with check (user_id = auth.uid());
 
--- RLS para logs: INSERT para usuários da empresa
-create policy "user_can_insert_logs" on public.logs_auditoria
+-- RLS for logs: INSERT for company users
+create policy "user_can_insert_logs" on public.audit_logs
   for insert with check (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );

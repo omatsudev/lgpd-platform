@@ -1,34 +1,31 @@
 import { ClipboardList } from 'lucide-react'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { CHECKLIST } from '@/lib/checklist-items'
 import { ChecklistBoard } from '@/components/checklist/checklist-board'
 
 export default async function ChecklistPage() {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
 
-  // Busca o estado salvo de todos os itens desta empresa
-  const { data: itens } = empresaId
+  const { data: items } = companyId
     ? await supabase
-        .from('checklist_itens')
-        .select('item_key, status, observacao, responsavel, data_conclusao')
-        .eq('empresa_id', empresaId)
+        .from('checklist_items')
+        .select('item_key, status, notes, responsible, completion_date')
+        .eq('company_id', companyId)
     : { data: [] }
 
-  // Monta dicionário item_key → estado
-  const estadoInicial: Record<string, any> = {}
-  for (const item of itens ?? []) {
-    estadoInicial[item.item_key] = {
+  const initialState: Record<string, any> = {}
+  for (const item of items ?? []) {
+    initialState[item.item_key] = {
       status: item.status,
-      observacao: item.observacao,
-      responsavel: item.responsavel,
-      data_conclusao: item.data_conclusao,
+      notes: item.notes,
+      responsible: item.responsible,
+      completion_date: item.completion_date,
     }
   }
 
-  // Calcula totais para o cabeçalho
-  const totalItens = CHECKLIST.reduce((acc, c) => acc + c.itens.length, 0)
-  const concluidos = Object.values(estadoInicial).filter((v: any) => v.status === 'concluido').length
-  const pendentes = totalItens - concluidos
+  const totalItems = CHECKLIST.reduce((acc, c) => acc + c.items.length, 0)
+  const completed = Object.values(initialState).filter((v: any) => v.status === 'completed').length
+  const pending = totalItems - completed
 
   return (
     <div className="space-y-5">
@@ -36,19 +33,19 @@ export default async function ChecklistPage() {
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">Checklist de Adequação LGPD</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            {pendentes > 0
-              ? `${pendentes} ite${pendentes > 1 ? 'ns' : 'm'} pendente${pendentes > 1 ? 's' : ''} · ${totalItens} no total`
-              : `Todos os ${totalItens} itens verificados`}
+            {pending > 0
+              ? `${pending} ite${pending > 1 ? 'ns' : 'm'} pendente${pending > 1 ? 's' : ''} · ${totalItems} no total`
+              : `Todos os ${totalItems} itens verificados`}
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <ClipboardList className="h-4 w-4" />
-          <span>{totalItens} requisitos · {CHECKLIST.length} categorias</span>
+          <span>{totalItems} requisitos · {CHECKLIST.length} categorias</span>
         </div>
       </div>
 
-      {empresaId ? (
-        <ChecklistBoard empresaId={empresaId} estadoInicial={estadoInicial} />
+      {companyId ? (
+        <ChecklistBoard companyId={companyId} initialState={initialState} />
       ) : (
         <div className="py-12 text-center">
           <p className="text-gray-500">Nenhuma empresa vinculada à sua conta.</p>

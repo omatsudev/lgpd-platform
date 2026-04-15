@@ -23,7 +23,7 @@ export default function CadastroPage() {
             <form className="space-y-4" action="/api/auth/register" method="POST">
               <div className="grid grid-cols-2 gap-3">
                 <label className="cursor-pointer">
-                  <input type="radio" name="tipo" value="empresa" className="sr-only peer" defaultChecked />
+                  <input type="radio" name="type" value="empresa" className="sr-only peer" defaultChecked />
                   <div className="border-2 border-gray-200 peer-checked:border-blue-800 peer-checked:bg-blue-50 rounded-xl p-4 text-center space-y-2 transition-colors hover:border-blue-300">
                     <Building2 className="h-7 w-7 mx-auto" style={{ color: '#0f2d5e' }} />
                     <p className="font-semibold text-sm text-gray-900">Empresa</p>
@@ -31,7 +31,7 @@ export default function CadastroPage() {
                   </div>
                 </label>
                 <label className="cursor-pointer">
-                  <input type="radio" name="tipo" value="dpo" className="sr-only peer" />
+                  <input type="radio" name="type" value="dpo" className="sr-only peer" />
                   <div className="border-2 border-gray-200 peer-checked:border-cyan-500 peer-checked:bg-cyan-50 rounded-xl p-4 text-center space-y-2 transition-colors hover:border-cyan-300">
                     <UserCheck className="h-7 w-7 mx-auto" style={{ color: '#0097a7' }} />
                     <p className="font-semibold text-sm text-gray-900">DPO / Advogado</p>

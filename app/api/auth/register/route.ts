@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   const password = formData.get('password') as string
   const name = formData.get('name') as string
   const empresa_nome = formData.get('empresa_nome') as string
-  const tipo = formData.get('tipo') as string
+  const tipo = formData.get('type') as string
 
   const supabase = await createClient()
 
@@ -36,16 +36,16 @@ export async function POST(request: NextRequest) {
       .trim()
       .replace(/\s+/g, '-')
 
-    const { data: empresa } = await supabase
-      .from('empresas')
-      .insert({ nome: empresa_nome, owner_id: authData.user.id, slug })
+    const { data: company } = await supabase
+      .from('companies')
+      .insert({ name: empresa_nome, owner_id: authData.user.id, slug })
       .select('id')
       .single()
 
-    if (empresa) {
-      await supabase.from('user_empresas').insert({
+    if (company) {
+      await supabase.from('user_companies').insert({
         user_id: authData.user.id,
-        empresa_id: empresa.id,
+        company_id: company.id,
         role: 'admin',
       })
     }

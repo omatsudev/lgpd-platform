@@ -13,43 +13,43 @@ import { AlertTriangle, Target, Wrench } from 'lucide-react'
 
 // ─── Constantes ────────────────────────────────────────────────────────────
 
-const CATEGORIAS = [
-  { value: 'privacidade', label: 'Privacidade' },
-  { value: 'seguranca', label: 'Segurança da Informação' },
+const CATEGORIES = [
+  { value: 'privacy', label: 'Privacidade' },
+  { value: 'security', label: 'Segurança da Informação' },
   { value: 'legal', label: 'Legal / Regulatório' },
-  { value: 'operacional', label: 'Operacional' },
-  { value: 'reputacional', label: 'Reputacional' },
-  { value: 'tecnologico', label: 'Tecnológico' },
+  { value: 'operational', label: 'Operacional' },
+  { value: 'reputational', label: 'Reputacional' },
+  { value: 'technological', label: 'Tecnológico' },
 ]
 
-const ORIGENS = [
-  { value: 'inventario', label: 'Inventário de Dados' },
-  { value: 'incidente', label: 'Incidente de Segurança' },
-  { value: 'auditoria', label: 'Auditoria' },
-  { value: 'fornecedor', label: 'Fornecedor' },
-  { value: 'interno', label: 'Análise Interna' },
-  { value: 'outro', label: 'Outro' },
+const ORIGINS = [
+  { value: 'inventory', label: 'Inventário de Dados' },
+  { value: 'incident', label: 'Incidente de Segurança' },
+  { value: 'audit', label: 'Auditoria' },
+  { value: 'supplier', label: 'Fornecedor' },
+  { value: 'internal', label: 'Análise Interna' },
+  { value: 'other', label: 'Outro' },
 ]
 
-const ESTRATEGIAS = [
-  { value: 'mitigar', label: 'Mitigar', desc: 'Implementar controles para reduzir probabilidade ou impacto' },
-  { value: 'aceitar', label: 'Aceitar', desc: 'Risco dentro do apetite, sem ação adicional' },
-  { value: 'transferir', label: 'Transferir', desc: 'Transferir o risco (seguro, terceirização)' },
-  { value: 'evitar', label: 'Evitar', desc: 'Cessar a atividade que gera o risco' },
+const STRATEGIES = [
+  { value: 'mitigate', label: 'Mitigar', desc: 'Implementar controles para reduzir probabilidade ou impacto' },
+  { value: 'accept', label: 'Aceitar', desc: 'Risco dentro do apetite, sem ação adicional' },
+  { value: 'transfer', label: 'Transferir', desc: 'Transferir o risco (seguro, terceirização)' },
+  { value: 'avoid', label: 'Evitar', desc: 'Cessar a atividade que gera o risco' },
 ]
 
 const STATUS_OPTIONS = [
-  { value: 'identificado', label: 'Identificado' },
-  { value: 'em_tratamento', label: 'Em Tratamento' },
-  { value: 'monitorando', label: 'Monitorando' },
-  { value: 'encerrado', label: 'Encerrado' },
+  { value: 'identified', label: 'Identificado' },
+  { value: 'under_treatment', label: 'Em Tratamento' },
+  { value: 'monitoring', label: 'Monitorando' },
+  { value: 'closed', label: 'Encerrado' },
 ]
 
-const ESCALA = [1, 2, 3, 4, 5]
+const SCALE = [1, 2, 3, 4, 5]
 const PROB_LABELS: Record<number, string> = {
   1: 'Raro', 2: 'Improvável', 3: 'Possível', 4: 'Provável', 5: 'Quase certo',
 }
-const IMP_LABELS: Record<number, string> = {
+const IMPACT_LABELS: Record<number, string> = {
   1: 'Insignificante', 2: 'Menor', 3: 'Moderado', 4: 'Maior', 5: 'Catastrófico',
 }
 
@@ -69,7 +69,7 @@ function scoreLabel(prob: number, imp: number) {
   return 'Baixo'
 }
 
-function EscalaSelector({
+function ScaleSelector({
   label, value, onChange, labelMap,
 }: {
   label: string
@@ -81,24 +81,20 @@ function EscalaSelector({
     <div className="space-y-2">
       <Label>{label}</Label>
       <div className="flex gap-2">
-        {ESCALA.map(n => (
+        {SCALE.map(n => (
           <button
             key={n}
             type="button"
             onClick={() => onChange(n)}
             className={`flex-1 py-2 rounded-lg border-2 text-sm font-semibold transition-all ${
-              value === n
-                ? 'border-blue-500 bg-blue-600 text-white'
-                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+              value === n ? 'border-blue-500 bg-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
             }`}
           >
             {n}
           </button>
         ))}
       </div>
-      {value > 0 && (
-        <p className="text-xs text-gray-500">{labelMap[value]}</p>
-      )}
+      {value > 0 && <p className="text-xs text-gray-500">{labelMap[value]}</p>}
     </div>
   )
 }
@@ -117,26 +113,26 @@ function SectionHeader({ icon: Icon, title, subtitle }: { icon: any; title: stri
 
 // ─── Componente principal ──────────────────────────────────────────────────
 
-type FormState = Omit<RiscoData, 'empresa_id' | 'id'>
+type FormState = Omit<RiscoData, 'company_id' | 'id'>
 
 function defaultState(): FormState {
   return {
-    titulo: '', descricao: '', categoria: '', origem: '',
-    inventario_id: '', incidente_id: '',
-    probabilidade_inerente: 3, impacto_inerente: 3,
-    probabilidade_residual: 0, impacto_residual: 0,
-    estrategia: '', plano_acao: '', responsavel: '', prazo: '',
-    status: 'identificado',
+    title: '', description: '', category: '', origin: '',
+    inventory_id: '', incident_id: '',
+    inherent_probability: 3, inherent_impact: 3,
+    residual_probability: 0, residual_impact: 0,
+    strategy: '', action_plan: '', responsible: '', deadline: '',
+    status: 'identified',
   }
 }
 
-interface RiscoFormProps {
-  empresaId: string
+interface RiskFormProps {
+  companyId: string
   id?: string
   initialData?: any
 }
 
-export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
+export function RiscoForm({ companyId, id, initialData }: RiskFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()
@@ -145,21 +141,21 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
   const [data, setData] = useState<FormState>(() => {
     if (!initialData) return defaultState()
     return {
-      titulo: initialData.titulo ?? '',
-      descricao: initialData.descricao ?? '',
-      categoria: initialData.categoria ?? '',
-      origem: initialData.origem ?? '',
-      inventario_id: initialData.inventario_id ?? '',
-      incidente_id: initialData.incidente_id ?? '',
-      probabilidade_inerente: initialData.probabilidade_inerente ?? 3,
-      impacto_inerente: initialData.impacto_inerente ?? 3,
-      probabilidade_residual: initialData.probabilidade_residual ?? 0,
-      impacto_residual: initialData.impacto_residual ?? 0,
-      estrategia: initialData.estrategia ?? '',
-      plano_acao: initialData.plano_acao ?? '',
-      responsavel: initialData.responsavel ?? '',
-      prazo: initialData.prazo ?? '',
-      status: initialData.status ?? 'identificado',
+      title: initialData.title ?? '',
+      description: initialData.description ?? '',
+      category: initialData.category ?? '',
+      origin: initialData.origin ?? '',
+      inventory_id: initialData.inventory_id ?? '',
+      incident_id: initialData.incident_id ?? '',
+      inherent_probability: initialData.inherent_probability ?? 3,
+      inherent_impact: initialData.inherent_impact ?? 3,
+      residual_probability: initialData.residual_probability ?? 0,
+      residual_impact: initialData.residual_impact ?? 0,
+      strategy: initialData.strategy ?? '',
+      action_plan: initialData.action_plan ?? '',
+      responsible: initialData.responsible ?? '',
+      deadline: initialData.deadline ?? '',
+      status: initialData.status ?? 'identified',
     }
   })
 
@@ -168,8 +164,8 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
 
   const validate = () => {
     const errs: Record<string, string> = {}
-    if (!data.titulo.trim()) errs.titulo = 'Título é obrigatório'
-    if (!data.categoria) errs.categoria = 'Categoria é obrigatória'
+    if (!data.title.trim()) errs.title = 'Título é obrigatório'
+    if (!data.category) errs.category = 'Categoria é obrigatória'
     return errs
   }
 
@@ -179,7 +175,7 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
     setErrors({})
     setSaving(true)
     try {
-      await salvarRisco({ ...data, empresa_id: empresaId, id })
+      await salvarRisco({ ...data, company_id: companyId, id })
     } catch { setSaving(false) }
   }
 
@@ -187,9 +183,9 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
     startDeleting(async () => { await deletarRisco(formData) })
   }
 
-  const scoreInerente = data.probabilidade_inerente * data.impacto_inerente
-  const temResidual = data.probabilidade_residual > 0 && data.impacto_residual > 0
-  const scoreResidual = temResidual ? data.probabilidade_residual * data.impacto_residual : null
+  const inherentScore = data.inherent_probability * data.inherent_impact
+  const hasResidual = data.residual_probability > 0 && data.residual_impact > 0
+  const residualScore = hasResidual ? data.residual_probability * data.residual_impact : null
 
   return (
     <div className="space-y-6">
@@ -200,30 +196,28 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="titulo">Título *</Label>
-            <Input id="titulo" value={data.titulo} onChange={e => update('titulo', e.target.value)} placeholder="Descreva o risco de forma clara e objetiva" />
-            {errors.titulo && <p className="text-xs text-red-500">{errors.titulo}</p>}
+            <Label htmlFor="title">Título *</Label>
+            <Input id="title" value={data.title} onChange={e => update('title', e.target.value)} placeholder="Descreva o risco de forma clara e objetiva" />
+            {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
           </div>
-
           <div className="space-y-1.5">
-            <Label htmlFor="descricao">Descrição</Label>
-            <Textarea id="descricao" value={data.descricao} onChange={e => update('descricao', e.target.value)} placeholder="Contexto, causa raiz e potenciais consequências..." rows={3} />
+            <Label htmlFor="description">Descrição</Label>
+            <Textarea id="description" value={data.description} onChange={e => update('description', e.target.value)} placeholder="Contexto, causa raiz e potenciais consequências..." rows={3} />
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label>Categoria *</Label>
-              <Select value={data.categoria} onValueChange={v => update('categoria', v)}>
+              <Select value={data.category} onValueChange={v => update('category', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>{CATEGORIAS.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
+                <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
               </Select>
-              {errors.categoria && <p className="text-xs text-red-500">{errors.categoria}</p>}
+              {errors.category && <p className="text-xs text-red-500">{errors.category}</p>}
             </div>
             <div className="space-y-1.5">
               <Label>Origem</Label>
-              <Select value={data.origem} onValueChange={v => update('origem', v)}>
+              <Select value={data.origin} onValueChange={v => update('origin', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>{ORIGENS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                <SelectContent>{ORIGINS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
@@ -243,17 +237,16 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
           <SectionHeader icon={Target} title="Avaliação de Risco Inerente" subtitle="Antes de qualquer controle ou medida de mitigação" />
         </CardHeader>
         <CardContent className="space-y-5">
-          <EscalaSelector label="Probabilidade" value={data.probabilidade_inerente} onChange={v => update('probabilidade_inerente', v)} labelMap={PROB_LABELS} />
-          <EscalaSelector label="Impacto" value={data.impacto_inerente} onChange={v => update('impacto_inerente', v)} labelMap={IMP_LABELS} />
-
-          <div className={`flex items-center justify-between p-4 rounded-lg border ${scoreColor(data.probabilidade_inerente, data.impacto_inerente)}`}>
+          <ScaleSelector label="Probabilidade" value={data.inherent_probability} onChange={v => update('inherent_probability', v)} labelMap={PROB_LABELS} />
+          <ScaleSelector label="Impacto" value={data.inherent_impact} onChange={v => update('inherent_impact', v)} labelMap={IMPACT_LABELS} />
+          <div className={`flex items-center justify-between p-4 rounded-lg border ${scoreColor(data.inherent_probability, data.inherent_impact)}`}>
             <div>
               <p className="text-sm font-medium">Risco Inerente</p>
               <p className="text-xs opacity-75">Score = Probabilidade × Impacto</p>
             </div>
             <div className="text-right">
-              <p className="text-3xl font-bold">{scoreInerente}</p>
-              <p className="text-sm font-semibold">{scoreLabel(data.probabilidade_inerente, data.impacto_inerente)}</p>
+              <p className="text-3xl font-bold">{inherentScore}</p>
+              <p className="text-sm font-semibold">{scoreLabel(data.inherent_probability, data.inherent_impact)}</p>
             </div>
           </div>
         </CardContent>
@@ -268,37 +261,33 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
           <div className="space-y-1.5">
             <Label>Estratégia de tratamento</Label>
             <div className="grid grid-cols-2 gap-2">
-              {ESTRATEGIAS.map(e => (
+              {STRATEGIES.map(s => (
                 <button
-                  key={e.value}
+                  key={s.value}
                   type="button"
-                  onClick={() => update('estrategia', e.value)}
+                  onClick={() => update('strategy', s.value)}
                   className={`p-3 rounded-lg border-2 text-left transition-all ${
-                    data.estrategia === e.value
-                      ? 'border-blue-500 bg-blue-50 text-blue-900'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                    data.strategy === s.value ? 'border-blue-500 bg-blue-50 text-blue-900' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                   }`}
                 >
-                  <p className="text-sm font-medium">{e.label}</p>
-                  <p className="text-xs mt-0.5 opacity-70">{e.desc}</p>
+                  <p className="text-sm font-medium">{s.label}</p>
+                  <p className="text-xs mt-0.5 opacity-70">{s.desc}</p>
                 </button>
               ))}
             </div>
           </div>
-
           <div className="space-y-1.5">
-            <Label htmlFor="plano_acao">Plano de ação</Label>
-            <Textarea id="plano_acao" value={data.plano_acao} onChange={e => update('plano_acao', e.target.value)} placeholder="Descreva as ações específicas para tratar este risco..." rows={4} />
+            <Label htmlFor="action_plan">Plano de ação</Label>
+            <Textarea id="action_plan" value={data.action_plan} onChange={e => update('action_plan', e.target.value)} placeholder="Descreva as ações específicas para tratar este risco..." rows={4} />
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="responsavel">Responsável</Label>
-              <Input id="responsavel" value={data.responsavel} onChange={e => update('responsavel', e.target.value)} placeholder="Nome ou setor responsável" />
+              <Label htmlFor="responsible">Responsável</Label>
+              <Input id="responsible" value={data.responsible} onChange={e => update('responsible', e.target.value)} placeholder="Nome ou setor responsável" />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="prazo">Prazo</Label>
-              <Input id="prazo" type="date" value={data.prazo} onChange={e => update('prazo', e.target.value)} />
+              <Label htmlFor="deadline">Prazo</Label>
+              <Input id="deadline" type="date" value={data.deadline} onChange={e => update('deadline', e.target.value)} />
             </div>
           </div>
         </CardContent>
@@ -310,18 +299,17 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
           <SectionHeader icon={Target} title="Avaliação de Risco Residual" subtitle="Após a implementação dos controles (opcional)" />
         </CardHeader>
         <CardContent className="space-y-5">
-          <EscalaSelector label="Probabilidade residual" value={data.probabilidade_residual || 0} onChange={v => update('probabilidade_residual', v)} labelMap={{ 0: 'Não avaliado', ...PROB_LABELS }} />
-          <EscalaSelector label="Impacto residual" value={data.impacto_residual || 0} onChange={v => update('impacto_residual', v)} labelMap={{ 0: 'Não avaliado', ...IMP_LABELS }} />
-
-          {scoreResidual !== null && (
-            <div className={`flex items-center justify-between p-4 rounded-lg border ${scoreColor(data.probabilidade_residual, data.impacto_residual)}`}>
+          <ScaleSelector label="Probabilidade residual" value={data.residual_probability || 0} onChange={v => update('residual_probability', v)} labelMap={{ 0: 'Não avaliado', ...PROB_LABELS }} />
+          <ScaleSelector label="Impacto residual" value={data.residual_impact || 0} onChange={v => update('residual_impact', v)} labelMap={{ 0: 'Não avaliado', ...IMPACT_LABELS }} />
+          {residualScore !== null && (
+            <div className={`flex items-center justify-between p-4 rounded-lg border ${scoreColor(data.residual_probability, data.residual_impact)}`}>
               <div>
                 <p className="text-sm font-medium">Risco Residual</p>
-                <p className="text-xs opacity-75">Redução de {scoreInerente - scoreResidual} pontos</p>
+                <p className="text-xs opacity-75">Redução de {inherentScore - residualScore} pontos</p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold">{scoreResidual}</p>
-                <p className="text-sm font-semibold">{scoreLabel(data.probabilidade_residual, data.impacto_residual)}</p>
+                <p className="text-3xl font-bold">{residualScore}</p>
+                <p className="text-sm font-semibold">{scoreLabel(data.residual_probability, data.residual_impact)}</p>
               </div>
             </div>
           )}
@@ -339,7 +327,7 @@ export function RiscoForm({ empresaId, id, initialData }: RiscoFormProps) {
           </form>
         )}
         <div className="flex gap-3 sm:ml-auto">
-          <Button variant="outline" onClick={() => router.push('/riscos')} disabled={saving}>Cancelar</Button>
+          <Button variant="outline" onClick={() => router.push('/risks')} disabled={saving}>Cancelar</Button>
           <Button onClick={handleSave} disabled={saving}>
             {saving ? 'Salvando...' : id ? 'Salvar Alterações' : 'Registrar Risco'}
           </Button>

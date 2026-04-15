@@ -1,20 +1,20 @@
 import { Cookie } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { ScanForm } from '@/components/cookies/scan-form'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 export default async function CookiesPage() {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
 
-  const { data: scans } = empresaId
+  const { data: scans } = companyId
     ? await supabase
         .from('site_scans')
-        .select('id, url, dominio, status, score_conformidade, tem_banner_cookies, tem_politica_privacidade, created_at')
-        .eq('empresa_id', empresaId)
+        .select('id, url, domain, status, compliance_score, has_cookie_banner, has_privacy_policy, created_at')
+        .eq('company_id', companyId)
         .order('created_at', { ascending: false })
         .limit(20)
     : { data: [] }
@@ -35,7 +35,7 @@ export default async function CookiesPage() {
           <h2 className="text-sm font-semibold text-gray-700">Scans anteriores</h2>
           <div className="grid gap-2">
             {historico.map((scan: any) => {
-              const score = scan.score_conformidade
+              const score = scan.compliance_score
               const scoreColor = score == null ? 'text-gray-400'
                 : score >= 80 ? 'text-green-600'
                 : score >= 50 ? 'text-yellow-600'
@@ -48,21 +48,21 @@ export default async function CookiesPage() {
                       <div className="flex items-center gap-3 min-w-0">
                         <Cookie className="h-4 w-4 text-gray-400 shrink-0" />
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">{scan.dominio}</p>
+                          <p className="text-sm font-medium text-gray-900 truncate">{scan.domain}</p>
                           <p className="text-xs text-gray-400">{formatDateTime(scan.created_at)}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        {scan.status === 'concluido' && score != null && (
+                        {scan.status === 'completed' && score != null && (
                           <span className={`text-lg font-bold ${scoreColor}`}>{score}</span>
                         )}
-                        {scan.status === 'erro' && (
+                        {scan.status === 'error' && (
                           <Badge variant="destructive" className="text-xs">Erro</Badge>
                         )}
-                        {scan.status === 'processando' && (
+                        {scan.status === 'processing' && (
                           <Badge variant="secondary" className="text-xs">Processando</Badge>
                         )}
-                        {scan.status === 'concluido' && (
+                        {scan.status === 'completed' && (
                           <Link href={`/cookies/${scan.id}`}>
                             <Button variant="ghost" size="sm">Ver</Button>
                           </Link>

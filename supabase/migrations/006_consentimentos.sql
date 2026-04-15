@@ -1,72 +1,72 @@
--- Módulo de Gestão de Consentimentos LGPD
+-- LGPD Consent Management Module
 
--- Finalidades de consentimento configuradas pela empresa
-create table public.consentimento_finalidades (
+-- Consent purposes configured by the company
+create table public.consent_purposes (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
-  nome text not null,
-  descricao text not null,
-  base_legal text not null default 'consentimento',
-  obrigatorio boolean default false,
-  ativo boolean default true,
+  company_id uuid references public.companies(id) on delete cascade not null,
+  name text not null,
+  description text not null,
+  legal_basis text not null default 'consent',
+  required boolean default false,
+  active boolean default true,
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null
 );
 
--- Registros de consentimento dos titulares
-create table public.consentimentos (
+-- Consent records from data subjects
+create table public.consents (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
-  finalidade_id uuid references public.consentimento_finalidades(id) on delete cascade not null,
+  company_id uuid references public.companies(id) on delete cascade not null,
+  purpose_id uuid references public.consent_purposes(id) on delete cascade not null,
 
-  -- Titular
-  titular_nome text,
-  titular_email text not null,
-  titular_cpf text,
+  -- Data subject
+  subject_name text,
+  subject_email text not null,
+  subject_tax_id text,
 
-  -- Consentimento
-  aceito boolean not null,
-  versao_politica text,
-  canal text not null default 'web' check (canal in ('web', 'app', 'presencial', 'email', 'api')),
-  ip_origem text,
+  -- Consent
+  accepted boolean not null,
+  policy_version text,
+  channel text not null default 'web' check (channel in ('web', 'app', 'in_person', 'email', 'api')),
+  source_ip text,
   user_agent text,
 
-  -- Revogação
-  revogado boolean default false,
-  revogado_em timestamptz,
-  motivo_revogacao text,
+  -- Revocation
+  revoked boolean default false,
+  revoked_at timestamptz,
+  revocation_reason text,
 
   created_at timestamptz default now() not null
 );
 
--- RLS — finalidades
-alter table public.consentimento_finalidades enable row level security;
+-- RLS — consent_purposes
+alter table public.consent_purposes enable row level security;
 
-create policy "user_can_manage_finalidades" on public.consentimento_finalidades
+create policy "user_can_manage_consent_purposes" on public.consent_purposes
   for all using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
--- RLS — consentimentos (leitura autenticada + insert público via API)
-alter table public.consentimentos enable row level security;
+-- RLS — consents (authenticated read + public insert via API)
+alter table public.consents enable row level security;
 
-create policy "user_can_read_consentimentos" on public.consentimentos
+create policy "user_can_read_consents" on public.consents
   for select using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
-create policy "public_can_insert_consentimento" on public.consentimentos
+create policy "public_can_insert_consent" on public.consents
   for insert with check (true);
 
-create policy "public_can_update_revogacao" on public.consentimentos
+create policy "public_can_update_revocation" on public.consents
   for update using (true) with check (true);
 
--- Updated_at trigger para finalidades
-create trigger set_finalidades_updated_at before update on public.consentimento_finalidades
+-- Updated_at trigger for consent_purposes
+create trigger set_consent_purposes_updated_at before update on public.consent_purposes
   for each row execute function public.set_updated_at();

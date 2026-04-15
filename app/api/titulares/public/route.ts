@@ -4,37 +4,37 @@ import { createClient } from '@/lib/supabase/server'
 export async function POST(request: NextRequest) {
   const formData = await request.formData()
   const empresa_slug = formData.get('empresa_slug') as string
-  const tipo = formData.get('tipo') as string
-  const nome = formData.get('nome') as string
+  const type = formData.get('type') as string
+  const name = formData.get('name') as string
   const email = formData.get('email') as string
   const cpf = formData.get('cpf') as string | null
-  const descricao = formData.get('descricao') as string
+  const description = formData.get('description') as string
 
   const supabase = await createClient()
 
-  const { data: empresa } = await supabase
-    .from('empresas')
+  const { data: company } = await supabase
+    .from('companies')
     .select('id')
     .eq('slug', empresa_slug)
     .single()
 
-  if (!empresa) {
+  if (!company) {
     return NextResponse.redirect(new URL(`/lgpd/${empresa_slug}?error=empresa_nao_encontrada`, request.url))
   }
 
-  // Prazo legal: 15 dias úteis
-  const prazo = new Date()
-  prazo.setDate(prazo.getDate() + 21)
+  // Legal deadline: 15 business days
+  const deadline = new Date()
+  deadline.setDate(deadline.getDate() + 21)
 
-  await supabase.from('solicitacoes_titulares').insert({
-    empresa_id: empresa.id,
-    tipo,
-    nome,
+  await supabase.from('data_subject_requests').insert({
+    company_id: company.id,
+    type,
+    name,
     email,
     cpf,
-    descricao,
-    status: 'pendente',
-    prazo_resposta: prazo.toISOString().split('T')[0],
+    description,
+    status: 'pending',
+    response_deadline: deadline.toISOString().split('T')[0],
   })
 
   return NextResponse.redirect(new URL(`/lgpd/${empresa_slug}?success=solicitacao_enviada`, request.url))

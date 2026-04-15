@@ -4,20 +4,20 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatDateTime } from '@/lib/utils'
 import { SearchInput } from '@/components/ui/search-input'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 
 const acaoMap: Record<string, 'default' | 'success' | 'warning' | 'destructive' | 'secondary'> = {
   CREATE: 'success', UPDATE: 'default', DELETE: 'destructive', ACCESS: 'secondary',
 }
 
 export default async function LogsPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
   const { q } = await searchParams
 
-  let query = supabase.from('logs_auditoria').select('*').eq('empresa_id', empresaId ?? '')
-  if (q) query = query.or(`user_email.ilike.%${q}%,acao.ilike.%${q}%,recurso.ilike.%${q}%,detalhes.ilike.%${q}%`)
+  let query = supabase.from('audit_logs').select('*').eq('company_id', companyId ?? '')
+  if (q) query = query.or(`user_email.ilike.%${q}%,action.ilike.%${q}%,resource.ilike.%${q}%,details.ilike.%${q}%`)
 
-  const { data: logs } = empresaId
+  const { data: logs } = companyId
     ? await query.order('created_at', { ascending: false }).limit(200)
     : { data: [] }
 
@@ -74,9 +74,9 @@ export default async function LogsPage({ searchParams }: { searchParams: Promise
                       <tr key={log.id} className="hover:bg-gray-50 transition-colors font-mono text-xs">
                         <td className="py-3 px-4 text-gray-500">{formatDateTime(log.created_at)}</td>
                         <td className="py-3 px-4 text-gray-700">{log.user_email}</td>
-                        <td className="py-3 px-4"><Badge variant={acaoMap[log.acao] ?? 'secondary'}>{log.acao}</Badge></td>
-                        <td className="py-3 px-4 text-gray-600">{log.recurso}</td>
-                        <td className="py-3 px-4 text-gray-500">{log.detalhes ?? '—'}</td>
+                        <td className="py-3 px-4"><Badge variant={acaoMap[log.action] ?? 'secondary'}>{log.action}</Badge></td>
+                        <td className="py-3 px-4 text-gray-600">{log.resource}</td>
+                        <td className="py-3 px-4 text-gray-500">{log.details ?? '—'}</td>
                         <td className="py-3 px-4 text-gray-400">{log.ip ?? '—'}</td>
                       </tr>
                     ))}
@@ -89,11 +89,11 @@ export default async function LogsPage({ searchParams }: { searchParams: Promise
                 {itens.map((log: any) => (
                   <div key={log.id} className="p-4 space-y-2">
                     <div className="flex items-center justify-between gap-2">
-                      <Badge variant={acaoMap[log.acao] ?? 'secondary'} className="text-xs">{log.acao}</Badge>
+                      <Badge variant={acaoMap[log.action] ?? 'secondary'} className="text-xs">{log.action}</Badge>
                       <span className="text-xs text-gray-400 font-mono">{formatDateTime(log.created_at)}</span>
                     </div>
                     <p className="text-xs font-medium text-gray-700">{log.user_email}</p>
-                    <p className="text-xs text-gray-500">{log.detalhes ?? log.recurso}</p>
+                    <p className="text-xs text-gray-500">{log.details ?? log.resource}</p>
                     {log.ip && <p className="text-xs text-gray-400 font-mono">IP: {log.ip}</p>}
                   </div>
                 ))}

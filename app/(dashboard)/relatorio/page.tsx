@@ -1,4 +1,4 @@
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { CHECKLIST } from '@/lib/checklist-items'
 import { formatDate } from '@/lib/utils'
 import { PrintButton } from '@/components/relatorio/print-button'
@@ -15,11 +15,11 @@ function nivelRisco(prob: number, imp: number) {
 }
 
 function scoreChecklist(itens: any[]) {
-  const total = CHECKLIST.reduce((acc, c) => acc + c.itens.length, 0)
+  const total = CHECKLIST.reduce((acc, c) => acc + c.items.length, 0)
   const map: Record<string, string> = {}
   for (const i of itens) map[i.item_key] = i.status
-  const na = CHECKLIST.reduce((acc, c) => acc + c.itens.filter(i => map[i.key] === 'nao_aplicavel').length, 0)
-  const done = CHECKLIST.reduce((acc, c) => acc + c.itens.filter(i => map[i.key] === 'concluido').length, 0)
+  const na = CHECKLIST.reduce((acc, c) => acc + c.items.filter(i => map[i.key] === 'not_applicable').length, 0)
+  const done = CHECKLIST.reduce((acc, c) => acc + c.items.filter(i => map[i.key] === 'completed').length, 0)
   const efetivos = total - na
   return { total, done, na, efetivos, pct: efetivos > 0 ? Math.round((done / efetivos) * 100) : 0 }
 }
@@ -71,7 +71,7 @@ function TabelaSimples({ headers, rows }: { headers: string[]; rows: (string | n
 // ─── Página principal ─────────────────────────────────────────────────────
 
 export default async function RelatorioPage() {
-  const { empresa, empresaId, supabase } = await getUserEmpresa()
+  const { company, companyId, supabase } = await getUserCompany()
   const hoje = new Date()
   const dataRelatorio = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
 
@@ -86,25 +86,25 @@ export default async function RelatorioPage() {
     { data: titulares },
     { data: consentimentos },
   ] = await Promise.all([
-    supabase.from('inventario_dados').select('*').eq('empresa_id', empresaId ?? ''),
-    supabase.from('incidentes').select('*').eq('empresa_id', empresaId ?? ''),
-    supabase.from('documentos').select('*').eq('empresa_id', empresaId ?? ''),
-    supabase.from('riscos').select('*').eq('empresa_id', empresaId ?? ''),
-    supabase.from('fornecedores').select('*').eq('empresa_id', empresaId ?? ''),
-    supabase.from('checklist_itens').select('*').eq('empresa_id', empresaId ?? ''),
-    supabase.from('solicitacoes_titulares').select('*').eq('empresa_id', empresaId ?? ''),
-    supabase.from('consentimentos').select('*').eq('empresa_id', empresaId ?? ''),
+    supabase.from('data_inventory').select('*').eq('company_id', companyId ?? ''),
+    supabase.from('incidents').select('*').eq('company_id', companyId ?? ''),
+    supabase.from('documents').select('*').eq('company_id', companyId ?? ''),
+    supabase.from('risks').select('*').eq('company_id', companyId ?? ''),
+    supabase.from('suppliers').select('*').eq('company_id', companyId ?? ''),
+    supabase.from('checklist_items').select('*').eq('company_id', companyId ?? ''),
+    supabase.from('data_subject_requests').select('*').eq('company_id', companyId ?? ''),
+    supabase.from('consents').select('*').eq('company_id', companyId ?? ''),
   ])
 
   // Métricas calculadas
   const checklist = scoreChecklist(checklistItens ?? [])
-  const riscosAbertos = (riscos ?? []).filter((r: any) => r.status !== 'encerrado')
-  const riscosCriticos = riscosAbertos.filter((r: any) => r.probabilidade_inerente * r.impacto_inerente >= 15)
-  const fornSemDPA = (fornecedores ?? []).filter((f: any) => f.tipo_acesso !== 'sem_acesso_dados' && !f.possui_dpa)
-  const docVencidos = (documentos ?? []).filter((d: any) => d.data_expiracao && new Date(d.data_expiracao) < hoje)
-  const incAbertos = (incidentes ?? []).filter((i: any) => !['resolvido', 'encerrado'].includes(i.status))
-  const titPendentes = (titulares ?? []).filter((t: any) => t.status === 'pendente')
-  const consentAtivos = (consentimentos ?? []).filter((c: any) => c.aceito && !c.revogado)
+  const riscosAbertos = (riscos ?? []).filter((r: any) => r.status !== 'closed')
+  const riscosCriticos = riscosAbertos.filter((r: any) => r.inherent_probability * r.inherent_impact >= 15)
+  const fornSemDPA = (fornecedores ?? []).filter((f: any) => f.access_type !== 'no_data_access' && !f.has_dpa)
+  const docVencidos = (documentos ?? []).filter((d: any) => d.expiration_date && new Date(d.expiration_date) < hoje)
+  const incAbertos = (incidentes ?? []).filter((i: any) => !['resolved', 'closed'].includes(i.status))
+  const titPendentes = (titulares ?? []).filter((t: any) => t.status === 'pending')
+  const consentAtivos = (consentimentos ?? []).filter((c: any) => c.accepted && !c.revoked)
 
   // Score geral de conformidade (média ponderada)
   const scoreGeral = Math.round(
@@ -115,13 +115,13 @@ export default async function RelatorioPage() {
   )
 
   const categoriaLabel: Record<string, string> = {
-    privacidade: 'Privacidade', seguranca: 'Segurança', legal: 'Legal',
-    operacional: 'Operacional', reputacional: 'Reputacional', tecnologico: 'Tecnológico',
+    privacy: 'Privacidade', security: 'Segurança', legal: 'Legal',
+    operational: 'Operacional', reputational: 'Reputacional', technological: 'Tecnológico',
   }
 
   const statusIncLabel: Record<string, string> = {
-    identificado: 'Identificado', em_investigacao: 'Em investigação',
-    contido: 'Contido', resolvido: 'Resolvido', encerrado: 'Encerrado',
+    identified: 'Identificado', under_investigation: 'Em investigação',
+    contained: 'Contido', resolved: 'Resolvido', closed: 'Encerrado',
   }
 
   return (
@@ -145,13 +145,13 @@ export default async function RelatorioPage() {
               <FileText className="h-6 w-6 text-blue-600" />
               <span className="text-xs font-semibold text-blue-600 uppercase tracking-widest">Relatório de Conformidade</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 print:text-xl">{empresa?.nome ?? 'Empresa'}</h1>
-            {empresa?.cnpj && <p className="text-sm text-gray-500 mt-0.5">CNPJ: {empresa.cnpj}</p>}
+            <h1 className="text-2xl font-bold text-gray-900 print:text-xl">{company?.name ?? 'Empresa'}</h1>
+            {company?.tax_id && <p className="text-sm text-gray-500 mt-0.5">CNPJ: {company.tax_id}</p>}
           </div>
           <div className="text-right text-sm text-gray-500">
             <p className="font-semibold text-gray-700">{dataRelatorio}</p>
-            {empresa?.dpo_nome && <p className="mt-1">DPO: {empresa.dpo_nome}</p>}
-            {empresa?.dpo_email && <p>{empresa.dpo_email}</p>}
+            {company?.dpo_name && <p className="mt-1">DPO: {company.dpo_name}</p>}
+            {company?.dpo_email && <p>{company.dpo_email}</p>}
           </div>
         </div>
 
@@ -174,9 +174,9 @@ export default async function RelatorioPage() {
             {CHECKLIST.map(cat => {
               const map: Record<string, string> = {}
               for (const i of checklistItens ?? []) map[i.item_key] = i.status
-              const done = cat.itens.filter(i => map[i.key] === 'concluido').length
-              const na = cat.itens.filter(i => map[i.key] === 'nao_aplicavel').length
-              const ef = cat.itens.length - na
+              const done = cat.items.filter(i => map[i.key] === 'completed').length
+              const na = cat.items.filter(i => map[i.key] === 'not_applicable').length
+              const ef = cat.items.length - na
               const pct = ef > 0 ? Math.round((done / ef) * 100) : 100
               return (
                 <div key={cat.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
@@ -200,17 +200,17 @@ export default async function RelatorioPage() {
         <Secao titulo="3. Inventário de Dados">
           <div className="grid grid-cols-3 gap-4 mb-4">
             <MetricaBox label="Total de processos" value={(inventario ?? []).length} />
-            <MetricaBox label="Completos" value={(inventario ?? []).filter((i: any) => i.status_registro === 'completo').length} />
-            <MetricaBox label="Rascunhos" value={(inventario ?? []).filter((i: any) => i.status_registro === 'rascunho' || !i.status_registro).length} />
+            <MetricaBox label="Completos" value={(inventario ?? []).filter((i: any) => i.record_status === 'complete').length} />
+            <MetricaBox label="Rascunhos" value={(inventario ?? []).filter((i: any) => i.record_status === 'draft' || !i.record_status).length} />
           </div>
           {(inventario ?? []).length > 0 && (
             <TabelaSimples
               headers={['Processo', 'Setor', 'Base Legal', 'Risco']}
               rows={(inventario ?? []).slice(0, 15).map((i: any) => [
-                i.nome_processo || i.tipo_dado,
-                i.setor_responsavel,
-                i.base_legal,
-                i.nivel_risco ?? 'baixo',
+                i.process_name || i.data_type,
+                i.responsible_department,
+                i.legal_basis,
+                i.risk_level ?? 'low',
               ])}
             />
           )}
@@ -224,17 +224,17 @@ export default async function RelatorioPage() {
           <div className="grid grid-cols-4 gap-4 mb-4">
             <MetricaBox label="Total" value={(riscos ?? []).length} />
             <MetricaBox label="Críticos" value={riscosCriticos.length} />
-            <MetricaBox label="Em tratamento" value={(riscos ?? []).filter((r: any) => r.status === 'em_tratamento').length} />
-            <MetricaBox label="Encerrados" value={(riscos ?? []).filter((r: any) => r.status === 'encerrado').length} />
+            <MetricaBox label="Em tratamento" value={(riscos ?? []).filter((r: any) => r.status === 'under_treatment').length} />
+            <MetricaBox label="Encerrados" value={(riscos ?? []).filter((r: any) => r.status === 'closed').length} />
           </div>
           {riscosAbertos.length > 0 && (
             <TabelaSimples
               headers={['Risco', 'Categoria', 'Nível', 'Estratégia', 'Status']}
               rows={riscosAbertos.slice(0, 10).map((r: any) => [
-                r.titulo,
-                categoriaLabel[r.categoria] ?? r.categoria,
-                nivelRisco(r.probabilidade_inerente, r.impacto_inerente),
-                r.estrategia ?? '—',
+                r.title,
+                categoriaLabel[r.category] ?? r.category,
+                nivelRisco(r.inherent_probability, r.inherent_impact),
+                r.strategy ?? '—',
                 r.status,
               ])}
             />
@@ -246,17 +246,17 @@ export default async function RelatorioPage() {
           <div className="grid grid-cols-3 gap-4 mb-4">
             <MetricaBox label="Total" value={(incidentes ?? []).length} />
             <MetricaBox label="Em aberto" value={incAbertos.length} />
-            <MetricaBox label="Notificou ANPD" value={(incidentes ?? []).filter((i: any) => i.notificou_anpd).length} />
+            <MetricaBox label="Notificou ANPD" value={(incidentes ?? []).filter((i: any) => i.notified_anpd).length} />
           </div>
           {(incidentes ?? []).length > 0 && (
             <TabelaSimples
               headers={['Título', 'Tipo', 'Severidade', 'Status', 'Data']}
               rows={(incidentes ?? []).slice(0, 10).map((i: any) => [
-                i.titulo,
-                i.tipo?.replace(/_/g, ' '),
-                i.severidade,
+                i.title,
+                i.type?.replace(/_/g, ' '),
+                i.severity,
                 statusIncLabel[i.status] ?? i.status,
-                i.data_descoberta ? formatDate(i.data_descoberta) : '—',
+                i.discovery_date ? formatDate(i.discovery_date) : '—',
               ])}
             />
           )}
@@ -266,9 +266,9 @@ export default async function RelatorioPage() {
         <Secao titulo="6. Fornecedores e Terceiros">
           <div className="grid grid-cols-4 gap-4 mb-4">
             <MetricaBox label="Total" value={(fornecedores ?? []).length} />
-            <MetricaBox label="Com DPA" value={(fornecedores ?? []).filter((f: any) => f.possui_dpa).length} />
+            <MetricaBox label="Com DPA" value={(fornecedores ?? []).filter((f: any) => f.has_dpa).length} />
             <MetricaBox label="Sem DPA" value={fornSemDPA.length} />
-            <MetricaBox label="Internacionais" value={(fornecedores ?? []).filter((f: any) => f.transferencia_internacional).length} />
+            <MetricaBox label="Internacionais" value={(fornecedores ?? []).filter((f: any) => f.international_transfer).length} />
           </div>
           {fornSemDPA.length > 0 && (
             <>
@@ -276,10 +276,10 @@ export default async function RelatorioPage() {
               <TabelaSimples
                 headers={['Fornecedor', 'Categoria', 'Tipo de acesso', 'Diligência']}
                 rows={fornSemDPA.map((f: any) => [
-                  f.nome,
-                  f.categoria,
-                  f.tipo_acesso?.replace(/_/g, ' '),
-                  f.status_diligencia,
+                  f.name,
+                  f.category,
+                  f.access_type?.replace(/_/g, ' '),
+                  f.due_diligence_status,
                 ])}
               />
             </>
@@ -290,19 +290,19 @@ export default async function RelatorioPage() {
         <Secao titulo="7. Documentos de Conformidade">
           <div className="grid grid-cols-4 gap-4 mb-4">
             <MetricaBox label="Total" value={(documentos ?? []).length} />
-            <MetricaBox label="Publicados" value={(documentos ?? []).filter((d: any) => d.status === 'publicado').length} />
-            <MetricaBox label="Em revisão" value={(documentos ?? []).filter((d: any) => d.status === 'em_revisao').length} />
+            <MetricaBox label="Publicados" value={(documentos ?? []).filter((d: any) => d.status === 'published').length} />
+            <MetricaBox label="Em revisão" value={(documentos ?? []).filter((d: any) => d.status === 'under_review').length} />
             <MetricaBox label="Vencidos" value={docVencidos.length} />
           </div>
           {(documentos ?? []).length > 0 && (
             <TabelaSimples
               headers={['Documento', 'Tipo', 'Versão', 'Status', 'Expiração']}
               rows={(documentos ?? []).slice(0, 10).map((d: any) => [
-                d.titulo,
-                d.tipo?.replace(/_/g, ' '),
-                `v${d.versao}`,
+                d.title,
+                d.type?.replace(/_/g, ' '),
+                `v${d.version}`,
                 d.status,
-                d.data_expiracao ? formatDate(d.data_expiracao) : '—',
+                d.expiration_date ? formatDate(d.expiration_date) : '—',
               ])}
             />
           )}

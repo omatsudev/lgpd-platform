@@ -4,64 +4,64 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/ui/search-input'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 
 const severidadeVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
-  baixa: 'success',
-  media: 'warning',
-  alta: 'destructive',
-  critica: 'destructive',
+  low: 'success',
+  medium: 'warning',
+  high: 'destructive',
+  critical: 'destructive',
 }
 
 const severidadeLabel: Record<string, string> = {
-  baixa: 'Baixa',
-  media: 'Média',
-  alta: 'Alta',
-  critica: 'Crítica',
+  low: 'Baixa',
+  medium: 'Média',
+  high: 'Alta',
+  critical: 'Crítica',
 }
 
 const statusVariant: Record<string, 'secondary' | 'warning' | 'default' | 'success'> = {
-  identificado: 'secondary',
-  em_investigacao: 'warning',
-  contido: 'default',
-  resolvido: 'success',
-  encerrado: 'secondary',
+  identified: 'secondary',
+  under_investigation: 'warning',
+  contained: 'default',
+  resolved: 'success',
+  closed: 'secondary',
 }
 
 const statusLabel: Record<string, string> = {
-  identificado: 'Identificado',
-  em_investigacao: 'Em Investigação',
-  contido: 'Contido',
-  resolvido: 'Resolvido',
-  encerrado: 'Encerrado',
+  identified: 'Identificado',
+  under_investigation: 'Em Investigação',
+  contained: 'Contido',
+  resolved: 'Resolvido',
+  closed: 'Encerrado',
 }
 
 const tipoLabel: Record<string, string> = {
-  vazamento_dados: 'Vazamento de Dados',
-  acesso_nao_autorizado: 'Acesso Não Autorizado',
-  perda_dados: 'Perda de Dados',
-  alteracao_indevida: 'Alteração Indevida',
-  uso_indevido: 'Uso Indevido',
+  data_breach: 'Vazamento de Dados',
+  unauthorized_access: 'Acesso Não Autorizado',
+  data_loss: 'Perda de Dados',
+  improper_modification: 'Alteração Indevida',
+  misuse: 'Uso Indevido',
   ransomware: 'Ransomware',
   phishing: 'Phishing',
-  outro: 'Outro',
+  other: 'Outro',
 }
 
 export default async function IncidentesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
   const { q } = await searchParams
 
-  let query = supabase.from('incidentes').select('*').eq('empresa_id', empresaId ?? '')
-  if (q) query = query.or(`titulo.ilike.%${q}%,tipo.ilike.%${q}%,descricao.ilike.%${q}%,responsavel.ilike.%${q}%`)
+  let query = supabase.from('incidents').select('*').eq('company_id', companyId ?? '')
+  if (q) query = query.or(`title.ilike.%${q}%,type.ilike.%${q}%,description.ilike.%${q}%,responsible.ilike.%${q}%`)
 
-  const { data: incidentes } = empresaId
+  const { data: incidentes } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
   const itens = incidentes ?? []
-  const abertos = itens.filter((i: any) => !['resolvido', 'encerrado'].includes(i.status)).length
-  const criticos = itens.filter((i: any) => i.severidade === 'critica').length
+  const abertos = itens.filter((i: any) => !['resolved', 'closed'].includes(i.status)).length
+  const criticos = itens.filter((i: any) => i.severity === 'critical').length
 
   return (
     <div className="space-y-5">
@@ -122,11 +122,11 @@ export default async function IncidentesPage({ searchParams }: { searchParams: P
                   <tbody className="divide-y divide-gray-100">
                     {itens.map((item: any) => (
                       <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="py-3 px-4 font-medium text-gray-900 max-w-[200px] truncate">{item.titulo}</td>
-                        <td className="py-3 px-4 text-gray-600 text-xs">{tipoLabel[item.tipo] ?? item.tipo}</td>
+                        <td className="py-3 px-4 font-medium text-gray-900 max-w-[200px] truncate">{item.title}</td>
+                        <td className="py-3 px-4 text-gray-600 text-xs">{tipoLabel[item.type] ?? item.type}</td>
                         <td className="py-3 px-4">
-                          <Badge variant={severidadeVariant[item.severidade] ?? 'secondary'}>
-                            {severidadeLabel[item.severidade] ?? item.severidade}
+                          <Badge variant={severidadeVariant[item.severity] ?? 'secondary'}>
+                            {severidadeLabel[item.severity] ?? item.severity}
                           </Badge>
                         </td>
                         <td className="py-3 px-4">
@@ -134,9 +134,9 @@ export default async function IncidentesPage({ searchParams }: { searchParams: P
                             {statusLabel[item.status] ?? item.status}
                           </Badge>
                         </td>
-                        <td className="py-3 px-4 text-gray-500 text-xs">{item.data_descoberta ? formatDate(item.data_descoberta) : '—'}</td>
+                        <td className="py-3 px-4 text-gray-500 text-xs">{item.discovery_date ? formatDate(item.discovery_date) : '—'}</td>
                         <td className="py-3 px-4">
-                          {item.notificou_anpd
+                          {item.notified_anpd
                             ? <Badge variant="success" className="text-xs">Notificado</Badge>
                             : <Badge variant="secondary" className="text-xs">Pendente</Badge>}
                         </td>
@@ -156,22 +156,22 @@ export default async function IncidentesPage({ searchParams }: { searchParams: P
                 {itens.map((item: any) => (
                   <div key={item.id} className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="font-medium text-gray-900 text-sm">{item.titulo}</p>
+                      <p className="font-medium text-gray-900 text-sm">{item.title}</p>
                       <Link href={`/incidentes/${item.id}`}>
                         <Button variant="ghost" size="sm" className="h-7 text-xs">Ver</Button>
                       </Link>
                     </div>
                     <div className="flex gap-2 flex-wrap">
-                      <Badge variant={severidadeVariant[item.severidade] ?? 'secondary'} className="text-xs">
-                        {severidadeLabel[item.severidade] ?? item.severidade}
+                      <Badge variant={severidadeVariant[item.severity] ?? 'secondary'} className="text-xs">
+                        {severidadeLabel[item.severity] ?? item.severity}
                       </Badge>
                       <Badge variant={statusVariant[item.status] ?? 'secondary'} className="text-xs">
                         {statusLabel[item.status] ?? item.status}
                       </Badge>
                     </div>
-                    <p className="text-xs text-gray-500">{tipoLabel[item.tipo] ?? item.tipo}</p>
-                    {item.data_descoberta && (
-                      <p className="text-xs text-gray-400">Descoberto: {formatDate(item.data_descoberta)}</p>
+                    <p className="text-xs text-gray-500">{tipoLabel[item.type] ?? item.type}</p>
+                    {item.discovery_date && (
+                      <p className="text-xs text-gray-400">Descoberto: {formatDate(item.discovery_date)}</p>
                     )}
                   </div>
                 ))}

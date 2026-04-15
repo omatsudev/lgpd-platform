@@ -2,16 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Copy, ExternalLink, QrCode, Shield } from 'lucide-react'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { salvarDadosEmpresa, salvarDPO, salvarPolitica } from '@/app/actions/configuracoes'
 
 export default async function ConfiguracoesPage() {
-  const { empresa } = await getUserEmpresa()
+  const { company } = await getUserCompany()
 
-  const slug = empresa?.slug ?? ''
+  const slug = company?.slug ?? ''
   const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://lgpdplatform.com'}/lgpd/${slug}`
 
   return (
@@ -31,21 +30,21 @@ export default async function ConfiguracoesPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Nome da Empresa</Label>
-                <Input name="nome" defaultValue={empresa?.nome ?? ''} placeholder="Minha Empresa Ltda" required />
+                <Input name="name" defaultValue={company?.name ?? ''} placeholder="Minha Empresa Ltda" required />
               </div>
               <div className="space-y-2">
                 <Label>CNPJ</Label>
-                <Input name="cnpj" defaultValue={empresa?.cnpj ?? ''} placeholder="12.345.678/0001-90" />
+                <Input name="tax_id" defaultValue={company?.tax_id ?? ''} placeholder="12.345.678/0001-90" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Setor de Atuação</Label>
-                <Input name="setor" defaultValue={empresa?.setor ?? ''} placeholder="Tecnologia" />
+                <Input name="sector" defaultValue={company?.sector ?? ''} placeholder="Tecnologia" />
               </div>
               <div className="space-y-2">
                 <Label>Slug (URL pública)</Label>
-                <Input name="slug" defaultValue={empresa?.slug ?? ''} placeholder="minha-empresa" required />
+                <Input name="slug" defaultValue={company?.slug ?? ''} placeholder="minha-empresa" required />
               </div>
             </div>
             <Button type="submit">Salvar Dados</Button>
@@ -64,16 +63,16 @@ export default async function ConfiguracoesPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Nome do DPO</Label>
-                <Input name="dpo_nome" defaultValue={empresa?.dpo_nome ?? ''} placeholder="Nome completo" />
+                <Input name="dpo_name" defaultValue={company?.dpo_name ?? ''} placeholder="Nome completo" />
               </div>
               <div className="space-y-2">
                 <Label>Email do DPO</Label>
-                <Input name="dpo_email" type="email" defaultValue={empresa?.dpo_email ?? ''} placeholder="dpo@empresa.com" />
+                <Input name="dpo_email" type="email" defaultValue={company?.dpo_email ?? ''} placeholder="dpo@empresa.com" />
               </div>
             </div>
             <div className="space-y-2">
               <Label>Telefone do DPO</Label>
-              <Input name="dpo_telefone" defaultValue={empresa?.dpo_telefone ?? ''} placeholder="(11) 99999-0000" />
+              <Input name="dpo_phone" defaultValue={company?.dpo_phone ?? ''} placeholder="(11) 99999-0000" />
             </div>
             <Button type="submit">Salvar DPO</Button>
           </form>
@@ -90,7 +89,7 @@ export default async function ConfiguracoesPage() {
           <form action={salvarPolitica} className="space-y-4">
             <div className="space-y-2">
               <Label>URL do documento (PDF)</Label>
-              <Input name="politica_url" defaultValue={empresa?.politica_privacidade_url ?? ''} placeholder="https://..." />
+              <Input name="privacy_policy_url" defaultValue={company?.privacy_policy_url ?? ''} placeholder="https://..." />
             </div>
             <Button type="submit">Salvar Política</Button>
           </form>

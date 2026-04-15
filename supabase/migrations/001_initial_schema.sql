@@ -1,158 +1,158 @@
--- LGPD Platform — Schema Inicial
--- Executar no Supabase SQL Editor
+-- LGPD Platform — Initial Schema (English identifiers)
+-- Run in Supabase SQL Editor
 
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
 -- =============================================
--- TABELA: empresas
+-- TABLE: companies
 -- =============================================
-create table public.empresas (
+create table public.companies (
   id uuid default uuid_generate_v4() primary key,
-  nome text not null,
-  cnpj text,
+  name text not null,
+  tax_id text,
   slug text unique not null,
-  setor text,
+  sector text,
   owner_id uuid references auth.users(id) on delete set null,
   dpo_id uuid references auth.users(id) on delete set null,
-  dpo_nome text,
+  dpo_name text,
   dpo_email text,
-  dpo_telefone text,
-  percentual_adequacao integer default 0,
-  politica_privacidade_url text,
+  dpo_phone text,
+  compliance_score integer default 0,
+  privacy_policy_url text,
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null
 );
 
 -- =============================================
--- TABELA: user_empresas (multi-tenant: DPO gerencia várias empresas)
+-- TABLE: user_companies (multi-tenant: DPO manages multiple companies)
 -- =============================================
-create table public.user_empresas (
+create table public.user_companies (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
+  company_id uuid references public.companies(id) on delete cascade not null,
   role text not null check (role in ('admin', 'dpo', 'empresa', 'colaborador')),
   created_at timestamptz default now() not null,
-  unique(user_id, empresa_id)
+  unique(user_id, company_id)
 );
 
 -- =============================================
--- TABELA: inventario_dados
+-- TABLE: data_inventory
 -- =============================================
-create table public.inventario_dados (
+create table public.data_inventory (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
-  tipo_dado text not null,
-  finalidade text not null,
-  base_legal text not null,
-  local_armazenamento text not null,
-  prazo_retencao text,
-  responsavel text,
-  medidas_seguranca text,
+  company_id uuid references public.companies(id) on delete cascade not null,
+  data_type text not null,
+  purpose text not null,
+  legal_basis text not null,
+  storage_location text not null,
+  retention_period text,
+  responsible text,
+  security_measures text,
   created_by uuid references auth.users(id),
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null
 );
 
 -- =============================================
--- TABELA: treinamentos
+-- TABLE: trainings
 -- =============================================
-create table public.treinamentos (
+create table public.trainings (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
-  titulo text not null,
-  descricao text,
+  company_id uuid references public.companies(id) on delete cascade not null,
+  title text not null,
+  description text,
   video_url text,
   pdf_url text,
-  perguntas jsonb, -- array de perguntas com alternativas
+  questions jsonb, -- array of questions with answer options
   created_by uuid references auth.users(id),
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null
 );
 
 -- =============================================
--- TABELA: treinamento_colaboradores
+-- TABLE: training_employees
 -- =============================================
-create table public.treinamento_colaboradores (
+create table public.training_employees (
   id uuid default uuid_generate_v4() primary key,
-  treinamento_id uuid references public.treinamentos(id) on delete cascade not null,
-  colaborador_id uuid references auth.users(id) on delete cascade,
-  colaborador_nome text not null,
-  colaborador_email text,
-  colaborador_whatsapp text,
-  link_acesso text unique not null,
-  status text default 'nao_iniciado' check (status in ('nao_iniciado', 'em_andamento', 'concluido')),
-  progresso integer default 0,
-  certificado_url text,
-  concluido_em timestamptz,
+  training_id uuid references public.trainings(id) on delete cascade not null,
+  employee_id uuid references auth.users(id) on delete cascade,
+  employee_name text not null,
+  employee_email text,
+  employee_whatsapp text,
+  access_link text unique not null,
+  status text default 'not_started' check (status in ('not_started', 'in_progress', 'completed')),
+  progress integer default 0,
+  certificate_url text,
+  completed_at timestamptz,
   created_at timestamptz default now() not null
 );
 
 -- =============================================
--- TABELA: denuncias
+-- TABLE: complaints
 -- =============================================
-create table public.denuncias (
+create table public.complaints (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
-  anonimo boolean default true not null,
-  nome text,
+  company_id uuid references public.companies(id) on delete cascade not null,
+  anonymous boolean default true not null,
+  name text,
   email text,
-  tipo text not null,
-  descricao text not null,
-  status text default 'recebido' check (status in ('recebido', 'em_analise', 'resolvido')) not null,
-  resposta text,
-  respondido_por uuid references auth.users(id),
-  ip_origem text,
+  type text not null,
+  description text not null,
+  status text default 'received' check (status in ('received', 'under_review', 'resolved')) not null,
+  response text,
+  responded_by uuid references auth.users(id),
+  source_ip text,
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null
 );
 
 -- =============================================
--- TABELA: solicitacoes_titulares
+-- TABLE: data_subject_requests
 -- =============================================
-create table public.solicitacoes_titulares (
+create table public.data_subject_requests (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
-  tipo text not null check (tipo in ('acesso', 'exclusao', 'correcao', 'portabilidade', 'oposicao')),
-  nome text not null,
+  company_id uuid references public.companies(id) on delete cascade not null,
+  type text not null check (type in ('access', 'deletion', 'correction', 'portability', 'objection')),
+  name text not null,
   email text not null,
   cpf text,
-  descricao text not null,
-  status text default 'pendente' check (status in ('pendente', 'em_analise', 'concluido', 'recusado')) not null,
-  resposta text,
-  respondido_por uuid references auth.users(id),
-  prazo_resposta date not null,
+  description text not null,
+  status text default 'pending' check (status in ('pending', 'under_review', 'completed', 'rejected')) not null,
+  response text,
+  responded_by uuid references auth.users(id),
+  response_deadline date not null,
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null
 );
 
 -- =============================================
--- TABELA: logs_auditoria
+-- TABLE: audit_logs
 -- =============================================
-create table public.logs_auditoria (
+create table public.audit_logs (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete set null,
+  company_id uuid references public.companies(id) on delete set null,
   user_id uuid references auth.users(id) on delete set null,
   user_email text not null,
-  acao text not null,
-  recurso text not null,
-  detalhes text,
+  action text not null,
+  resource text not null,
+  details text,
   ip text,
   created_at timestamptz default now() not null
 );
 
--- Logs são imutáveis (sem update/delete permitido via RLS)
+-- Logs are immutable (no update/delete allowed via RLS)
 
 -- =============================================
--- TABELA: notificacoes
+-- TABLE: notifications
 -- =============================================
-create table public.notificacoes (
+create table public.notifications (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
-  titulo text not null,
-  mensagem text not null,
-  tipo text default 'info' check (tipo in ('info', 'alerta', 'erro', 'sucesso')),
-  lida boolean default false,
+  title text not null,
+  message text not null,
+  type text default 'info' check (type in ('info', 'warning', 'error', 'success')),
+  read boolean default false,
   created_at timestamptz default now() not null
 );
 
@@ -160,65 +160,65 @@ create table public.notificacoes (
 -- ROW LEVEL SECURITY (RLS)
 -- =============================================
 
-alter table public.empresas enable row level security;
-alter table public.user_empresas enable row level security;
-alter table public.inventario_dados enable row level security;
-alter table public.treinamentos enable row level security;
-alter table public.treinamento_colaboradores enable row level security;
-alter table public.denuncias enable row level security;
-alter table public.solicitacoes_titulares enable row level security;
-alter table public.logs_auditoria enable row level security;
-alter table public.notificacoes enable row level security;
+alter table public.companies enable row level security;
+alter table public.user_companies enable row level security;
+alter table public.data_inventory enable row level security;
+alter table public.trainings enable row level security;
+alter table public.training_employees enable row level security;
+alter table public.complaints enable row level security;
+alter table public.data_subject_requests enable row level security;
+alter table public.audit_logs enable row level security;
+alter table public.notifications enable row level security;
 
--- Políticas básicas: usuário acessa apenas empresas onde tem vínculo
-create policy "user_can_see_own_empresas" on public.empresas
+-- Policies: user can only access companies they are linked to
+create policy "user_can_see_own_companies" on public.companies
   for select using (
     id in (
-      select empresa_id from public.user_empresas
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
     or owner_id = auth.uid()
   );
 
-create policy "user_can_manage_inventario" on public.inventario_dados
+create policy "user_can_manage_data_inventory" on public.data_inventory
   for all using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
-create policy "user_can_manage_denuncias" on public.denuncias
+create policy "user_can_manage_complaints" on public.complaints
   for all using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
-create policy "user_can_manage_titulares" on public.solicitacoes_titulares
+create policy "user_can_manage_data_subject_requests" on public.data_subject_requests
   for all using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
--- Logs: apenas leitura para membros da empresa
-create policy "user_can_read_logs" on public.logs_auditoria
+-- Logs: read-only for company members
+create policy "user_can_read_logs" on public.audit_logs
   for select using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
--- Notificações: apenas o próprio usuário
-create policy "user_can_see_own_notifications" on public.notificacoes
+-- Notifications: only the owner
+create policy "user_can_see_own_notifications" on public.notifications
   for all using (user_id = auth.uid());
 
 -- =============================================
--- FUNÇÃO: atualizar updated_at automaticamente
+-- FUNCTION: auto-update updated_at
 -- =============================================
 create or replace function public.set_updated_at()
 returns trigger as $$
@@ -228,14 +228,14 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger set_empresas_updated_at before update on public.empresas
+create trigger set_companies_updated_at before update on public.companies
   for each row execute function public.set_updated_at();
 
-create trigger set_inventario_updated_at before update on public.inventario_dados
+create trigger set_data_inventory_updated_at before update on public.data_inventory
   for each row execute function public.set_updated_at();
 
-create trigger set_denuncias_updated_at before update on public.denuncias
+create trigger set_complaints_updated_at before update on public.complaints
   for each row execute function public.set_updated_at();
 
-create trigger set_titulares_updated_at before update on public.solicitacoes_titulares
+create trigger set_data_subject_requests_updated_at before update on public.data_subject_requests
   for each row execute function public.set_updated_at();

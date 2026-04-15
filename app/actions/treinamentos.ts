@@ -10,28 +10,28 @@ export async function salvarTreinamento(formData: FormData) {
   if (!user) throw new Error('Não autenticado')
 
   const id = formData.get('id') as string | null
-  const empresaId = formData.get('empresa_id') as string
-  const titulo = formData.get('titulo') as string
-  const descricao = formData.get('descricao') as string | null
+  const companyId = formData.get('company_id') as string
+  const title = formData.get('title') as string
+  const description = formData.get('description') as string | null
   const video_url = formData.get('video_url') as string | null
   const pdf_url = formData.get('pdf_url') as string | null
 
   const payload = {
-    empresa_id: empresaId,
-    titulo,
-    descricao: descricao || null,
+    company_id: companyId,
+    title,
+    description: description || null,
     video_url: video_url || null,
     pdf_url: pdf_url || null,
   }
 
   if (id) {
-    await supabase.from('treinamentos').update(payload).eq('id', id)
+    await supabase.from('trainings').update(payload).eq('id', id)
     revalidatePath(`/treinamentos/${id}`)
     revalidatePath('/treinamentos')
     redirect(`/treinamentos/${id}`)
   } else {
     const { data } = await supabase
-      .from('treinamentos')
+      .from('trainings')
       .insert({ ...payload, created_by: user.id })
       .select('id')
       .single()
@@ -45,22 +45,22 @@ export async function adicionarColaborador(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Não autenticado')
 
-  const treinamentoId = formData.get('treinamento_id') as string
-  const nome = formData.get('nome') as string
+  const trainingId = formData.get('training_id') as string
+  const name = formData.get('name') as string
   const email = formData.get('email') as string | null
   const whatsapp = formData.get('whatsapp') as string | null
 
-  const link_acesso = crypto.randomUUID()
+  const access_link = crypto.randomUUID()
 
-  await supabase.from('treinamento_colaboradores').insert({
-    treinamento_id: treinamentoId,
-    colaborador_nome: nome,
-    colaborador_email: email || null,
-    colaborador_whatsapp: whatsapp || null,
-    link_acesso,
-    status: 'nao_iniciado',
-    progresso: 0,
+  await supabase.from('training_employees').insert({
+    training_id: trainingId,
+    employee_name: name,
+    employee_email: email || null,
+    employee_whatsapp: whatsapp || null,
+    access_link,
+    status: 'not_started',
+    progress: 0,
   })
 
-  revalidatePath(`/treinamentos/${treinamentoId}`)
+  revalidatePath(`/treinamentos/${trainingId}`)
 }

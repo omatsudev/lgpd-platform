@@ -17,14 +17,16 @@ import {
 
 // ─── Tipos ────────────────────────────────────────────────────────────────
 
-type StatusItem = {
-  status: 'pendente' | 'em_andamento' | 'concluido' | 'nao_aplicavel'
-  observacao?: string
-  responsavel?: string
-  data_conclusao?: string
+type ChecklistStatus = 'pending' | 'in_progress' | 'completed' | 'not_applicable'
+
+type ItemState = {
+  status: ChecklistStatus
+  notes?: string
+  responsible?: string
+  completion_date?: string
 }
 
-type EstadoChecklist = Record<string, StatusItem>
+type ChecklistState = Record<string, ItemState>
 
 // ─── Constantes ───────────────────────────────────────────────────────────
 
@@ -32,95 +34,94 @@ const ICON_MAP: Record<string, any> = {
   Shield, Database, ClipboardCheck, Users, Lock, Truck, GraduationCap, FileSearch,
 }
 
-const STATUS_CONFIG = {
-  pendente:      { label: 'Pendente',      icon: Circle,       color: 'text-gray-400',  bg: 'bg-gray-100  text-gray-700'  },
-  em_andamento:  { label: 'Em andamento',  icon: Clock,        color: 'text-yellow-500', bg: 'bg-yellow-100 text-yellow-800' },
-  concluido:     { label: 'Concluído',     icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-100 text-green-800' },
-  nao_aplicavel: { label: 'N/A',           icon: MinusCircle,  color: 'text-gray-300',  bg: 'bg-gray-50   text-gray-400'  },
+const STATUS_CONFIG: Record<ChecklistStatus, { label: string; icon: any; color: string; bg: string }> = {
+  pending:        { label: 'Pendente',      icon: Circle,       color: 'text-gray-400',   bg: 'bg-gray-100 text-gray-700'    },
+  in_progress:    { label: 'Em andamento',  icon: Clock,        color: 'text-yellow-500', bg: 'bg-yellow-100 text-yellow-800' },
+  completed:      { label: 'Concluído',     icon: CheckCircle2, color: 'text-green-500',  bg: 'bg-green-100 text-green-800'  },
+  not_applicable: { label: 'N/A',           icon: MinusCircle,  color: 'text-gray-300',   bg: 'bg-gray-50 text-gray-400'     },
 }
 
-const PRIORIDADE_CONFIG = {
-  critica: { label: 'Crítica', variant: 'destructive' as const },
-  alta:    { label: 'Alta',    variant: 'warning' as const },
-  media:   { label: 'Média',   variant: 'secondary' as const },
-  baixa:   { label: 'Baixa',   variant: 'secondary' as const },
+const PRIORITY_CONFIG = {
+  critical: { label: 'Crítica', variant: 'destructive' as const },
+  high:     { label: 'Alta',    variant: 'warning' as const },
+  medium:   { label: 'Média',   variant: 'secondary' as const },
+  low:      { label: 'Baixa',   variant: 'secondary' as const },
 }
 
 // ─── Sub-componentes ──────────────────────────────────────────────────────
 
 function ItemRow({
   item,
-  estado,
-  empresaId,
-  categoria,
+  state,
+  companyId,
+  category,
 }: {
   item: ChecklistItem
-  estado?: StatusItem
-  empresaId: string
-  categoria: string
+  state?: ItemState
+  companyId: string
+  category: string
 }) {
-  const [aberto, setAberto] = useState(false)
+  const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
-  const [form, setForm] = useState<StatusItem>({
-    status: estado?.status ?? 'pendente',
-    observacao: estado?.observacao ?? '',
-    responsavel: estado?.responsavel ?? '',
-    data_conclusao: estado?.data_conclusao ?? '',
+  const [form, setForm] = useState<ItemState>({
+    status: state?.status ?? 'pending',
+    notes: state?.notes ?? '',
+    responsible: state?.responsible ?? '',
+    completion_date: state?.completion_date ?? '',
   })
 
   const statusConf = STATUS_CONFIG[form.status]
   const Icon = statusConf.icon
 
-  const handleSave = (novoStatus?: StatusItem['status']) => {
-    const dados = novoStatus ? { ...form, status: novoStatus } : form
-    if (novoStatus) setForm(prev => ({ ...prev, status: novoStatus }))
+  const handleSave = (newStatus?: ChecklistStatus) => {
+    const payload = newStatus ? { ...form, status: newStatus } : form
+    if (newStatus) setForm(prev => ({ ...prev, status: newStatus }))
 
     const fd = new FormData()
-    fd.set('empresa_id', empresaId)
+    fd.set('company_id', companyId)
     fd.set('item_key', item.key)
-    fd.set('categoria', categoria)
-    fd.set('status', dados.status)
-    fd.set('observacao', dados.observacao ?? '')
-    fd.set('responsavel', dados.responsavel ?? '')
-    fd.set('data_conclusao', dados.data_conclusao ?? '')
+    fd.set('category', category)
+    fd.set('status', payload.status)
+    fd.set('notes', payload.notes ?? '')
+    fd.set('responsible', payload.responsible ?? '')
+    fd.set('completion_date', payload.completion_date ?? '')
 
     startTransition(() => atualizarItemChecklist(fd))
   }
 
   return (
-    <div className={`border rounded-lg transition-all ${form.status === 'nao_aplicavel' ? 'opacity-50' : ''}`}>
+    <div className={`border rounded-lg transition-all ${form.status === 'not_applicable' ? 'opacity-50' : ''}`}>
       <div
         className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50 rounded-lg"
-        onClick={() => setAberto(prev => !prev)}
+        onClick={() => setOpen(prev => !prev)}
       >
         <Icon className={`h-5 w-5 mt-0.5 shrink-0 ${statusConf.color}`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 flex-wrap">
-            <p className={`text-sm font-medium ${form.status === 'concluido' ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-              {item.titulo}
+            <p className={`text-sm font-medium ${form.status === 'completed' ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+              {item.title}
             </p>
             <div className="flex items-center gap-2 shrink-0">
-              <Badge variant={PRIORIDADE_CONFIG[item.prioridade].variant} className="text-xs">
-                {PRIORIDADE_CONFIG[item.prioridade].label}
+              <Badge variant={PRIORITY_CONFIG[item.priority].variant} className="text-xs">
+                {PRIORITY_CONFIG[item.priority].label}
               </Badge>
               {item.referencia && (
                 <span className="text-xs text-blue-500 font-mono">{item.referencia}</span>
               )}
-              {aberto ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+              {open ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">{item.descricao}</p>
-          {!aberto && form.responsavel && (
-            <p className="text-xs text-gray-400 mt-1">Responsável: {form.responsavel}</p>
+          <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
+          {!open && form.responsible && (
+            <p className="text-xs text-gray-400 mt-1">Responsável: {form.responsible}</p>
           )}
         </div>
       </div>
 
-      {aberto && (
+      {open && (
         <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
-          {/* Botões de status rápido */}
           <div className="flex flex-wrap gap-2">
-            {(Object.keys(STATUS_CONFIG) as Array<keyof typeof STATUS_CONFIG>).map(s => {
+            {(Object.keys(STATUS_CONFIG) as ChecklistStatus[]).map(s => {
               const conf = STATUS_CONFIG[s]
               const StatusIcon = conf.icon
               return (
@@ -146,8 +147,8 @@ function ItemRow({
             <div className="space-y-1">
               <Label className="text-xs">Responsável</Label>
               <Input
-                value={form.responsavel}
-                onChange={e => setForm(prev => ({ ...prev, responsavel: e.target.value }))}
+                value={form.responsible}
+                onChange={e => setForm(prev => ({ ...prev, responsible: e.target.value }))}
                 placeholder="Nome ou setor"
                 className="h-8 text-sm"
               />
@@ -156,8 +157,8 @@ function ItemRow({
               <Label className="text-xs">Data de conclusão</Label>
               <Input
                 type="date"
-                value={form.data_conclusao}
-                onChange={e => setForm(prev => ({ ...prev, data_conclusao: e.target.value }))}
+                value={form.completion_date}
+                onChange={e => setForm(prev => ({ ...prev, completion_date: e.target.value }))}
                 className="h-8 text-sm"
               />
             </div>
@@ -166,8 +167,8 @@ function ItemRow({
           <div className="space-y-1">
             <Label className="text-xs">Observações</Label>
             <Textarea
-              value={form.observacao}
-              onChange={e => setForm(prev => ({ ...prev, observacao: e.target.value }))}
+              value={form.notes}
+              onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
               placeholder="Evidências, links, notas..."
               rows={2}
               className="text-sm"
@@ -186,30 +187,29 @@ function ItemRow({
 // ─── Componente principal ─────────────────────────────────────────────────
 
 interface ChecklistBoardProps {
-  empresaId: string
-  estadoInicial: EstadoChecklist
+  companyId: string
+  initialState: ChecklistState
 }
 
-export function ChecklistBoard({ empresaId, estadoInicial }: ChecklistBoardProps) {
-  const [categoriasAbertas, setCategoriasAbertas] = useState<Record<string, boolean>>(() =>
+export function ChecklistBoard({ companyId, initialState }: ChecklistBoardProps) {
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(CHECKLIST.map(c => [c.id, true]))
   )
 
-  const [estado] = useState<EstadoChecklist>(estadoInicial)
+  const [state] = useState<ChecklistState>(initialState)
 
-  const toggleCategoria = (id: string) =>
-    setCategoriasAbertas(prev => ({ ...prev, [id]: !prev[id] }))
+  const toggleCategory = (id: string) =>
+    setOpenCategories(prev => ({ ...prev, [id]: !prev[id] }))
 
-  // Calcula progresso global
-  const totalItens = CHECKLIST.reduce((acc, c) => acc + c.itens.length, 0)
-  const concluidos = CHECKLIST.reduce((acc, c) =>
-    acc + c.itens.filter(i => estado[i.key]?.status === 'concluido').length, 0
+  const totalItems = CHECKLIST.reduce((acc, c) => acc + c.items.length, 0)
+  const completed = CHECKLIST.reduce((acc, c) =>
+    acc + c.items.filter(i => state[i.key]?.status === 'completed').length, 0
   )
-  const naoAplicaveis = CHECKLIST.reduce((acc, c) =>
-    acc + c.itens.filter(i => estado[i.key]?.status === 'nao_aplicavel').length, 0
+  const notApplicable = CHECKLIST.reduce((acc, c) =>
+    acc + c.items.filter(i => state[i.key]?.status === 'not_applicable').length, 0
   )
-  const efetivos = totalItens - naoAplicaveis
-  const percentual = efetivos > 0 ? Math.round((concluidos / efetivos) * 100) : 0
+  const effective = totalItems - notApplicable
+  const percentage = effective > 0 ? Math.round((completed / effective) * 100) : 0
 
   return (
     <div className="space-y-6">
@@ -219,14 +219,14 @@ export function ChecklistBoard({ empresaId, estadoInicial }: ChecklistBoardProps
           <div className="flex items-end justify-between mb-3">
             <div>
               <p className="text-sm text-gray-500">Adequação geral</p>
-              <p className="text-3xl font-bold text-gray-900">{percentual}%</p>
+              <p className="text-3xl font-bold text-gray-900">{percentage}%</p>
             </div>
             <div className="text-right text-sm text-gray-500">
-              <p><span className="font-medium text-green-600">{concluidos}</span> concluídos</p>
-              <p><span className="font-medium text-gray-900">{efetivos}</span> aplicáveis</p>
+              <p><span className="font-medium text-green-600">{completed}</span> concluídos</p>
+              <p><span className="font-medium text-gray-900">{effective}</span> aplicáveis</p>
             </div>
           </div>
-          <Progress value={percentual} className="h-3" />
+          <Progress value={percentage} className="h-3" />
           <div className="flex gap-4 mt-3 text-xs text-gray-400">
             <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-green-500" /> Concluído</span>
             <span className="flex items-center gap-1"><Clock className="h-3 w-3 text-yellow-500" /> Em andamento</span>
@@ -239,19 +239,16 @@ export function ChecklistBoard({ empresaId, estadoInicial }: ChecklistBoardProps
       {/* Categorias */}
       {CHECKLIST.map(cat => {
         const CatIcon = ICON_MAP[cat.icon] ?? Shield
-        const total = cat.itens.length
-        const done = cat.itens.filter(i => estado[i.key]?.status === 'concluido').length
-        const na = cat.itens.filter(i => estado[i.key]?.status === 'nao_aplicavel').length
-        const efetivoCat = total - na
-        const pct = efetivoCat > 0 ? Math.round((done / efetivoCat) * 100) : 100
-        const aberto = categoriasAbertas[cat.id]
+        const total = cat.items.length
+        const done = cat.items.filter(i => state[i.key]?.status === 'completed').length
+        const na = cat.items.filter(i => state[i.key]?.status === 'not_applicable').length
+        const effectiveCat = total - na
+        const pct = effectiveCat > 0 ? Math.round((done / effectiveCat) * 100) : 100
+        const isOpen = openCategories[cat.id]
 
         return (
           <Card key={cat.id}>
-            <CardHeader
-              className="pb-0 cursor-pointer"
-              onClick={() => toggleCategoria(cat.id)}
-            >
+            <CardHeader className="pb-0 cursor-pointer" onClick={() => toggleCategory(cat.id)}>
               <div className="flex items-center justify-between py-1">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-50 rounded-lg">
@@ -259,7 +256,7 @@ export function ChecklistBoard({ empresaId, estadoInicial }: ChecklistBoardProps
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">{cat.label}</p>
-                    <p className="text-xs text-gray-500">{done} de {efetivoCat} concluídos {na > 0 ? `· ${na} N/A` : ''}</p>
+                    <p className="text-xs text-gray-500">{done} de {effectiveCat} concluídos {na > 0 ? `· ${na} N/A` : ''}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -267,20 +264,20 @@ export function ChecklistBoard({ empresaId, estadoInicial }: ChecklistBoardProps
                     <Progress value={pct} className="h-2" />
                   </div>
                   <span className="text-sm font-semibold text-gray-700 w-10 text-right">{pct}%</span>
-                  {aberto ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                  {isOpen ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
                 </div>
               </div>
             </CardHeader>
 
-            {aberto && (
+            {isOpen && (
               <CardContent className="pt-3 space-y-2">
-                {cat.itens.map(item => (
+                {cat.items.map(item => (
                   <ItemRow
                     key={item.key}
                     item={item}
-                    estado={estado[item.key]}
-                    empresaId={empresaId}
-                    categoria={cat.id}
+                    state={state[item.key]}
+                    companyId={companyId}
+                    category={cat.id}
                   />
                 ))}
               </CardContent>

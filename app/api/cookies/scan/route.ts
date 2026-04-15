@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getUserEmpresa } from '@/lib/supabase/queries'
-import { escanearSite } from '@/lib/site-scanner'
+import { getUserCompany } from '@/lib/supabase/queries'
+import { scanSite } from '@/lib/site-scanner'
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'URL obrigatória' }, { status: 400 })
     }
 
-    // Valida e normaliza a URL
+    // Validate and normalize URL
     let urlNormalizada: string
     try {
       const parsed = new URL(url.startsWith('http') ? url : `https://${url}`)
@@ -20,23 +20,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'URL inválida' }, { status: 400 })
     }
 
-    const dominio = new URL(urlNormalizada).hostname
-    const { empresaId } = await getUserEmpresa()
+    const domain = new URL(urlNormalizada).hostname
+    const { companyId } = await getUserCompany()
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user || !empresaId) {
+    if (!user || !companyId) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    // Cria registro como processando
+    // Create record as processing
     const { data: scan } = await supabase
       .from('site_scans')
       .insert({
-        empresa_id: empresaId,
+        company_id: companyId,
         url: urlNormalizada,
-        dominio,
-        status: 'processando',
+        domain,
+        status: 'processing',
         created_by: user.id,
       })
       .select('id')
@@ -46,22 +46,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Erro ao criar scan' }, { status: 500 })
     }
 
-    // Executa o scan
+    // Run the scan
     try {
-      const resultado = await escanearSite(urlNormalizada)
+      const resultado = await scanSite(urlNormalizada)
 
       await supabase
         .from('site_scans')
         .update({
-          status: 'concluido',
+          status: 'completed',
           cookies: resultado.cookies,
-          tecnologias: resultado.tecnologias,
-          tem_banner_cookies: resultado.tem_banner_cookies,
-          tem_politica_privacidade: resultado.tem_politica_privacidade,
-          url_politica_privacidade: resultado.url_politica_privacidade,
-          score_conformidade: resultado.score_conformidade,
-          problemas: resultado.problemas,
-          recomendacoes: resultado.recomendacoes,
+          technologies: resultado.technologies,
+          has_cookie_banner: resultado.has_cookie_banner,
+          has_privacy_policy: resultado.has_privacy_policy,
+          privacy_policy_url: resultado.privacy_policy_url,
+          compliance_score: resultado.compliance_score,
+          issues: resultado.issues,
+          recommendations: resultado.recommendations,
         })
         .eq('id', scan.id)
 
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     } catch (err: any) {
       await supabase
         .from('site_scans')
-        .update({ status: 'erro', erro_mensagem: err.message ?? 'Falha ao escanear o site' })
+        .update({ status: 'error', error_message: err.message ?? 'Falha ao escanear o site' })
         .eq('id', scan.id)
 
       return NextResponse.json({ id: scan.id, error: err.message ?? 'Falha ao escanear' }, { status: 422 })

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { RevogarForm } from '@/components/consentimentos/revogar-form'
 
@@ -14,18 +14,18 @@ const canalLabel: Record<string, string> = {
 
 export default async function ConsentimentoDetalhePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
 
   const { data: reg } = await supabase
-    .from('consentimentos')
-    .select('*, consentimento_finalidades(nome, descricao, base_legal)')
+    .from('consents')
+    .select('*, consent_purposes(name, description, legal_basis)')
     .eq('id', id)
     .single()
 
   if (!reg) notFound()
 
-  const status = reg.revogado ? 'revogado' : reg.aceito ? 'ativo' : 'recusado'
-  const finalidade = reg.consentimento_finalidades as any
+  const status = reg.revoked ? 'revogado' : reg.accepted ? 'ativo' : 'recusado'
+  const finalidade = reg.consent_purposes as any
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -56,11 +56,11 @@ export default async function ConsentimentoDetalhePage({ params }: { params: Pro
               <p className="font-semibold text-gray-900">
                 Consentimento {status === 'ativo' ? 'Ativo' : status === 'revogado' ? 'Revogado' : 'Recusado'}
               </p>
-              {status === 'revogado' && reg.revogado_em && (
-                <p className="text-xs text-gray-600">Revogado em {formatDateTime(reg.revogado_em)}</p>
+              {status === 'revogado' && reg.revoked_at && (
+                <p className="text-xs text-gray-600">Revogado em {formatDateTime(reg.revoked_at)}</p>
               )}
-              {status === 'revogado' && reg.motivo_revogacao && (
-                <p className="text-xs text-gray-600 mt-0.5">Motivo: {reg.motivo_revogacao}</p>
+              {status === 'revogado' && reg.revocation_reason && (
+                <p className="text-xs text-gray-600 mt-0.5">Motivo: {reg.revocation_reason}</p>
               )}
             </div>
           </div>
@@ -73,9 +73,9 @@ export default async function ConsentimentoDetalhePage({ params }: { params: Pro
           <CardTitle className="text-base">Titular</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <Row label="E-mail" value={reg.titular_email} />
-          <Row label="Nome" value={reg.titular_nome} />
-          <Row label="CPF" value={reg.titular_cpf} />
+          <Row label="E-mail" value={reg.subject_email} />
+          <Row label="Nome" value={reg.subject_name} />
+          <Row label="CPF" value={reg.subject_tax_id} />
         </CardContent>
       </Card>
 
@@ -85,9 +85,9 @@ export default async function ConsentimentoDetalhePage({ params }: { params: Pro
           <CardTitle className="text-base">Finalidade</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <Row label="Nome" value={finalidade?.nome} />
-          <Row label="Descrição" value={finalidade?.descricao} />
-          <Row label="Base legal" value={finalidade?.base_legal} />
+          <Row label="Nome" value={finalidade?.name} />
+          <Row label="Descrição" value={finalidade?.description} />
+          <Row label="Base legal" value={finalidade?.legal_basis} />
         </CardContent>
       </Card>
 
@@ -97,9 +97,9 @@ export default async function ConsentimentoDetalhePage({ params }: { params: Pro
           <CardTitle className="text-base">Metadados de Coleta</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <Row label="Canal" value={canalLabel[reg.canal] ?? reg.canal} />
-          <Row label="Versão da política" value={reg.versao_politica} />
-          <Row label="IP de origem" value={reg.ip_origem} mono />
+          <Row label="Canal" value={canalLabel[reg.channel] ?? reg.channel} />
+          <Row label="Versão da política" value={reg.policy_version} />
+          <Row label="IP de origem" value={reg.source_ip} mono />
           <Row label="Data/hora" value={formatDateTime(reg.created_at)} mono />
           {reg.user_agent && (
             <div className="pt-1">

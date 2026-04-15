@@ -2,40 +2,40 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 // POST /api/consentimentos/public
-// Registra um consentimento vindo de um site externo
-// Body: { slug, finalidade_id, email, nome?, cpf?, aceito, versao_politica?, canal? }
+// Registers a consent from an external site
+// Body: { slug, purpose_id, email, name?, cpf?, accepted, policy_version?, channel? }
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { slug, finalidade_id, email, nome, cpf, aceito, versao_politica, canal } = body
+    const { slug, purpose_id, email, name, cpf, accepted, policy_version, channel } = body
 
-    if (!slug || !finalidade_id || !email || aceito === undefined) {
-      return NextResponse.json({ error: 'Campos obrigatórios: slug, finalidade_id, email, aceito' }, { status: 400 })
+    if (!slug || !purpose_id || !email || accepted === undefined) {
+      return NextResponse.json({ error: 'Campos obrigatórios: slug, purpose_id, email, accepted' }, { status: 400 })
     }
 
     const supabase = await createClient()
 
-    // Busca a empresa pelo slug
-    const { data: empresa } = await supabase
-      .from('empresas')
+    // Look up the company by slug
+    const { data: company } = await supabase
+      .from('companies')
       .select('id')
       .eq('slug', slug)
       .single()
 
-    if (!empresa) {
+    if (!company) {
       return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 404 })
     }
 
-    // Verifica se a finalidade pertence à empresa
-    const { data: finalidade } = await supabase
-      .from('consentimento_finalidades')
+    // Verify the purpose belongs to the company
+    const { data: purpose } = await supabase
+      .from('consent_purposes')
       .select('id')
-      .eq('id', finalidade_id)
-      .eq('empresa_id', empresa.id)
-      .eq('ativo', true)
+      .eq('id', purpose_id)
+      .eq('company_id', company.id)
+      .eq('active', true)
       .single()
 
-    if (!finalidade) {
+    if (!purpose) {
       return NextResponse.json({ error: 'Finalidade não encontrada ou inativa' }, { status: 404 })
     }
 
@@ -45,17 +45,17 @@ export async function POST(req: NextRequest) {
     const userAgent = req.headers.get('user-agent') ?? null
 
     const { data: registro, error } = await supabase
-      .from('consentimentos')
+      .from('consents')
       .insert({
-        empresa_id: empresa.id,
-        finalidade_id: finalidade.id,
-        titular_email: email,
-        titular_nome: nome ?? null,
-        titular_cpf: cpf ?? null,
-        aceito: Boolean(aceito),
-        versao_politica: versao_politica ?? null,
-        canal: canal ?? 'api',
-        ip_origem: ip,
+        company_id: company.id,
+        purpose_id: purpose.id,
+        subject_email: email,
+        subject_name: name ?? null,
+        subject_tax_id: cpf ?? null,
+        accepted: Boolean(accepted),
+        policy_version: policy_version ?? null,
+        channel: channel ?? 'api',
+        source_ip: ip,
         user_agent: userAgent,
       })
       .select('id')
@@ -70,13 +70,13 @@ export async function POST(req: NextRequest) {
 }
 
 // GET /api/consentimentos/public?slug=X&email=Y&finalidade_id=Z
-// Verifica se um titular possui consentimento ativo para uma finalidade
+// Checks if a data subject has an active consent for a purpose
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
     const slug = searchParams.get('slug')
     const email = searchParams.get('email')
-    const finalidade_id = searchParams.get('finalidade_id')
+    const purpose_id = searchParams.get('purpose_id')
 
     if (!slug || !email) {
       return NextResponse.json({ error: 'slug e email são obrigatórios' }, { status: 400 })
@@ -84,25 +84,25 @@ export async function GET(req: NextRequest) {
 
     const supabase = await createClient()
 
-    const { data: empresa } = await supabase
-      .from('empresas')
+    const { data: company } = await supabase
+      .from('companies')
       .select('id')
       .eq('slug', slug)
       .single()
 
-    if (!empresa) {
+    if (!company) {
       return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 404 })
     }
 
     let query = supabase
-      .from('consentimentos')
-      .select('id, finalidade_id, aceito, revogado, created_at')
-      .eq('empresa_id', empresa.id)
-      .eq('titular_email', email)
-      .eq('aceito', true)
-      .eq('revogado', false)
+      .from('consents')
+      .select('id, purpose_id, accepted, revoked, created_at')
+      .eq('company_id', company.id)
+      .eq('subject_email', email)
+      .eq('accepted', true)
+      .eq('revoked', false)
 
-    if (finalidade_id) query = query.eq('finalidade_id', finalidade_id)
+    if (purpose_id) query = query.eq('purpose_id', purpose_id)
 
     const { data: registros } = await query.order('created_at', { ascending: false })
 

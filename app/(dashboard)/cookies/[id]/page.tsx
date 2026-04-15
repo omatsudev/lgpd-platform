@@ -2,13 +2,13 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { ScanForm } from '@/components/cookies/scan-form'
 import { formatDateTime } from '@/lib/utils'
 
 export default async function ScanDetalhePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
 
   const { data: scan } = await supabase
     .from('site_scans')
@@ -16,7 +16,7 @@ export default async function ScanDetalhePage({ params }: { params: Promise<{ id
     .eq('id', id)
     .single()
 
-  if (!scan || scan.empresa_id !== empresaId) notFound()
+  if (!scan || scan.company_id !== companyId) notFound()
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -27,22 +27,22 @@ export default async function ScanDetalhePage({ params }: { params: Promise<{ id
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{scan.dominio}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{scan.domain}</h1>
           <p className="text-sm text-gray-500">Scan realizado em {formatDateTime(scan.created_at)}</p>
         </div>
       </div>
 
       <ScanForm
         scanId={scan.id}
-        resultado={scan.status === 'concluido' ? {
+        resultado={scan.status === 'completed' ? {
           cookies: scan.cookies ?? [],
-          tecnologias: scan.tecnologias ?? [],
-          tem_banner_cookies: scan.tem_banner_cookies ?? false,
-          tem_politica_privacidade: scan.tem_politica_privacidade ?? false,
-          url_politica_privacidade: scan.url_politica_privacidade ?? null,
-          score_conformidade: scan.score_conformidade ?? 0,
-          problemas: scan.problemas ?? [],
-          recomendacoes: scan.recomendacoes ?? [],
+          technologies: scan.technologies ?? [],
+          has_cookie_banner: scan.has_cookie_banner ?? false,
+          has_privacy_policy: scan.has_privacy_policy ?? false,
+          privacy_policy_url: scan.privacy_policy_url ?? null,
+          compliance_score: scan.compliance_score ?? 0,
+          issues: scan.issues ?? [],
+          recommendations: scan.recommendations ?? [],
         } : undefined}
       />
     </div>

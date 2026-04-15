@@ -13,8 +13,8 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
   const supabase = await createClient()
 
   const { data: empresa } = await supabase
-    .from('empresas')
-    .select('id, nome, cnpj, dpo_nome, dpo_email, dpo_telefone, politica_privacidade_url')
+    .from('companies')
+    .select('id, name, tax_id, dpo_name, dpo_email, dpo_phone, privacy_policy_url')
     .eq('slug', slug)
     .single()
 
@@ -28,7 +28,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
           <div className="flex items-center gap-3">
             <Image src="/logo.jpg" alt="Serra Privacy" width={100} height={36} className="object-contain rounded-lg" />
             <div className="border-l border-gray-200 pl-3">
-              <p className="font-bold text-gray-900 text-sm">{empresa.nome}</p>
+              <p className="font-bold text-gray-900 text-sm">{empresa.name}</p>
               <p className="text-xs text-gray-400">Portal de Privacidade</p>
             </div>
           </div>
@@ -40,7 +40,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
         <div className="text-center space-y-2">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Portal de Privacidade</h1>
           <p className="text-gray-500 max-w-2xl mx-auto text-sm md:text-base">
-            A {empresa.nome} respeita sua privacidade e está comprometida com a proteção dos seus dados, em conformidade com a LGPD.
+            A {empresa.name} respeita sua privacidade e está comprometida com a proteção dos seus dados, em conformidade com a LGPD.
           </p>
         </div>
 
@@ -53,17 +53,17 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-1.5 text-sm">
-              {empresa.dpo_nome ? (
+              {empresa.dpo_name ? (
                 <>
-                  <p className="font-medium text-gray-900">{empresa.dpo_nome}</p>
+                  <p className="font-medium text-gray-900">{empresa.dpo_name}</p>
                   {empresa.dpo_email && (
                     <a href={`mailto:${empresa.dpo_email}`} className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 break-all">
                       <Mail className="h-3.5 w-3.5 flex-shrink-0" />{empresa.dpo_email}
                     </a>
                   )}
-                  {empresa.dpo_telefone && (
+                  {empresa.dpo_phone && (
                     <div className="flex items-center gap-1.5 text-gray-500">
-                      <Phone className="h-3.5 w-3.5 flex-shrink-0" />{empresa.dpo_telefone}
+                      <Phone className="h-3.5 w-3.5 flex-shrink-0" />{empresa.dpo_phone}
                     </div>
                   )}
                 </>
@@ -81,9 +81,9 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-gray-500">Consulte como tratamos seus dados pessoais.</p>
-              {empresa.politica_privacidade_url ? (
+              {empresa.privacy_policy_url ? (
                 <Button variant="outline" size="sm" className="w-full" asChild>
-                  <a href={empresa.politica_privacidade_url} target="_blank" rel="noopener noreferrer">Acessar Política</a>
+                  <a href={empresa.privacy_policy_url} target="_blank" rel="noopener noreferrer">Acessar Política</a>
                 </Button>
               ) : (
                 <p className="text-xs text-gray-400">Em elaboração</p>
@@ -123,7 +123,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                 <input type="hidden" name="empresa_slug" value={slug} />
                 <div className="space-y-1.5">
                   <Label>Nome completo</Label>
-                  <Input name="nome" placeholder="Seu nome" required />
+                  <Input name="name" placeholder="Seu nome" required />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Email</Label>
@@ -131,7 +131,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                 </div>
                 <div className="space-y-1.5">
                   <Label>Tipo de solicitação</Label>
-                  <select name="tipo" className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                  <select name="type" className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <option value="">Selecione...</option>
                     <option value="acesso">Acesso aos dados</option>
                     <option value="correcao">Correção de dados</option>
@@ -142,7 +142,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                 </div>
                 <div className="space-y-1.5">
                   <Label>Descrição</Label>
-                  <Textarea name="descricao" placeholder="Descreva sua solicitação..." required />
+                  <Textarea name="description" placeholder="Descreva sua solicitação..." required />
                 </div>
                 <Button type="submit" className="w-full">Enviar Solicitação</Button>
               </form>
@@ -164,16 +164,16 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                   <Label>Identificação</Label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input type="radio" name="anonimo" value="true" defaultChecked /> Anônimo
+                      <input type="radio" name="anonymous" value="true" defaultChecked /> Anônimo
                     </label>
                     <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input type="radio" name="anonimo" value="false" /> Identificado
+                      <input type="radio" name="anonymous" value="false" /> Identificado
                     </label>
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Tipo de denúncia</Label>
-                  <select name="tipo" className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                  <select name="type" className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <option value="">Selecione...</option>
                     <option value="Vazamento de dados">Vazamento de dados</option>
                     <option value="Uso indevido de dados">Uso indevido de dados</option>
@@ -184,7 +184,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                 </div>
                 <div className="space-y-1.5">
                   <Label>Descrição</Label>
-                  <Textarea name="descricao" placeholder="Descreva o ocorrido..." rows={4} required />
+                  <Textarea name="description" placeholder="Descreva o ocorrido..." rows={4} required />
                 </div>
                 <Button type="submit" variant="outline" className="w-full border-orange-300 text-orange-700 hover:bg-orange-50">
                   Enviar Denúncia
@@ -196,7 +196,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
       </main>
 
       <footer className="border-t border-gray-200 mt-10 py-5 text-center text-xs text-gray-400 px-4">
-        <p>{empresa.nome}{empresa.cnpj ? ` — CNPJ: ${empresa.cnpj}` : ''}</p>
+        <p>{empresa.name}{empresa.tax_id ? ` — CNPJ: ${empresa.tax_id}` : ''}</p>
         <p className="mt-1">Desenvolvido com <a href="/" className="text-blue-500 hover:underline">Serra Privacy</a></p>
       </footer>
     </div>

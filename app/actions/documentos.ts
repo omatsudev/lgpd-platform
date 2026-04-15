@@ -6,19 +6,19 @@ import { createClient } from '@/lib/supabase/server'
 
 export type DocumentoData = {
   id?: string
-  empresa_id: string
-  titulo: string
-  tipo: string
-  descricao: string
-  versao: string
-  conteudo: string
-  arquivo_url: string
-  arquivo_nome: string
+  company_id: string
+  title: string
+  type: string
+  description: string
+  version: string
+  content: string
+  file_url: string
+  file_name: string
   status: string
-  responsavel: string
-  data_aprovacao: string
-  data_revisao: string
-  data_expiracao: string
+  responsible: string
+  approval_date: string
+  review_date: string
+  expiration_date: string
 }
 
 export async function salvarDocumento(data: DocumentoData) {
@@ -27,25 +27,25 @@ export async function salvarDocumento(data: DocumentoData) {
   if (!user) throw new Error('Não autenticado')
 
   const payload = {
-    empresa_id: data.empresa_id,
-    titulo: data.titulo,
-    tipo: data.tipo,
-    descricao: data.descricao || null,
-    versao: data.versao || '1.0',
-    conteudo: data.conteudo || null,
-    arquivo_url: data.arquivo_url || null,
-    arquivo_nome: data.arquivo_nome || null,
+    company_id: data.company_id,
+    title: data.title,
+    type: data.type,
+    description: data.description || null,
+    version: data.version || '1.0',
+    content: data.content || null,
+    file_url: data.file_url || null,
+    file_name: data.file_name || null,
     status: data.status,
-    responsavel: data.responsavel || null,
-    data_aprovacao: data.data_aprovacao || null,
-    data_revisao: data.data_revisao || null,
-    data_expiracao: data.data_expiracao || null,
+    responsible: data.responsible || null,
+    approval_date: data.approval_date || null,
+    review_date: data.review_date || null,
+    expiration_date: data.expiration_date || null,
   }
 
   if (data.id) {
-    await supabase.from('documentos').update(payload).eq('id', data.id)
+    await supabase.from('documents').update(payload).eq('id', data.id)
   } else {
-    await supabase.from('documentos').insert({ ...payload, created_by: user.id })
+    await supabase.from('documents').insert({ ...payload, created_by: user.id })
   }
 
   revalidatePath('/documentos')
@@ -58,7 +58,7 @@ export async function deletarDocumento(formData: FormData) {
   if (!user) throw new Error('Não autenticado')
 
   const id = formData.get('id') as string
-  await supabase.from('documentos').delete().eq('id', id)
+  await supabase.from('documents').delete().eq('id', id)
 
   revalidatePath('/documentos')
   redirect('/documentos')

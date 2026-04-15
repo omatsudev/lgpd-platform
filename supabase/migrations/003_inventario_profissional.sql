@@ -1,22 +1,22 @@
--- Expansão da tabela inventario_dados para suportar o wizard profissional
+-- Expansion of data_inventory table to support the professional wizard
 
-alter table public.inventario_dados
-  add column if not exists nome_processo text,
-  add column if not exists setor_responsavel text,
-  add column if not exists descricao_processo text,
-  add column if not exists fases_ciclo_vida jsonb default '{}',
-  add column if not exists categorias_dados jsonb default '[]',
-  add column if not exists descricao_dados text,
-  add column if not exists frequencia_tratamento text,
-  add column if not exists dados_compartilhados boolean default false,
-  add column if not exists com_quem_compartilhado text,
-  add column if not exists forma_coleta_consentimento text,
-  add column if not exists fonte_dados text,
-  add column if not exists categoria_titular text,
-  add column if not exists local_tipo text,
-  add column if not exists necessita_ripd text default 'automatico',
-  add column if not exists nivel_risco text default 'baixo',
-  add column if not exists status_registro text default 'rascunho';
+alter table public.data_inventory
+  add column if not exists process_name text,
+  add column if not exists responsible_department text,
+  add column if not exists process_description text,
+  add column if not exists lifecycle_phases jsonb default '{}',
+  add column if not exists data_categories jsonb default '[]',
+  add column if not exists data_description text,
+  add column if not exists processing_frequency text,
+  add column if not exists data_shared boolean default false,
+  add column if not exists shared_with text,
+  add column if not exists consent_collection_method text,
+  add column if not exists data_source text,
+  add column if not exists data_subject_category text,
+  add column if not exists storage_type text,
+  add column if not exists requires_dpia text default 'automatic',
+  add column if not exists risk_level text default 'low',
+  add column if not exists record_status text default 'draft';
 
--- Trigger para atualizar updated_at já existe (set_inventario_updated_at)
--- Nenhuma migração adicional necessária
+-- Trigger to update updated_at already exists (set_data_inventory_updated_at)
+-- No additional migration needed

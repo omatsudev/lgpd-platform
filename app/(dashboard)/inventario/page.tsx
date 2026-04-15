@@ -4,27 +4,35 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/ui/search-input'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 
 const riscoVariant: Record<string, 'destructive' | 'warning' | 'success'> = {
-  alto: 'destructive',
-  medio: 'warning',
-  baixo: 'success',
+  high: 'destructive',
+  medium: 'warning',
+  low: 'success',
 }
 
 const statusVariant: Record<string, 'default' | 'secondary'> = {
-  completo: 'default',
-  rascunho: 'secondary',
+  complete: 'default',
+  draft: 'secondary',
+}
+
+const riscoLabel: Record<string, string> = {
+  high: 'Alto', medium: 'Médio', low: 'Baixo',
+}
+
+const statusLabel: Record<string, string> = {
+  complete: 'Completo', draft: 'Rascunho',
 }
 
 export default async function InventarioPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
   const { q } = await searchParams
 
-  let query = supabase.from('inventario_dados').select('*').eq('empresa_id', empresaId ?? '')
-  if (q) query = query.or(`nome_processo.ilike.%${q}%,tipo_dado.ilike.%${q}%,finalidade.ilike.%${q}%,base_legal.ilike.%${q}%,setor_responsavel.ilike.%${q}%`)
+  let query = supabase.from('data_inventory').select('*').eq('company_id', companyId ?? '')
+  if (q) query = query.or(`process_name.ilike.%${q}%,data_type.ilike.%${q}%,purpose.ilike.%${q}%,legal_basis.ilike.%${q}%,responsible_department.ilike.%${q}%`)
 
-  const { data: inventario } = empresaId
+  const { data: inventario } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
@@ -76,19 +84,19 @@ export default async function InventarioPage({ searchParams }: { searchParams: P
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {itens.map((item: any) => {
-                      const nome = item.nome_processo || item.tipo_dado || '—'
-                      const risco = item.nivel_risco ?? 'baixo'
-                      const status = item.status_registro ?? 'rascunho'
+                      const nome = item.process_name || item.data_type || '—'
+                      const risco = item.risk_level ?? 'low'
+                      const status = item.record_status ?? 'draft'
                       return (
                         <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                           <td className="py-3 px-4 font-medium text-gray-900 max-w-[200px] truncate">{nome}</td>
-                          <td className="py-3 px-4 text-gray-600 text-xs">{item.setor_responsavel ?? '—'}</td>
-                          <td className="py-3 px-4 text-gray-600 text-xs max-w-[160px] truncate">{item.base_legal ?? '—'}</td>
+                          <td className="py-3 px-4 text-gray-600 text-xs">{item.responsible_department ?? '—'}</td>
+                          <td className="py-3 px-4 text-gray-600 text-xs max-w-[160px] truncate">{item.legal_basis ?? '—'}</td>
                           <td className="py-3 px-4">
-                            <Badge variant={riscoVariant[risco] ?? 'secondary'} className="capitalize">{risco}</Badge>
+                            <Badge variant={riscoVariant[risco] ?? 'secondary'}>{riscoLabel[risco] ?? risco}</Badge>
                           </td>
                           <td className="py-3 px-4">
-                            <Badge variant={statusVariant[status] ?? 'secondary'} className="capitalize">{status}</Badge>
+                            <Badge variant={statusVariant[status] ?? 'secondary'}>{statusLabel[status] ?? status}</Badge>
                           </td>
                           <td className="py-3 px-4 text-right">
                             <Link href={`/inventario/${item.id}`}><Button variant="ghost" size="sm">Editar</Button></Link>
@@ -103,9 +111,9 @@ export default async function InventarioPage({ searchParams }: { searchParams: P
               {/* Mobile cards */}
               <div className="md:hidden divide-y divide-gray-100">
                 {itens.map((item: any) => {
-                  const nome = item.nome_processo || item.tipo_dado || '—'
-                  const risco = item.nivel_risco ?? 'baixo'
-                  const status = item.status_registro ?? 'rascunho'
+                  const nome = item.process_name || item.data_type || '—'
+                  const risco = item.risk_level ?? 'low'
+                  const status = item.record_status ?? 'draft'
                   return (
                     <div key={item.id} className="p-4 space-y-2">
                       <div className="flex items-start justify-between gap-2">
@@ -113,12 +121,12 @@ export default async function InventarioPage({ searchParams }: { searchParams: P
                         <Link href={`/inventario/${item.id}`}><Button variant="ghost" size="sm" className="h-7 text-xs">Editar</Button></Link>
                       </div>
                       <div className="flex gap-2 flex-wrap">
-                        <Badge variant={riscoVariant[risco] ?? 'secondary'} className="capitalize text-xs">{risco}</Badge>
-                        <Badge variant={statusVariant[status] ?? 'secondary'} className="capitalize text-xs">{status}</Badge>
+                        <Badge variant={riscoVariant[risco] ?? 'secondary'} className="text-xs">{riscoLabel[risco] ?? risco}</Badge>
+                        <Badge variant={statusVariant[status] ?? 'secondary'} className="text-xs">{statusLabel[status] ?? status}</Badge>
                       </div>
                       <div className="text-xs text-gray-500 space-y-0.5">
-                        {item.setor_responsavel && <p><span className="font-medium">Setor:</span> {item.setor_responsavel}</p>}
-                        {item.base_legal && <p><span className="font-medium">Base legal:</span> {item.base_legal}</p>}
+                        {item.responsible_department && <p><span className="font-medium">Setor:</span> {item.responsible_department}</p>}
+                        {item.legal_basis && <p><span className="font-medium">Base legal:</span> {item.legal_basis}</p>}
                       </div>
                     </div>
                   )

@@ -1,57 +1,57 @@
--- Módulo de Gestão de Riscos LGPD
+-- LGPD Risk Management Module
 
-create table public.riscos (
+create table public.risks (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
+  company_id uuid references public.companies(id) on delete cascade not null,
 
-  -- Identificação
-  titulo text not null,
-  descricao text,
-  categoria text not null check (categoria in (
-    'privacidade', 'seguranca', 'legal', 'operacional', 'reputacional', 'tecnologico'
+  -- Identification
+  title text not null,
+  description text,
+  category text not null check (category in (
+    'privacy', 'security', 'legal', 'operational', 'reputational', 'technological'
   )),
 
-  -- Origem
-  origem text check (origem in ('inventario', 'incidente', 'auditoria', 'fornecedor', 'interno', 'outro')),
+  -- Origin
+  origin text check (origin in ('inventory', 'incident', 'audit', 'supplier', 'internal', 'other')),
 
-  -- UUIDs sem FK direta para não depender da ordem de execução das migrations
-  inventario_id uuid,
-  incidente_id uuid,
+  -- UUIDs without direct FK to avoid migration order dependency
+  inventory_id uuid,
+  incident_id uuid,
 
-  -- Avaliação inerente (antes dos controles)
-  probabilidade_inerente integer not null check (probabilidade_inerente between 1 and 5),
-  impacto_inerente integer not null check (impacto_inerente between 1 and 5),
+  -- Inherent assessment (before controls)
+  inherent_probability integer not null check (inherent_probability between 1 and 5),
+  inherent_impact integer not null check (inherent_impact between 1 and 5),
 
-  -- Avaliação residual (após os controles)
-  probabilidade_residual integer check (probabilidade_residual between 1 and 5),
-  impacto_residual integer check (impacto_residual between 1 and 5),
+  -- Residual assessment (after controls)
+  residual_probability integer check (residual_probability between 1 and 5),
+  residual_impact integer check (residual_impact between 1 and 5),
 
-  -- Tratamento
-  estrategia text check (estrategia in ('aceitar', 'mitigar', 'transferir', 'evitar')),
-  plano_acao text,
-  responsavel text,
-  prazo date,
+  -- Treatment
+  strategy text check (strategy in ('accept', 'mitigate', 'transfer', 'avoid')),
+  action_plan text,
+  responsible text,
+  deadline date,
 
   -- Status
-  status text not null default 'identificado' check (status in (
-    'identificado', 'em_tratamento', 'monitorando', 'encerrado'
+  status text not null default 'identified' check (status in (
+    'identified', 'under_treatment', 'monitoring', 'closed'
   )),
 
-  -- Metadados
+  -- Metadata
   created_by uuid references auth.users(id),
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null
 );
 
-alter table public.riscos enable row level security;
+alter table public.risks enable row level security;
 
-create policy "user_can_manage_riscos" on public.riscos
+create policy "user_can_manage_risks" on public.risks
   for all using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
-create trigger set_riscos_updated_at before update on public.riscos
+create trigger set_risks_updated_at before update on public.risks
   for each row execute function public.set_updated_at();

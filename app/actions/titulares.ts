@@ -11,14 +11,14 @@ export async function atualizarTitular(formData: FormData) {
 
   const id = formData.get('id') as string
   const status = formData.get('status') as string
-  const resposta = formData.get('resposta') as string | null
+  const response = formData.get('response') as string | null
 
   await supabase
-    .from('solicitacoes_titulares')
+    .from('data_subject_requests')
     .update({
       status,
-      resposta: resposta || null,
-      respondido_por: user.id,
+      response: response || null,
+      responded_by: user.id,
     })
     .eq('id', id)
 

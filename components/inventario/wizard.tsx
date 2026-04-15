@@ -71,55 +71,55 @@ const BASES_LEGAIS = [
 // ─── Tipos ────────────────────────────────────────────────────────────────
 
 type Fase = { ativo: boolean; controlador: boolean; operador: boolean }
-type FormData = Omit<InventarioData, 'empresa_id' | 'id'>
+type FormData = Omit<InventarioData, 'company_id' | 'id'>
 
 const DEFAULT_FASE: Fase = { ativo: false, controlador: false, operador: false }
 
 function defaultData(): FormData {
   return {
-    nome_processo: '',
-    setor_responsavel: '',
-    descricao_processo: '',
-    fases_ciclo_vida: {
+    process_name: '',
+    responsible_department: '',
+    process_description: '',
+    lifecycle_phases: {
       coleta: { ...DEFAULT_FASE },
       retencao: { ...DEFAULT_FASE },
       processamento: { ...DEFAULT_FASE },
       compartilhamento: { ...DEFAULT_FASE },
       eliminacao: { ...DEFAULT_FASE },
     },
-    categorias_dados: [],
-    descricao_dados: '',
-    frequencia_tratamento: '',
-    dados_compartilhados: false,
-    com_quem_compartilhado: '',
-    finalidade: '',
-    base_legal: '',
-    forma_coleta_consentimento: '',
-    fonte_dados: '',
-    categoria_titular: '',
-    local_tipo: '',
-    local_armazenamento: '',
-    prazo_retencao: '',
-    responsavel: '',
-    medidas_seguranca: '',
-    necessita_ripd: 'automatico',
-    nivel_risco: 'baixo',
-    status_registro: 'rascunho',
+    data_categories: [],
+    data_description: '',
+    processing_frequency: '',
+    data_shared: false,
+    shared_with: '',
+    purpose: '',
+    legal_basis: '',
+    consent_collection_method: '',
+    data_source: '',
+    data_subject_category: '',
+    storage_type: '',
+    storage_location: '',
+    retention_period: '',
+    responsible: '',
+    security_measures: '',
+    requires_dpia: 'automatic',
+    risk_level: 'low',
+    record_status: 'draft',
   }
 }
 
 // ─── Cálculo de risco ──────────────────────────────────────────────────────
 
 function calcularRisco(data: FormData): 'baixo' | 'medio' | 'alto' {
-  const temSensiveis = data.categorias_dados.includes('dados_sensiveis')
-  const semBaseLegal = !data.base_legal
+  const temSensiveis = data.data_categories.includes('dados_sensiveis')
+  const semBaseLegal = !data.legal_basis
   if (temSensiveis || semBaseLegal) return 'alto'
-  if (data.dados_compartilhados || !data.prazo_retencao) return 'medio'
+  if (data.data_shared || !data.retention_period) return 'medio'
   return 'baixo'
 }
 
 function sugerirRIPD(data: FormData): boolean {
-  return data.categorias_dados.includes('dados_sensiveis') || data.dados_compartilhados
+  return data.data_categories.includes('dados_sensiveis') || data.data_shared
 }
 
 const riscoConfig = {
@@ -161,24 +161,24 @@ function Step1({ data, update }: { data: FormData; update: (f: keyof FormData, v
       <div className="space-y-2">
         <Label>Nome do Processo *</Label>
         <Input
-          value={data.nome_processo}
-          onChange={e => update('nome_processo', e.target.value)}
+          value={data.process_name}
+          onChange={e => update('process_name', e.target.value)}
           placeholder="Ex: Gestão de Recursos Humanos, Atendimento ao Cliente..."
         />
       </div>
       <div className="space-y-2">
         <Label>Setor Responsável</Label>
         <Input
-          value={data.setor_responsavel}
-          onChange={e => update('setor_responsavel', e.target.value)}
+          value={data.responsible_department}
+          onChange={e => update('responsible_department', e.target.value)}
           placeholder="Ex: RH, Comercial, TI, Financeiro..."
         />
       </div>
       <div className="space-y-2">
         <Label>Descrição do Processo</Label>
         <Textarea
-          value={data.descricao_processo}
-          onChange={e => update('descricao_processo', e.target.value)}
+          value={data.process_description}
+          onChange={e => update('process_description', e.target.value)}
           placeholder="Descreva brevemente o processo e como ele envolve dados pessoais..."
           rows={4}
         />
@@ -188,7 +188,7 @@ function Step1({ data, update }: { data: FormData; update: (f: keyof FormData, v
 }
 
 function Step2({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
-  const fases = data.fases_ciclo_vida as Record<string, Fase>
+  const fases = data.lifecycle_phases as Record<string, Fase>
 
   const toggleFase = (faseId: string, field: keyof Fase, value: boolean) => {
     const updated = {
@@ -198,7 +198,7 @@ function Step2({ data, update }: { data: FormData; update: (f: keyof FormData, v
     if (field === 'ativo' && !value) {
       updated[faseId] = { ativo: false, controlador: false, operador: false }
     }
-    update('fases_ciclo_vida', updated)
+    update('lifecycle_phases', updated)
   }
 
   return (
@@ -240,9 +240,9 @@ function Step3({ data, update }: { data: FormData; update: (f: keyof FormData, v
   const [tooltip, setTooltip] = useState<string | null>(null)
 
   const toggle = (id: string) => {
-    const current = data.categorias_dados
+    const current = data.data_categories
     const next = current.includes(id) ? current.filter(c => c !== id) : [...current, id]
-    update('categorias_dados', next)
+    update('data_categories', next)
   }
 
   return (
@@ -250,7 +250,7 @@ function Step3({ data, update }: { data: FormData; update: (f: keyof FormData, v
       <p className="text-sm text-gray-500">Selecione as categorias de dados pessoais tratados neste processo.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {CATEGORIAS.map(cat => {
-          const selected = data.categorias_dados.includes(cat.id)
+          const selected = data.data_categories.includes(cat.id)
           const isSensivel = cat.id === 'dados_sensiveis'
           return (
             <button
@@ -287,7 +287,7 @@ function Step3({ data, update }: { data: FormData; update: (f: keyof FormData, v
           )
         })}
       </div>
-      {data.categorias_dados.includes('dados_sensiveis') && (
+      {data.data_categories.includes('dados_sensiveis') && (
         <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
           <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
           <span><strong>Dados sensíveis:</strong> exigem maior cuidado jurídico. O nível de risco será classificado como <strong>Alto</strong> automaticamente.</span>
@@ -296,8 +296,8 @@ function Step3({ data, update }: { data: FormData; update: (f: keyof FormData, v
       <div className="space-y-2">
         <Label>Descrição adicional dos dados</Label>
         <Textarea
-          value={data.descricao_dados}
-          onChange={e => update('descricao_dados', e.target.value)}
+          value={data.data_description}
+          onChange={e => update('data_description', e.target.value)}
           placeholder="Detalhe os dados específicos tratados, se necessário..."
           rows={3}
         />
@@ -316,9 +316,9 @@ function Step4({ data, update }: { data: FormData; update: (f: keyof FormData, v
             <button
               key={freq}
               type="button"
-              onClick={() => update('frequencia_tratamento', freq.toLowerCase())}
+              onClick={() => update('processing_frequency', freq.toLowerCase())}
               className={`rounded-lg border p-3 text-sm font-medium transition-colors ${
-                data.frequencia_tratamento === freq.toLowerCase()
+                data.processing_frequency === freq.toLowerCase()
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-700'
               }`}
@@ -339,9 +339,9 @@ function Step4({ data, update }: { data: FormData; update: (f: keyof FormData, v
             <button
               key={String(opt.value)}
               type="button"
-              onClick={() => update('dados_compartilhados', opt.value)}
+              onClick={() => update('data_shared', opt.value)}
               className={`flex-1 rounded-lg border p-3 text-sm font-medium transition-colors ${
-                data.dados_compartilhados === opt.value
+                data.data_shared === opt.value
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-700'
               }`}
@@ -350,12 +350,12 @@ function Step4({ data, update }: { data: FormData; update: (f: keyof FormData, v
             </button>
           ))}
         </div>
-        {data.dados_compartilhados && (
+        {data.data_shared && (
           <div className="space-y-2">
             <Label>Com quem são compartilhados?</Label>
             <Input
-              value={data.com_quem_compartilhado}
-              onChange={e => update('com_quem_compartilhado', e.target.value)}
+              value={data.shared_with}
+              onChange={e => update('shared_with', e.target.value)}
               placeholder="Ex: Operadoras de saúde, parceiros comerciais, autoridades..."
             />
             <div className="flex items-start gap-2 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-xs text-yellow-700">
@@ -375,8 +375,8 @@ function Step5({ data, update }: { data: FormData; update: (f: keyof FormData, v
       <div className="space-y-2">
         <Label>Finalidade do Tratamento *</Label>
         <Textarea
-          value={data.finalidade}
-          onChange={e => update('finalidade', e.target.value)}
+          value={data.purpose}
+          onChange={e => update('purpose', e.target.value)}
           placeholder="Descreva para qual finalidade os dados são tratados. Ex: Gestão de folha de pagamento, envio de comunicações de marketing..."
           rows={3}
         />
@@ -384,7 +384,7 @@ function Step5({ data, update }: { data: FormData; update: (f: keyof FormData, v
 
       <div className="space-y-2">
         <Label>Base Legal *</Label>
-        <Select value={data.base_legal} onValueChange={v => update('base_legal', v)}>
+        <Select value={data.legal_basis} onValueChange={v => update('legal_basis', v)}>
           <SelectTrigger>
             <SelectValue placeholder="Selecione a base legal..." />
           </SelectTrigger>
@@ -394,19 +394,19 @@ function Step5({ data, update }: { data: FormData; update: (f: keyof FormData, v
             ))}
           </SelectContent>
         </Select>
-        {!data.base_legal && (
+        {!data.legal_basis && (
           <p className="text-xs text-red-500 flex items-center gap-1">
             <AlertTriangle className="h-3 w-3" /> A ausência de base legal é uma não-conformidade crítica.
           </p>
         )}
       </div>
 
-      {data.base_legal === 'Consentimento do titular' && (
+      {data.legal_basis === 'Consentimento do titular' && (
         <div className="space-y-2">
           <Label>Forma de coleta do consentimento *</Label>
           <Input
-            value={data.forma_coleta_consentimento}
-            onChange={e => update('forma_coleta_consentimento', e.target.value)}
+            value={data.consent_collection_method}
+            onChange={e => update('consent_collection_method', e.target.value)}
             placeholder="Ex: Checkbox no site, termo assinado, WhatsApp..."
           />
           <p className="text-xs text-gray-500">O consentimento deve ser livre, informado, inequívoco e documentado.</p>
@@ -430,9 +430,9 @@ function Step6({ data, update }: { data: FormData; update: (f: keyof FormData, v
             <button
               key={opt.value}
               type="button"
-              onClick={() => update('fonte_dados', opt.value)}
+              onClick={() => update('data_source', opt.value)}
               className={`rounded-lg border p-3 text-sm font-medium transition-colors text-center ${
-                data.fonte_dados === opt.value
+                data.data_source === opt.value
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-700'
               }`}
@@ -457,9 +457,9 @@ function Step6({ data, update }: { data: FormData; update: (f: keyof FormData, v
             <button
               key={opt.value}
               type="button"
-              onClick={() => update('categoria_titular', opt.value)}
+              onClick={() => update('data_subject_category', opt.value)}
               className={`rounded-lg border p-3 text-sm font-medium transition-colors ${
-                data.categoria_titular === opt.value
+                data.data_subject_category === opt.value
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-700'
               }`}
@@ -488,9 +488,9 @@ function Step7({ data, update }: { data: FormData; update: (f: keyof FormData, v
             <button
               key={opt.value}
               type="button"
-              onClick={() => update('local_tipo', opt.value)}
+              onClick={() => update('storage_type', opt.value)}
               className={`rounded-lg border p-3 text-sm font-medium transition-colors ${
-                data.local_tipo === opt.value
+                data.storage_type === opt.value
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-700'
               }`}
@@ -504,8 +504,8 @@ function Step7({ data, update }: { data: FormData; update: (f: keyof FormData, v
       <div className="space-y-2">
         <Label>Onde exatamente? *</Label>
         <Input
-          value={data.local_armazenamento}
-          onChange={e => update('local_armazenamento', e.target.value)}
+          value={data.storage_location}
+          onChange={e => update('storage_location', e.target.value)}
           placeholder="Ex: Servidor interno, AWS S3, Google Drive, Planilha Excel..."
         />
       </div>
@@ -514,11 +514,11 @@ function Step7({ data, update }: { data: FormData; update: (f: keyof FormData, v
         <div className="space-y-2">
           <Label>Prazo de retenção</Label>
           <Input
-            value={data.prazo_retencao}
-            onChange={e => update('prazo_retencao', e.target.value)}
+            value={data.retention_period}
+            onChange={e => update('retention_period', e.target.value)}
             placeholder="Ex: 5 anos, enquanto vigente o contrato..."
           />
-          {!data.prazo_retencao && (
+          {!data.retention_period && (
             <p className="text-xs text-yellow-600 flex items-center gap-1">
               <AlertTriangle className="h-3 w-3" /> Sem prazo definido aumenta o risco.
             </p>
@@ -527,8 +527,8 @@ function Step7({ data, update }: { data: FormData; update: (f: keyof FormData, v
         <div className="space-y-2">
           <Label>Responsável pelo tratamento</Label>
           <Input
-            value={data.responsavel}
-            onChange={e => update('responsavel', e.target.value)}
+            value={data.responsible}
+            onChange={e => update('responsible', e.target.value)}
             placeholder="Nome ou setor..."
           />
         </div>
@@ -537,8 +537,8 @@ function Step7({ data, update }: { data: FormData; update: (f: keyof FormData, v
       <div className="space-y-2">
         <Label>Medidas de segurança adotadas</Label>
         <Textarea
-          value={data.medidas_seguranca}
-          onChange={e => update('medidas_seguranca', e.target.value)}
+          value={data.security_measures}
+          onChange={e => update('security_measures', e.target.value)}
           placeholder="Ex: Criptografia, controle de acesso, backup automático, antivírus..."
           rows={3}
         />
@@ -552,7 +552,7 @@ function Step8({ data, update }: { data: FormData; update: (f: keyof FormData, v
   const risco = calcularRisco(data)
   const riscoInfo = riscoConfig[risco]
 
-  const ripdFinal = data.necessita_ripd === 'automatico' ? (ripd_sugerido ? 'sim' : 'nao') : data.necessita_ripd
+  const ripdFinal = data.requires_dpia === 'automatic' ? (ripd_sugerido ? 'sim' : 'nao') : data.requires_dpia
 
   return (
     <div className="space-y-5">
@@ -566,10 +566,10 @@ function Step8({ data, update }: { data: FormData; update: (f: keyof FormData, v
           <Badge variant={riscoInfo.badge}>{riscoInfo.label}</Badge>
         </div>
         <div className="mt-2 space-y-1 text-xs text-gray-600">
-          {data.categorias_dados.includes('dados_sensiveis') && <p>• Dados sensíveis identificados → risco elevado</p>}
-          {!data.base_legal && <p>• Sem base legal definida → alerta crítico</p>}
-          {data.dados_compartilhados && <p>• Compartilhamento com terceiros → risco aumentado</p>}
-          {!data.prazo_retencao && <p>• Sem prazo de retenção definido</p>}
+          {data.data_categories.includes('dados_sensiveis') && <p>• Dados sensíveis identificados → risco elevado</p>}
+          {!data.legal_basis && <p>• Sem base legal definida → alerta crítico</p>}
+          {data.data_shared && <p>• Compartilhamento com terceiros → risco aumentado</p>}
+          {!data.retention_period && <p>• Sem prazo de retenção definido</p>}
           {risco === 'baixo' && <p>• Nenhum fator de risco crítico identificado</p>}
         </div>
       </div>
@@ -577,7 +577,7 @@ function Step8({ data, update }: { data: FormData; update: (f: keyof FormData, v
       {/* RIPD */}
       <div className="space-y-3">
         <Label>Necessita de RIPD (Relatório de Impacto)?</Label>
-        {ripd_sugerido && data.necessita_ripd === 'automatico' && (
+        {ripd_sugerido && data.requires_dpia === 'automatic' && (
           <div className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 border border-orange-200 text-xs text-orange-700">
             <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
             <span>O sistema sugere <strong>SIM</strong> com base nos dados identificados (dados sensíveis ou compartilhamento com terceiros).</span>
@@ -585,16 +585,16 @@ function Step8({ data, update }: { data: FormData; update: (f: keyof FormData, v
         )}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { value: 'automatico', label: `Automático (${ripd_sugerido ? 'Sim' : 'Não'})` },
+            { value: 'automatic', label: `Automático (${ripd_sugerido ? 'Sim' : 'Não'})` },
             { value: 'sim', label: 'Sim' },
             { value: 'nao', label: 'Não' },
           ].map(opt => (
             <button
               key={opt.value}
               type="button"
-              onClick={() => update('necessita_ripd', opt.value)}
+              onClick={() => update('requires_dpia', opt.value)}
               className={`rounded-lg border p-3 text-sm font-medium transition-colors ${
-                data.necessita_ripd === opt.value
+                data.requires_dpia === opt.value
                   ? 'border-blue-500 bg-blue-50 text-blue-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-700'
               }`}
@@ -613,12 +613,12 @@ function Step8({ data, update }: { data: FormData; update: (f: keyof FormData, v
 
 function Step9({ data, risco }: { data: FormData; risco: ReturnType<typeof calcularRisco> }) {
   const riscoInfo = riscoConfig[risco]
-  const fasesAtivas = Object.entries(data.fases_ciclo_vida as Record<string, Fase>)
+  const fasesAtivas = Object.entries(data.lifecycle_phases as Record<string, Fase>)
     .filter(([, f]) => f.ativo)
     .map(([id]) => FASES.find(f => f.id === id)?.label)
     .filter(Boolean)
 
-  const categoriaLabels = data.categorias_dados.map(
+  const categoriaLabels = data.data_categories.map(
     id => CATEGORIAS.find(c => c.id === id)?.label
   ).filter(Boolean)
 
@@ -643,40 +643,40 @@ function Step9({ data, risco }: { data: FormData; risco: ReturnType<typeof calcu
 
       <div className="space-y-1">
         <SectionTitle>Processo</SectionTitle>
-        <Row label="Nome do processo" value={data.nome_processo} />
-        <Row label="Setor" value={data.setor_responsavel} />
-        <Row label="Descrição" value={data.descricao_processo} />
+        <Row label="Nome do processo" value={data.process_name} />
+        <Row label="Setor" value={data.responsible_department} />
+        <Row label="Descrição" value={data.process_description} />
       </div>
 
       <div className="space-y-1">
         <SectionTitle>Dados e Tratamento</SectionTitle>
         <Row label="Categorias" value={categoriaLabels.join(', ')} />
         <Row label="Fases ativas" value={fasesAtivas.join(', ')} />
-        <Row label="Frequência" value={data.frequencia_tratamento} />
-        <Row label="Compartilhamento" value={data.dados_compartilhados ? `Sim — ${data.com_quem_compartilhado}` : 'Não'} />
+        <Row label="Frequência" value={data.processing_frequency} />
+        <Row label="Compartilhamento" value={data.data_shared ? `Sim — ${data.shared_with}` : 'Não'} />
       </div>
 
       <div className="space-y-1">
         <SectionTitle>Base Legal e Finalidade</SectionTitle>
-        <Row label="Finalidade" value={data.finalidade} />
-        <Row label="Base legal" value={data.base_legal} />
-        {data.forma_coleta_consentimento && (
-          <Row label="Coleta de consentimento" value={data.forma_coleta_consentimento} />
+        <Row label="Finalidade" value={data.purpose} />
+        <Row label="Base legal" value={data.legal_basis} />
+        {data.consent_collection_method && (
+          <Row label="Coleta de consentimento" value={data.consent_collection_method} />
         )}
       </div>
 
       <div className="space-y-1">
         <SectionTitle>Titular e Armazenamento</SectionTitle>
-        <Row label="Fonte dos dados" value={data.fonte_dados} />
-        <Row label="Categoria do titular" value={data.categoria_titular} />
-        <Row label="Tipo de armazenamento" value={data.local_tipo} />
-        <Row label="Local" value={data.local_armazenamento} />
-        <Row label="Prazo de retenção" value={data.prazo_retencao} />
+        <Row label="Fonte dos dados" value={data.data_source} />
+        <Row label="Categoria do titular" value={data.data_subject_category} />
+        <Row label="Tipo de armazenamento" value={data.storage_type} />
+        <Row label="Local" value={data.storage_location} />
+        <Row label="Prazo de retenção" value={data.retention_period} />
       </div>
 
       <div className="space-y-1">
         <SectionTitle>Impacto</SectionTitle>
-        <Row label="RIPD" value={data.necessita_ripd === 'automatico' ? `Automático (${sugerirRIPD(data) ? 'Sim' : 'Não'})` : data.necessita_ripd} />
+        <Row label="RIPD" value={data.requires_dpia === 'automatic' ? `Automático (${sugerirRIPD(data) ? 'Sim' : 'Não'})` : data.requires_dpia} />
       </div>
     </div>
   )
@@ -685,12 +685,12 @@ function Step9({ data, risco }: { data: FormData; risco: ReturnType<typeof calcu
 // ─── Wizard principal ──────────────────────────────────────────────────────
 
 interface WizardProps {
-  empresaId: string
+  companyId: string
   initialData?: Partial<FormData>
   id?: string
 }
 
-export function InventarioWizard({ empresaId, initialData, id }: WizardProps) {
+export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [data, setData] = useState<FormData>({ ...defaultData(), ...initialData })
@@ -701,15 +701,15 @@ export function InventarioWizard({ empresaId, initialData, id }: WizardProps) {
 
   const risco = calcularRisco(data)
 
-  const handleSave = async (status: 'rascunho' | 'completo') => {
+  const handleSave = async (status: 'draft' | 'complete') => {
     setSaving(true)
     try {
       await salvarInventarioProfissional({
         ...data,
-        empresa_id: empresaId,
+        company_id: companyId,
         id,
-        nivel_risco: risco,
-        status_registro: status,
+        risk_level: risco,
+        record_status: status,
       })
     } catch (e) {
       setSaving(false)
@@ -734,7 +734,7 @@ export function InventarioWizard({ empresaId, initialData, id }: WizardProps) {
     <div className="max-w-3xl space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <button onClick={() => router.push('/inventario')} className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-gray-100 transition-colors">
+        <button onClick={() => router.push('/inventory')} className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-gray-100 transition-colors">
           <ChevronLeft className="h-5 w-5 text-gray-600" />
         </button>
         <div>
@@ -803,8 +803,8 @@ export function InventarioWizard({ empresaId, initialData, id }: WizardProps) {
         <div className="flex gap-2">
           <Button
             variant="ghost"
-            onClick={() => handleSave('rascunho')}
-            disabled={saving || !data.nome_processo}
+            onClick={() => handleSave('draft')}
+            disabled={saving || !data.process_name}
             className="text-gray-500"
           >
             Salvar rascunho
@@ -816,8 +816,8 @@ export function InventarioWizard({ empresaId, initialData, id }: WizardProps) {
             </Button>
           ) : (
             <Button
-              onClick={() => handleSave('completo')}
-              disabled={saving || !data.nome_processo || !data.base_legal || !data.finalidade}
+              onClick={() => handleSave('complete')}
+              disabled={saving || !data.process_name || !data.legal_basis || !data.purpose}
             >
               {saving ? 'Salvando...' : 'Salvar Inventário'}
             </Button>

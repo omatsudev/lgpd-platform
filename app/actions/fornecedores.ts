@@ -6,32 +6,32 @@ import { createClient } from '@/lib/supabase/server'
 
 export type FornecedorData = {
   id?: string
-  empresa_id: string
-  nome: string
-  cnpj: string
+  company_id: string
+  name: string
+  tax_id: string
   site: string
-  contato_nome: string
-  contato_email: string
-  contato_telefone: string
-  pais: string
-  categoria: string
-  tipo_acesso: string
-  dados_acessados: string[]
-  finalidade_compartilhamento: string
-  base_legal_compartilhamento: string
-  possui_contrato: boolean
-  possui_dpa: boolean
-  data_assinatura_dpa: string
-  url_contrato: string
-  status_diligencia: string
-  data_ultima_avaliacao: string
-  data_proxima_avaliacao: string
-  nivel_risco: string
-  observacoes: string
-  transferencia_internacional: boolean
-  pais_destino: string
-  mecanismo_transferencia: string
-  ativo: boolean
+  contact_name: string
+  contact_email: string
+  contact_phone: string
+  country: string
+  category: string
+  access_type: string
+  accessed_data: string[]
+  sharing_purpose: string
+  sharing_legal_basis: string
+  has_contract: boolean
+  has_dpa: boolean
+  dpa_signing_date: string
+  contract_url: string
+  due_diligence_status: string
+  last_assessment_date: string
+  next_assessment_date: string
+  risk_level: string
+  notes: string
+  international_transfer: boolean
+  destination_country: string
+  transfer_mechanism: string
+  active: boolean
 }
 
 export async function salvarFornecedor(data: FornecedorData) {
@@ -40,38 +40,38 @@ export async function salvarFornecedor(data: FornecedorData) {
   if (!user) throw new Error('Não autenticado')
 
   const payload = {
-    empresa_id: data.empresa_id,
-    nome: data.nome,
-    cnpj: data.cnpj || null,
+    company_id: data.company_id,
+    name: data.name,
+    tax_id: data.tax_id || null,
     site: data.site || null,
-    contato_nome: data.contato_nome || null,
-    contato_email: data.contato_email || null,
-    contato_telefone: data.contato_telefone || null,
-    pais: data.pais || 'Brasil',
-    categoria: data.categoria,
-    tipo_acesso: data.tipo_acesso,
-    dados_acessados: data.dados_acessados,
-    finalidade_compartilhamento: data.finalidade_compartilhamento || null,
-    base_legal_compartilhamento: data.base_legal_compartilhamento || null,
-    possui_contrato: data.possui_contrato,
-    possui_dpa: data.possui_dpa,
-    data_assinatura_dpa: data.data_assinatura_dpa || null,
-    url_contrato: data.url_contrato || null,
-    status_diligencia: data.status_diligencia,
-    data_ultima_avaliacao: data.data_ultima_avaliacao || null,
-    data_proxima_avaliacao: data.data_proxima_avaliacao || null,
-    nivel_risco: data.nivel_risco,
-    observacoes: data.observacoes || null,
-    transferencia_internacional: data.transferencia_internacional,
-    pais_destino: data.pais_destino || null,
-    mecanismo_transferencia: data.mecanismo_transferencia || null,
-    ativo: data.ativo,
+    contact_name: data.contact_name || null,
+    contact_email: data.contact_email || null,
+    contact_phone: data.contact_phone || null,
+    country: data.country || 'Brasil',
+    category: data.category,
+    access_type: data.access_type,
+    accessed_data: data.accessed_data,
+    sharing_purpose: data.sharing_purpose || null,
+    sharing_legal_basis: data.sharing_legal_basis || null,
+    has_contract: data.has_contract,
+    has_dpa: data.has_dpa,
+    dpa_signing_date: data.dpa_signing_date || null,
+    contract_url: data.contract_url || null,
+    due_diligence_status: data.due_diligence_status,
+    last_assessment_date: data.last_assessment_date || null,
+    next_assessment_date: data.next_assessment_date || null,
+    risk_level: data.risk_level,
+    notes: data.notes || null,
+    international_transfer: data.international_transfer,
+    destination_country: data.destination_country || null,
+    transfer_mechanism: data.transfer_mechanism || null,
+    active: data.active,
   }
 
   if (data.id) {
-    await supabase.from('fornecedores').update(payload).eq('id', data.id)
+    await supabase.from('suppliers').update(payload).eq('id', data.id)
   } else {
-    await supabase.from('fornecedores').insert({ ...payload, created_by: user.id })
+    await supabase.from('suppliers').insert({ ...payload, created_by: user.id })
   }
 
   revalidatePath('/fornecedores')
@@ -84,7 +84,7 @@ export async function deletarFornecedor(formData: FormData) {
   if (!user) throw new Error('Não autenticado')
 
   const id = formData.get('id') as string
-  await supabase.from('fornecedores').delete().eq('id', id)
+  await supabase.from('suppliers').delete().eq('id', id)
 
   revalidatePath('/fornecedores')
   redirect('/fornecedores')

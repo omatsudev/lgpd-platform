@@ -5,30 +5,30 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { SearchInput } from '@/components/ui/search-input'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 
 export default async function TreinamentosPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
   const { q } = await searchParams
 
   let query = supabase
-    .from('treinamentos')
-    .select('*, treinamento_colaboradores(status)')
-    .eq('empresa_id', empresaId ?? '')
-  if (q) query = query.or(`titulo.ilike.%${q}%,descricao.ilike.%${q}%`)
+    .from('trainings')
+    .select('*, training_employees(status)')
+    .eq('company_id', companyId ?? '')
+  if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
 
-  const { data } = empresaId
+  const { data } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
   const treinamentos = (data ?? []).map((t: any) => {
-    const colabs = t.treinamento_colaboradores ?? []
+    const colabs = t.training_employees ?? []
     return {
       ...t,
       total_colaboradores: colabs.length,
-      concluidos: colabs.filter((c: any) => c.status === 'concluido').length,
-      em_andamento: colabs.filter((c: any) => c.status === 'em_andamento').length,
-      nao_iniciados: colabs.filter((c: any) => c.status === 'nao_iniciado').length,
+      concluidos: colabs.filter((c: any) => c.status === 'completed').length,
+      em_andamento: colabs.filter((c: any) => c.status === 'in_progress').length,
+      nao_iniciados: colabs.filter((c: any) => c.status === 'not_started').length,
     }
   })
 
@@ -62,8 +62,8 @@ export default async function TreinamentosPage({ searchParams }: { searchParams:
                 <CardContent className="pt-5">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="space-y-2 flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900">{t.titulo}</h3>
-                      {t.descricao && <p className="text-sm text-gray-500">{t.descricao}</p>}
+                      <h3 className="font-semibold text-gray-900">{t.title}</h3>
+                      {t.description && <p className="text-sm text-gray-500">{t.description}</p>}
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="success">{t.concluidos} concluídos</Badge>
                         <Badge variant="warning">{t.em_andamento} em andamento</Badge>

@@ -6,18 +6,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { salvarEmpresa } from '@/app/actions/empresas'
 
 export default async function EmpresaFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
-  const { supabase } = await getUserEmpresa()
+  const { supabase } = await getUserCompany()
 
   let empresa: any = null
   if (!isNew) {
     const { data } = await supabase
-      .from('empresas')
+      .from('companies')
       .select('*')
       .eq('id', id)
       .single()
@@ -32,7 +32,7 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
           <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Nova Empresa' : empresa?.nome}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Nova Empresa' : empresa?.name}</h1>
           <p className="text-sm text-gray-500">{isNew ? 'Cadastrar empresa para gerenciar' : 'Gerenciar adequação LGPD'}</p>
         </div>
       </div>
@@ -42,9 +42,9 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
           <CardContent className="pt-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold text-blue-800">Adequação LGPD</span>
-              <span className="text-xl font-bold text-blue-600">{empresa.percentual_adequacao ?? 0}%</span>
+              <span className="text-xl font-bold text-blue-600">{empresa.compliance_score ?? 0}%</span>
             </div>
-            <Progress value={empresa.percentual_adequacao ?? 0} />
+            <Progress value={empresa.compliance_score ?? 0} />
           </CardContent>
         </Card>
       )}
@@ -57,17 +57,17 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Razão Social</Label>
-                <Input name="nome" defaultValue={empresa?.nome ?? ''} placeholder="Nome da empresa" required />
+                <Input name="name" defaultValue={empresa?.name ?? ''} placeholder="Nome da empresa" required />
               </div>
               <div className="space-y-2">
                 <Label>CNPJ</Label>
-                <Input name="cnpj" defaultValue={empresa?.cnpj ?? ''} placeholder="00.000.000/0001-00" />
+                <Input name="tax_id" defaultValue={empresa?.tax_id ?? ''} placeholder="00.000.000/0001-00" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Setor</Label>
-                <Input name="setor" defaultValue={empresa?.setor ?? ''} placeholder="Ex: Saúde, Varejo..." />
+                <Input name="sector" defaultValue={empresa?.sector ?? ''} placeholder="Ex: Saúde, Varejo..." />
               </div>
               <div className="space-y-2">
                 <Label>Slug (URL pública)</Label>

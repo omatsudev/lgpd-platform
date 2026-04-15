@@ -4,11 +4,11 @@ import { Bell, ChevronDown, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface HeaderProps {
-  empresaNome?: string
+  companyName?: string
   userName?: string
 }
 
-export function Header({ empresaNome = 'Minha Empresa', userName = 'Usuário' }: HeaderProps) {
+export function Header({ companyName = 'Minha Empresa', userName = 'Usuário' }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-gray-200 bg-white px-4 md:px-6 shadow-sm">
       {/* Spacer for mobile hamburger button */}
@@ -16,7 +16,7 @@ export function Header({ empresaNome = 'Minha Empresa', userName = 'Usuário' }:
 
       <div className="flex items-center gap-2 text-sm text-gray-600 min-w-0">
         <Building2 className="h-4 w-4 flex-shrink-0" style={{ color: '#0f2d5e' }} />
-        <span className="font-semibold truncate" style={{ color: '#0f2d5e' }}>{empresaNome}</span>
+        <span className="font-semibold truncate" style={{ color: '#0f2d5e' }}>{companyName}</span>
       </div>
 
       <div className="ml-auto flex items-center gap-2">

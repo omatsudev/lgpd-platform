@@ -8,27 +8,27 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { salvarTreinamento, adicionarColaborador } from '@/app/actions/treinamentos'
 
 const statusMap: Record<string, 'success' | 'warning' | 'secondary'> = {
-  concluido: 'success', em_andamento: 'warning', nao_iniciado: 'secondary',
+  completed: 'success', in_progress: 'warning', not_started: 'secondary',
 }
 const statusLabel: Record<string, string> = {
-  concluido: 'Concluído', em_andamento: 'Em andamento', nao_iniciado: 'Não iniciado',
+  completed: 'Concluído', in_progress: 'Em andamento', not_started: 'Não iniciado',
 }
 
 export default async function TreinamentoFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
 
   let treinamento: any = null
   let colaboradores: any[] = []
 
   if (!isNew) {
     const { data: t } = await supabase
-      .from('treinamentos')
+      .from('trainings')
       .select('*')
       .eq('id', id)
       .single()
@@ -36,9 +36,9 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
     treinamento = t
 
     const { data: colabs } = await supabase
-      .from('treinamento_colaboradores')
+      .from('training_employees')
       .select('*')
-      .eq('treinamento_id', id)
+      .eq('training_id', id)
       .order('created_at', { ascending: false })
     colaboradores = colabs ?? []
   }
@@ -50,7 +50,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
           <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Novo Treinamento' : treinamento?.titulo}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Novo Treinamento' : treinamento?.title}</h1>
           <p className="text-sm text-gray-500">Gerencie conteúdo e acompanhe colaboradores</p>
         </div>
       </div>
@@ -62,14 +62,14 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
           <CardContent>
             <form action={salvarTreinamento} className="space-y-4">
               <input type="hidden" name="id" value={isNew ? '' : id} />
-              <input type="hidden" name="empresa_id" value={empresaId ?? ''} />
+              <input type="hidden" name="company_id" value={companyId ?? ''} />
               <div className="space-y-2">
                 <Label>Título</Label>
-                <Input name="titulo" defaultValue={treinamento?.titulo ?? ''} placeholder="Nome do treinamento" required />
+                <Input name="title" defaultValue={treinamento?.title ?? ''} placeholder="Nome do treinamento" required />
               </div>
               <div className="space-y-2">
                 <Label>Descrição</Label>
-                <Textarea name="descricao" rows={2} defaultValue={treinamento?.descricao ?? ''} placeholder="Descrição do treinamento" />
+                <Textarea name="description" rows={2} defaultValue={treinamento?.description ?? ''} placeholder="Descrição do treinamento" />
               </div>
               <div className="space-y-2">
                 <Label>Vídeo (URL YouTube/Vimeo)</Label>
@@ -92,10 +92,10 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
               <p className="text-sm text-gray-500">Salve o treinamento primeiro para adicionar colaboradores.</p>
             ) : (
               <form action={adicionarColaborador} className="space-y-4">
-                <input type="hidden" name="treinamento_id" value={id} />
+                <input type="hidden" name="training_id" value={id} />
                 <div className="space-y-2">
                   <Label>Nome *</Label>
-                  <Input name="nome" placeholder="Nome do colaborador" required />
+                  <Input name="name" placeholder="Nome do colaborador" required />
                 </div>
                 <div className="space-y-2">
                   <Label>Email</Label>
@@ -128,14 +128,14 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1 gap-2">
                       <div className="min-w-0">
-                        <span className="text-sm font-medium text-gray-900 truncate block">{c.colaborador_nome}</span>
-                        {c.colaborador_whatsapp && (
-                          <span className="text-xs text-gray-400">{c.colaborador_whatsapp}</span>
+                        <span className="text-sm font-medium text-gray-900 truncate block">{c.employee_name}</span>
+                        {c.employee_whatsapp && (
+                          <span className="text-xs text-gray-400">{c.employee_whatsapp}</span>
                         )}
                       </div>
                       <Badge variant={statusMap[c.status] ?? 'secondary'}>{statusLabel[c.status] ?? c.status}</Badge>
                     </div>
-                    <Progress value={c.progresso ?? 0} className="h-1.5" />
+                    <Progress value={c.progress ?? 0} className="h-1.5" />
                   </div>
                   <Button variant="ghost" size="sm" disabled title="WhatsApp não configurado">
                     <Send className="h-3 w-3" />

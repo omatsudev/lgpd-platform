@@ -3,51 +3,51 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/ui/search-input'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 
 export default async function ColaboradoresPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
   const { q } = await searchParams
 
-  // Busca todos os treinamento_colaboradores da empresa via join
-  const { data: treinamentosData } = empresaId
+  // Busca todos os training_employees da empresa via join
+  const { data: treinamentosData } = companyId
     ? await supabase
-        .from('treinamentos')
-        .select('id, treinamento_colaboradores(colaborador_nome, colaborador_email, colaborador_whatsapp, status)')
-        .eq('empresa_id', empresaId)
+        .from('trainings')
+        .select('id, training_employees(employee_name, employee_email, employee_whatsapp, status)')
+        .eq('company_id', companyId)
     : { data: [] }
 
   // Agrupa colaboradores únicos (por email ou nome) e soma treinamentos
   const colaboradoresMap = new Map<string, {
-    nome: string
+    name: string
     email: string | null
     whatsapp: string | null
     total: number
-    concluidos: number
+    completed: number
   }>()
 
   for (const t of (treinamentosData ?? [])) {
-    for (const c of ((t as any).treinamento_colaboradores ?? [])) {
-      const key = c.colaborador_email ?? c.colaborador_nome
+    for (const c of ((t as any).training_employees ?? [])) {
+      const key = c.employee_email ?? c.employee_name
       if (!colaboradoresMap.has(key)) {
         colaboradoresMap.set(key, {
-          nome: c.colaborador_nome,
-          email: c.colaborador_email,
-          whatsapp: c.colaborador_whatsapp,
+          name: c.employee_name,
+          email: c.employee_email,
+          whatsapp: c.employee_whatsapp,
           total: 0,
-          concluidos: 0,
+          completed: 0,
         })
       }
       const col = colaboradoresMap.get(key)!
       col.total += 1
-      if (c.status === 'concluido') col.concluidos += 1
+      if (c.status === 'completed') col.completed += 1
     }
   }
 
   const todos = Array.from(colaboradoresMap.values())
   const colaboradores = q
     ? todos.filter(c =>
-        c.nome.toLowerCase().includes(q.toLowerCase()) ||
+        c.name.toLowerCase().includes(q.toLowerCase()) ||
         c.email?.toLowerCase().includes(q.toLowerCase())
       )
     : todos
@@ -92,16 +92,16 @@ export default async function ColaboradoresPage({ searchParams }: { searchParams
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {colaboradores.map((c, i) => {
-                    const completo = c.concluidos === c.total && c.total > 0
-                    const parcial = c.concluidos > 0
+                    const completo = c.completed === c.total && c.total > 0
+                    const parcial = c.completed > 0
                     return (
                       <tr key={i} className="hover:bg-gray-50 transition-colors">
-                        <td className="py-3 px-4 font-medium text-gray-900">{c.nome}</td>
+                        <td className="py-3 px-4 font-medium text-gray-900">{c.name}</td>
                         <td className="py-3 px-4 text-gray-500 text-xs">{c.email ?? '—'}</td>
                         <td className="py-3 px-4 text-gray-500 text-xs">{c.whatsapp ?? '—'}</td>
                         <td className="py-3 px-4">
                           <Badge variant={completo ? 'success' : parcial ? 'warning' : 'secondary'}>
-                            {c.concluidos}/{c.total}
+                            {c.completed}/{c.total}
                           </Badge>
                         </td>
                         <td className="py-3 px-4 text-right">
@@ -120,18 +120,18 @@ export default async function ColaboradoresPage({ searchParams }: { searchParams
           {/* Mobile cards */}
           <div className="md:hidden grid gap-3">
             {colaboradores.map((c, i) => {
-              const completo = c.concluidos === c.total && c.total > 0
-              const parcial = c.concluidos > 0
+              const completo = c.completed === c.total && c.total > 0
+              const parcial = c.completed > 0
               return (
                 <Card key={i}>
                   <CardContent className="pt-4 pb-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1 min-w-0">
-                        <p className="font-medium text-gray-900">{c.nome}</p>
+                        <p className="font-medium text-gray-900">{c.name}</p>
                         {c.email && <p className="text-xs text-gray-500 truncate">{c.email}</p>}
                         {c.whatsapp && <p className="text-xs text-gray-500">{c.whatsapp}</p>}
                         <Badge variant={completo ? 'success' : parcial ? 'warning' : 'secondary'}>
-                          {c.concluidos}/{c.total} treinamentos
+                          {c.completed}/{c.total} treinamentos
                         </Badge>
                       </div>
                       <Button variant="outline" size="sm" className="flex-shrink-0" disabled>

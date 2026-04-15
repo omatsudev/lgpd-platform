@@ -21,23 +21,23 @@ const BASES_LEGAIS = [
 ]
 
 interface FinalidadeFormProps {
-  empresaId: string
+  companyId: string
   id?: string
   initialData?: any
 }
 
-export function FinalidadeForm({ empresaId, id, initialData }: FinalidadeFormProps) {
+export function FinalidadeForm({ companyId, id, initialData }: FinalidadeFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const [data, setData] = useState({
-    nome: initialData?.nome ?? '',
-    descricao: initialData?.descricao ?? '',
-    base_legal: initialData?.base_legal ?? 'Consentimento do titular',
-    obrigatorio: initialData?.obrigatorio ?? false,
-    ativo: initialData?.ativo ?? true,
+    name: initialData?.name ?? '',
+    description: initialData?.description ?? '',
+    legal_basis: initialData?.legal_basis ?? 'Consentimento do titular',
+    required: initialData?.required ?? false,
+    active: initialData?.active ?? true,
   })
 
   const update = (field: string, value: any) =>
@@ -45,8 +45,8 @@ export function FinalidadeForm({ empresaId, id, initialData }: FinalidadeFormPro
 
   const validate = () => {
     const errs: Record<string, string> = {}
-    if (!data.nome.trim()) errs.nome = 'Nome é obrigatório'
-    if (!data.descricao.trim()) errs.descricao = 'Descrição é obrigatória'
+    if (!data.name.trim()) errs.name = 'Nome é obrigatório'
+    if (!data.description.trim()) errs.description = 'Descrição é obrigatória'
     return errs
   }
 
@@ -56,7 +56,15 @@ export function FinalidadeForm({ empresaId, id, initialData }: FinalidadeFormPro
     setErrors({})
     setSaving(true)
     try {
-      await salvarFinalidade({ ...data, empresa_id: empresaId, id } as FinalidadeData)
+      await salvarFinalidade({
+        id,
+        company_id: companyId,
+        name: data.name,
+        description: data.description,
+        legal_basis: data.legal_basis,
+        required: data.required,
+        active: data.active,
+      })
     } catch { setSaving(false) }
   }
 
@@ -69,31 +77,31 @@ export function FinalidadeForm({ empresaId, id, initialData }: FinalidadeFormPro
       <Card>
         <CardContent className="pt-6 space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="nome">Nome da finalidade *</Label>
+            <Label htmlFor="name">Nome da finalidade *</Label>
             <Input
-              id="nome"
-              value={data.nome}
-              onChange={e => update('nome', e.target.value)}
+              id="name"
+              value={data.name}
+              onChange={e => update('name', e.target.value)}
               placeholder="Ex: Envio de newsletters, Análise de perfil"
             />
-            {errors.nome && <p className="text-xs text-red-500">{errors.nome}</p>}
+            {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="descricao">Descrição (exibida ao titular) *</Label>
+            <Label htmlFor="description">Descrição (exibida ao titular) *</Label>
             <Textarea
-              id="descricao"
-              value={data.descricao}
-              onChange={e => update('descricao', e.target.value)}
+              id="description"
+              value={data.description}
+              onChange={e => update('description', e.target.value)}
               placeholder="Descreva de forma clara e simples para que essa finalidade será usada..."
               rows={3}
             />
-            {errors.descricao && <p className="text-xs text-red-500">{errors.descricao}</p>}
+            {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
           </div>
 
           <div className="space-y-1.5">
             <Label>Base legal</Label>
-            <Select value={data.base_legal} onValueChange={v => update('base_legal', v)}>
+            <Select value={data.legal_basis} onValueChange={v => update('legal_basis', v)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -109,8 +117,8 @@ export function FinalidadeForm({ empresaId, id, initialData }: FinalidadeFormPro
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
-                checked={data.obrigatorio}
-                onChange={e => update('obrigatorio', e.target.checked)}
+                checked={data.required}
+                onChange={e => update('required', e.target.checked)}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm text-gray-700">
@@ -121,8 +129,8 @@ export function FinalidadeForm({ empresaId, id, initialData }: FinalidadeFormPro
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
-                checked={data.ativo}
-                onChange={e => update('ativo', e.target.checked)}
+                checked={data.active}
+                onChange={e => update('active', e.target.checked)}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm text-gray-700">
@@ -144,7 +152,7 @@ export function FinalidadeForm({ empresaId, id, initialData }: FinalidadeFormPro
           </form>
         )}
         <div className="flex gap-3 sm:ml-auto">
-          <Button variant="outline" onClick={() => router.push('/consentimentos?aba=finalidades')} disabled={saving}>
+          <Button variant="outline" onClick={() => router.push('/consents?tab=purposes')} disabled={saving}>
             Cancelar
           </Button>
           <Button onClick={handleSave} disabled={saving}>

@@ -14,22 +14,22 @@ import { Building2, Database, FileCheck, ShieldCheck, Globe } from 'lucide-react
 // ─── Constantes ────────────────────────────────────────────────────────────
 
 const CATEGORIAS = [
-  { value: 'tecnologia', label: 'Tecnologia (SaaS, cloud, TI)' },
-  { value: 'saude', label: 'Saúde (plano, clínica, lab)' },
-  { value: 'financeiro', label: 'Financeiro (banco, pagamentos)' },
+  { value: 'technology', label: 'Tecnologia (SaaS, cloud, TI)' },
+  { value: 'healthcare', label: 'Saúde (plano, clínica, lab)' },
+  { value: 'financial', label: 'Financeiro (banco, pagamentos)' },
   { value: 'rh', label: 'RH (folha, recrutamento)' },
   { value: 'marketing', label: 'Marketing (CRM, e-mail, ads)' },
-  { value: 'juridico', label: 'Jurídico' },
-  { value: 'contabilidade', label: 'Contabilidade' },
-  { value: 'logistica', label: 'Logística' },
-  { value: 'outro', label: 'Outro' },
+  { value: 'legal', label: 'Jurídico' },
+  { value: 'accounting', label: 'Contabilidade' },
+  { value: 'logistics', label: 'Logística' },
+  { value: 'other', label: 'Outro' },
 ]
 
 const TIPOS_ACESSO = [
-  { value: 'operador', label: 'Operador', desc: 'Trata dados em nome da sua empresa' },
-  { value: 'controlador_conjunto', label: 'Controlador Conjunto', desc: 'Decide junto sobre o tratamento' },
-  { value: 'suboperador', label: 'Suboperador', desc: 'Contratado pelo operador para tratar dados' },
-  { value: 'sem_acesso_dados', label: 'Sem acesso a dados', desc: 'Não acessa dados pessoais' },
+  { value: 'processor', label: 'Operador', desc: 'Trata dados em nome da sua empresa' },
+  { value: 'joint_controller', label: 'Controlador Conjunto', desc: 'Decide junto sobre o tratamento' },
+  { value: 'sub_processor', label: 'Suboperador', desc: 'Contratado pelo operador para tratar dados' },
+  { value: 'no_data_access', label: 'Sem acesso a dados', desc: 'Não acessa dados pessoais' },
 ]
 
 const DADOS_CATEGORIAS = [
@@ -60,18 +60,44 @@ const BASES_LEGAIS = [
   'Exercício regular de direitos',
 ]
 
-type FormState = Omit<FornecedorData, 'empresa_id' | 'id'>
+type FormState = {
+  name: string
+  tax_id: string
+  site: string
+  contact_name: string
+  contact_email: string
+  contact_phone: string
+  country: string
+  category: string
+  access_type: string
+  accessed_data: string[]
+  sharing_purpose: string
+  sharing_legal_basis: string
+  has_contract: boolean
+  has_dpa: boolean
+  dpa_signing_date: string
+  contract_url: string
+  due_diligence_status: string
+  last_assessment_date: string
+  next_assessment_date: string
+  risk_level: string
+  notes: string
+  international_transfer: boolean
+  destination_country: string
+  transfer_mechanism: string
+  active: boolean
+}
 
 function defaultState(): FormState {
   return {
-    nome: '', cnpj: '', site: '', contato_nome: '', contato_email: '', contato_telefone: '',
-    pais: 'Brasil', categoria: '', tipo_acesso: 'operador',
-    dados_acessados: [], finalidade_compartilhamento: '', base_legal_compartilhamento: '',
-    possui_contrato: false, possui_dpa: false, data_assinatura_dpa: '', url_contrato: '',
-    status_diligencia: 'pendente', data_ultima_avaliacao: '', data_proxima_avaliacao: '',
-    nivel_risco: 'medio', observacoes: '',
-    transferencia_internacional: false, pais_destino: '', mecanismo_transferencia: '',
-    ativo: true,
+    name: '', tax_id: '', site: '', contact_name: '', contact_email: '', contact_phone: '',
+    country: 'Brasil', category: '', access_type: 'processor',
+    accessed_data: [], sharing_purpose: '', sharing_legal_basis: '',
+    has_contract: false, has_dpa: false, dpa_signing_date: '', contract_url: '',
+    due_diligence_status: 'pending', last_assessment_date: '', next_assessment_date: '',
+    risk_level: 'medium', notes: '',
+    international_transfer: false, destination_country: '', transfer_mechanism: '',
+    active: true,
   }
 }
 
@@ -107,12 +133,12 @@ function CheckBox({ checked, onChange, label, sub }: { checked: boolean; onChang
 // ─── Componente principal ──────────────────────────────────────────────────
 
 interface FornecedorFormProps {
-  empresaId: string
+  companyId: string
   id?: string
   initialData?: any
 }
 
-export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormProps) {
+export function FornecedorForm({ companyId, id, initialData }: FornecedorFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()
@@ -121,31 +147,31 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
   const [data, setData] = useState<FormState>(() => {
     if (!initialData) return defaultState()
     return {
-      nome: initialData.nome ?? '',
-      cnpj: initialData.cnpj ?? '',
+      name: initialData.name ?? '',
+      tax_id: initialData.tax_id ?? '',
       site: initialData.site ?? '',
-      contato_nome: initialData.contato_nome ?? '',
-      contato_email: initialData.contato_email ?? '',
-      contato_telefone: initialData.contato_telefone ?? '',
-      pais: initialData.pais ?? 'Brasil',
-      categoria: initialData.categoria ?? '',
-      tipo_acesso: initialData.tipo_acesso ?? 'operador',
-      dados_acessados: initialData.dados_acessados ?? [],
-      finalidade_compartilhamento: initialData.finalidade_compartilhamento ?? '',
-      base_legal_compartilhamento: initialData.base_legal_compartilhamento ?? '',
-      possui_contrato: initialData.possui_contrato ?? false,
-      possui_dpa: initialData.possui_dpa ?? false,
-      data_assinatura_dpa: initialData.data_assinatura_dpa ?? '',
-      url_contrato: initialData.url_contrato ?? '',
-      status_diligencia: initialData.status_diligencia ?? 'pendente',
-      data_ultima_avaliacao: initialData.data_ultima_avaliacao ?? '',
-      data_proxima_avaliacao: initialData.data_proxima_avaliacao ?? '',
-      nivel_risco: initialData.nivel_risco ?? 'medio',
-      observacoes: initialData.observacoes ?? '',
-      transferencia_internacional: initialData.transferencia_internacional ?? false,
-      pais_destino: initialData.pais_destino ?? '',
-      mecanismo_transferencia: initialData.mecanismo_transferencia ?? '',
-      ativo: initialData.ativo ?? true,
+      contact_name: initialData.contact_name ?? '',
+      contact_email: initialData.contact_email ?? '',
+      contact_phone: initialData.contact_phone ?? '',
+      country: initialData.country ?? 'Brasil',
+      category: initialData.category ?? '',
+      access_type: initialData.access_type ?? 'processor',
+      accessed_data: initialData.accessed_data ?? [],
+      sharing_purpose: initialData.sharing_purpose ?? '',
+      sharing_legal_basis: initialData.sharing_legal_basis ?? '',
+      has_contract: initialData.has_contract ?? false,
+      has_dpa: initialData.has_dpa ?? false,
+      dpa_signing_date: initialData.dpa_signing_date ?? '',
+      contract_url: initialData.contract_url ?? '',
+      due_diligence_status: initialData.due_diligence_status ?? 'pending',
+      last_assessment_date: initialData.last_assessment_date ?? '',
+      next_assessment_date: initialData.next_assessment_date ?? '',
+      risk_level: initialData.risk_level ?? 'medium',
+      notes: initialData.notes ?? '',
+      international_transfer: initialData.international_transfer ?? false,
+      destination_country: initialData.destination_country ?? '',
+      transfer_mechanism: initialData.transfer_mechanism ?? '',
+      active: initialData.active ?? true,
     }
   })
 
@@ -155,16 +181,16 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
   const toggleDado = (dado: string) => {
     setData(prev => ({
       ...prev,
-      dados_acessados: prev.dados_acessados.includes(dado)
-        ? prev.dados_acessados.filter(d => d !== dado)
-        : [...prev.dados_acessados, dado],
+      accessed_data: prev.accessed_data.includes(dado)
+        ? prev.accessed_data.filter(d => d !== dado)
+        : [...prev.accessed_data, dado],
     }))
   }
 
   const validate = () => {
     const errs: Record<string, string> = {}
-    if (!data.nome.trim()) errs.nome = 'Nome é obrigatório'
-    if (!data.categoria) errs.categoria = 'Categoria é obrigatória'
+    if (!data.name.trim()) errs.name = 'Nome é obrigatório'
+    if (!data.category) errs.category = 'Categoria é obrigatória'
     return errs
   }
 
@@ -174,7 +200,35 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
     setErrors({})
     setSaving(true)
     try {
-      await salvarFornecedor({ ...data, empresa_id: empresaId, id })
+      await salvarFornecedor({
+        id,
+        company_id: companyId,
+        name: data.name,
+        tax_id: data.tax_id,
+        site: data.site,
+        contact_name: data.contact_name,
+        contact_email: data.contact_email,
+        contact_phone: data.contact_phone,
+        country: data.country,
+        category: data.category,
+        access_type: data.access_type,
+        accessed_data: data.accessed_data,
+        sharing_purpose: data.sharing_purpose,
+        sharing_legal_basis: data.sharing_legal_basis,
+        has_contract: data.has_contract,
+        has_dpa: data.has_dpa,
+        dpa_signing_date: data.dpa_signing_date,
+        contract_url: data.contract_url,
+        due_diligence_status: data.due_diligence_status,
+        last_assessment_date: data.last_assessment_date,
+        next_assessment_date: data.next_assessment_date,
+        risk_level: data.risk_level,
+        notes: data.notes,
+        international_transfer: data.international_transfer,
+        destination_country: data.destination_country,
+        transfer_mechanism: data.transfer_mechanism,
+        active: data.active,
+      })
     } catch { setSaving(false) }
   }
 
@@ -182,7 +236,7 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
     startDeleting(async () => { await deletarFornecedor(formData) })
   }
 
-  const acessaDados = data.tipo_acesso !== 'sem_acesso_dados'
+  const acessaDados = data.access_type !== 'no_data_access'
 
   return (
     <div className="space-y-6">
@@ -194,48 +248,49 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="nome">Nome *</Label>
-              <Input id="nome" value={data.nome} onChange={e => update('nome', e.target.value)} placeholder="Razão social ou nome comercial" />
-              {errors.nome && <p className="text-xs text-red-500">{errors.nome}</p>}
+              <Label htmlFor="name">Nome *</Label>
+              <Input id="name" value={data.name} onChange={e => update('name', e.target.value)} placeholder="Razão social ou nome comercial" />
+              {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="cnpj">CNPJ</Label>
-              <Input id="cnpj" value={data.cnpj} onChange={e => update('cnpj', e.target.value)} placeholder="00.000.000/0001-00" />
+              <Label htmlFor="tax_id">CNPJ</Label>
+              <Input id="tax_id" value={data.tax_id} onChange={e => update('tax_id', e.target.value)} placeholder="00.000.000/0001-00" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>Categoria *</Label>
-              <Select value={data.categoria} onValueChange={v => update('categoria', v)}>
+              <Select value={data.category} onValueChange={v => update('category', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent>{CATEGORIAS.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
               </Select>
-              {errors.categoria && <p className="text-xs text-red-500">{errors.categoria}</p>}
+              {errors.category && <p className="text-xs text-red-500">{errors.category}</p>}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="site">Site</Label>
               <Input id="site" value={data.site} onChange={e => update('site', e.target.value)} placeholder="https://..." type="url" />
+
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="contato_nome">Contato</Label>
-              <Input id="contato_nome" value={data.contato_nome} onChange={e => update('contato_nome', e.target.value)} placeholder="Nome do responsável" />
+              <Label htmlFor="contact_name">Contato</Label>
+              <Input id="contact_name" value={data.contact_name} onChange={e => update('contact_name', e.target.value)} placeholder="Nome do responsável" />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="contato_email">E-mail</Label>
-              <Input id="contato_email" value={data.contato_email} onChange={e => update('contato_email', e.target.value)} placeholder="contato@fornecedor.com" type="email" />
+              <Label htmlFor="contact_email">E-mail</Label>
+              <Input id="contact_email" value={data.contact_email} onChange={e => update('contact_email', e.target.value)} placeholder="contato@fornecedor.com" type="email" />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="contato_telefone">Telefone</Label>
-              <Input id="contato_telefone" value={data.contato_telefone} onChange={e => update('contato_telefone', e.target.value)} placeholder="(11) 99999-9999" />
+              <Label htmlFor="contact_phone">Telefone</Label>
+              <Input id="contact_phone" value={data.contact_phone} onChange={e => update('contact_phone', e.target.value)} placeholder="(11) 99999-9999" />
             </div>
           </div>
 
           <div className="flex items-center gap-3 pt-1">
-            <CheckBox checked={data.ativo} onChange={v => update('ativo', v)} label="Fornecedor ativo" sub="Desmarcado para fornecedores encerrados" />
+            <CheckBox checked={data.active} onChange={v => update('active', v)} label="Fornecedor ativo" sub="Desmarcado para fornecedores encerrados" />
           </div>
         </CardContent>
       </Card>
@@ -253,9 +308,9 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
                 <button
                   key={t.value}
                   type="button"
-                  onClick={() => update('tipo_acesso', t.value)}
+                  onClick={() => update('access_type', t.value)}
                   className={`p-3 rounded-lg border-2 text-left transition-all ${
-                    data.tipo_acesso === t.value
+                    data.access_type === t.value
                       ? 'border-blue-500 bg-blue-50 text-blue-900'
                       : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                   }`}
@@ -276,7 +331,7 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
                     <label key={d} className="flex items-center gap-2 cursor-pointer select-none p-2 rounded hover:bg-gray-50">
                       <input
                         type="checkbox"
-                        checked={data.dados_acessados.includes(d)}
+                        checked={data.accessed_data.includes(d)}
                         onChange={() => toggleDado(d)}
                         className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
@@ -288,18 +343,18 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="finalidade">Finalidade do compartilhamento</Label>
+                  <Label htmlFor="sharing_purpose">Finalidade do compartilhamento</Label>
                   <Textarea
-                    id="finalidade"
-                    value={data.finalidade_compartilhamento}
-                    onChange={e => update('finalidade_compartilhamento', e.target.value)}
+                    id="sharing_purpose"
+                    value={data.sharing_purpose}
+                    onChange={e => update('sharing_purpose', e.target.value)}
                     placeholder="Para que o fornecedor usa os dados?"
                     rows={2}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Base legal</Label>
-                  <Select value={data.base_legal_compartilhamento} onValueChange={v => update('base_legal_compartilhamento', v)}>
+                  <Select value={data.sharing_legal_basis} onValueChange={v => update('sharing_legal_basis', v)}>
                     <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                     <SelectContent>{BASES_LEGAIS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
                   </Select>
@@ -319,14 +374,14 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
           <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-6">
               <CheckBox
-                checked={data.possui_contrato}
-                onChange={v => update('possui_contrato', v)}
+                checked={data.has_contract}
+                onChange={v => update('has_contract', v)}
                 label="Possui contrato assinado"
                 sub="Contrato de prestação de serviços"
               />
               <CheckBox
-                checked={data.possui_dpa}
-                onChange={v => update('possui_dpa', v)}
+                checked={data.has_dpa}
+                onChange={v => update('has_dpa', v)}
                 label="Possui DPA assinado"
                 sub="Data Processing Agreement / Anexo LGPD"
               />
@@ -334,20 +389,20 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="data_assinatura_dpa">Data de assinatura do DPA</Label>
+                <Label htmlFor="dpa_signing_date">Data de assinatura do DPA</Label>
                 <Input
-                  id="data_assinatura_dpa"
+                  id="dpa_signing_date"
                   type="date"
-                  value={data.data_assinatura_dpa}
-                  onChange={e => update('data_assinatura_dpa', e.target.value)}
+                  value={data.dpa_signing_date}
+                  onChange={e => update('dpa_signing_date', e.target.value)}
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="url_contrato">URL do contrato/DPA</Label>
+                <Label htmlFor="contract_url">URL do contrato/DPA</Label>
                 <Input
-                  id="url_contrato"
-                  value={data.url_contrato}
-                  onChange={e => update('url_contrato', e.target.value)}
+                  id="contract_url"
+                  value={data.contract_url}
+                  onChange={e => update('contract_url', e.target.value)}
                   placeholder="Link para o documento assinado"
                   type="url"
                 />
@@ -366,25 +421,25 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>Status da diligência</Label>
-              <Select value={data.status_diligencia} onValueChange={v => update('status_diligencia', v)}>
+              <Select value={data.due_diligence_status} onValueChange={v => update('due_diligence_status', v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {[
-                    { value: 'pendente', label: 'Pendente' },
-                    { value: 'em_analise', label: 'Em Análise' },
-                    { value: 'aprovado', label: 'Aprovado' },
-                    { value: 'reprovado', label: 'Reprovado' },
-                    { value: 'expirado', label: 'Expirado' },
+                    { value: 'pending', label: 'Pendente' },
+                    { value: 'under_review', label: 'Em Análise' },
+                    { value: 'approved', label: 'Aprovado' },
+                    { value: 'rejected', label: 'Reprovado' },
+                    { value: 'expired', label: 'Expirado' },
                   ].map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
               <Label>Nível de risco</Label>
-              <Select value={data.nivel_risco} onValueChange={v => update('nivel_risco', v)}>
+              <Select value={data.risk_level} onValueChange={v => update('risk_level', v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {['baixo', 'medio', 'alto', 'critico'].map(r => (
+                  {['low', 'medium', 'high', 'critical'].map(r => (
                     <SelectItem key={r} value={r} className="capitalize">{r.charAt(0).toUpperCase() + r.slice(1)}</SelectItem>
                   ))}
                 </SelectContent>
@@ -394,21 +449,21 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="data_ultima_avaliacao">Última avaliação</Label>
-              <Input id="data_ultima_avaliacao" type="date" value={data.data_ultima_avaliacao} onChange={e => update('data_ultima_avaliacao', e.target.value)} />
+              <Label htmlFor="last_assessment_date">Última avaliação</Label>
+              <Input id="last_assessment_date" type="date" value={data.last_assessment_date} onChange={e => update('last_assessment_date', e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="data_proxima_avaliacao">Próxima avaliação</Label>
-              <Input id="data_proxima_avaliacao" type="date" value={data.data_proxima_avaliacao} onChange={e => update('data_proxima_avaliacao', e.target.value)} />
+              <Label htmlFor="next_assessment_date">Próxima avaliação</Label>
+              <Input id="next_assessment_date" type="date" value={data.next_assessment_date} onChange={e => update('next_assessment_date', e.target.value)} />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="observacoes">Observações</Label>
+            <Label htmlFor="notes">Observações</Label>
             <Textarea
-              id="observacoes"
-              value={data.observacoes}
-              onChange={e => update('observacoes', e.target.value)}
+              id="notes"
+              value={data.notes}
+              onChange={e => update('notes', e.target.value)}
               placeholder="Pontos de atenção, histórico de avaliações, questões pendentes..."
               rows={3}
             />
@@ -423,25 +478,25 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
         </CardHeader>
         <CardContent className="space-y-4">
           <CheckBox
-            checked={data.transferencia_internacional}
-            onChange={v => update('transferencia_internacional', v)}
+            checked={data.international_transfer}
+            onChange={v => update('international_transfer', v)}
             label="Envolve transferência internacional de dados"
             sub="O fornecedor processa dados em servidores ou equipes fora do Brasil"
           />
-          {data.transferencia_internacional && (
+          {data.international_transfer && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               <div className="space-y-1.5">
-                <Label htmlFor="pais_destino">País de destino</Label>
+                <Label htmlFor="destination_country">País de destino</Label>
                 <Input
-                  id="pais_destino"
-                  value={data.pais_destino}
-                  onChange={e => update('pais_destino', e.target.value)}
+                  id="destination_country"
+                  value={data.destination_country}
+                  onChange={e => update('destination_country', e.target.value)}
                   placeholder="Ex: Estados Unidos, União Europeia"
                 />
               </div>
               <div className="space-y-1.5">
                 <Label>Mecanismo de transferência</Label>
-                <Select value={data.mecanismo_transferencia} onValueChange={v => update('mecanismo_transferencia', v)}>
+                <Select value={data.transfer_mechanism} onValueChange={v => update('transfer_mechanism', v)}>
                   <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
                     {MECANISMOS_TRANSFERENCIA.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
@@ -464,7 +519,7 @@ export function FornecedorForm({ empresaId, id, initialData }: FornecedorFormPro
           </form>
         )}
         <div className="flex gap-3 sm:ml-auto">
-          <Button variant="outline" onClick={() => router.push('/fornecedores')} disabled={saving}>Cancelar</Button>
+          <Button variant="outline" onClick={() => router.push('/suppliers')} disabled={saving}>Cancelar</Button>
           <Button onClick={handleSave} disabled={saving}>
             {saving ? 'Salvando...' : id ? 'Salvar Alterações' : 'Cadastrar Fornecedor'}
           </Button>

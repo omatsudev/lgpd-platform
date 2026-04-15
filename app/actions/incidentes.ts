@@ -6,26 +6,26 @@ import { createClient } from '@/lib/supabase/server'
 
 export type IncidenteData = {
   id?: string
-  empresa_id: string
-  titulo: string
-  tipo: string
-  severidade: string
+  company_id: string
+  title: string
+  type: string
+  severity: string
   status: string
-  data_ocorrencia: string
-  data_descoberta: string
-  descricao: string
-  dados_afetados: string
-  categorias_dados_afetados: string[]
-  numero_titulares_afetados: string
-  causa_raiz: string
-  medidas_imediatas: string
-  medidas_corretivas: string
-  responsavel: string
-  notificou_anpd: boolean
-  data_notificacao_anpd: string
-  protocolo_anpd: string
-  notificou_titulares: boolean
-  data_notificacao_titulares: string
+  occurrence_date: string
+  discovery_date: string
+  description: string
+  affected_data: string
+  affected_data_categories: string[]
+  affected_subjects_count: string
+  root_cause: string
+  immediate_measures: string
+  corrective_measures: string
+  responsible: string
+  notified_anpd: boolean
+  anpd_notification_date: string
+  anpd_protocol: string
+  notified_subjects: boolean
+  subjects_notification_date: string
 }
 
 export async function salvarIncidente(data: IncidenteData) {
@@ -34,32 +34,32 @@ export async function salvarIncidente(data: IncidenteData) {
   if (!user) throw new Error('Não autenticado')
 
   const payload = {
-    empresa_id: data.empresa_id,
-    titulo: data.titulo,
-    tipo: data.tipo,
-    severidade: data.severidade,
+    company_id: data.company_id,
+    title: data.title,
+    type: data.type,
+    severity: data.severity,
     status: data.status,
-    data_ocorrencia: data.data_ocorrencia || null,
-    data_descoberta: data.data_descoberta,
-    descricao: data.descricao,
-    dados_afetados: data.dados_afetados || null,
-    categorias_dados_afetados: data.categorias_dados_afetados,
-    numero_titulares_afetados: data.numero_titulares_afetados || null,
-    causa_raiz: data.causa_raiz || null,
-    medidas_imediatas: data.medidas_imediatas || null,
-    medidas_corretivas: data.medidas_corretivas || null,
-    responsavel: data.responsavel || null,
-    notificou_anpd: data.notificou_anpd,
-    data_notificacao_anpd: data.data_notificacao_anpd || null,
-    protocolo_anpd: data.protocolo_anpd || null,
-    notificou_titulares: data.notificou_titulares,
-    data_notificacao_titulares: data.data_notificacao_titulares || null,
+    occurrence_date: data.occurrence_date || null,
+    discovery_date: data.discovery_date,
+    description: data.description,
+    affected_data: data.affected_data || null,
+    affected_data_categories: data.affected_data_categories,
+    affected_subjects_count: data.affected_subjects_count || null,
+    root_cause: data.root_cause || null,
+    immediate_measures: data.immediate_measures || null,
+    corrective_measures: data.corrective_measures || null,
+    responsible: data.responsible || null,
+    notified_anpd: data.notified_anpd,
+    anpd_notification_date: data.anpd_notification_date || null,
+    anpd_protocol: data.anpd_protocol || null,
+    notified_subjects: data.notified_subjects,
+    subjects_notification_date: data.subjects_notification_date || null,
   }
 
   if (data.id) {
-    await supabase.from('incidentes').update(payload).eq('id', data.id)
+    await supabase.from('incidents').update(payload).eq('id', data.id)
   } else {
-    await supabase.from('incidentes').insert({ ...payload, created_by: user.id })
+    await supabase.from('incidents').insert({ ...payload, created_by: user.id })
   }
 
   revalidatePath('/incidentes')
@@ -72,7 +72,7 @@ export async function deletarIncidente(formData: FormData) {
   if (!user) throw new Error('Não autenticado')
 
   const id = formData.get('id') as string
-  await supabase.from('incidentes').delete().eq('id', id)
+  await supabase.from('incidents').delete().eq('id', id)
 
   revalidatePath('/incidentes')
   redirect('/incidentes')

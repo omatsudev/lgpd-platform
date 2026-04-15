@@ -4,24 +4,24 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/ui/search-input'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { RiscoMatriz } from '@/components/riscos/matriz'
 
 const categoriaLabel: Record<string, string> = {
-  privacidade: 'Privacidade', seguranca: 'Segurança', legal: 'Legal',
-  operacional: 'Operacional', reputacional: 'Reputacional', tecnologico: 'Tecnológico',
+  privacy: 'Privacidade', security: 'Segurança', legal: 'Legal',
+  operational: 'Operacional', reputational: 'Reputacional', technological: 'Tecnológico',
 }
 
 const estrategiaVariant: Record<string, 'destructive' | 'warning' | 'default' | 'success'> = {
-  evitar: 'destructive', mitigar: 'warning', transferir: 'default', aceitar: 'success',
+  avoid: 'destructive', mitigate: 'warning', transfer: 'default', accept: 'success',
 }
 
 const statusVariant: Record<string, 'secondary' | 'warning' | 'default' | 'success'> = {
-  identificado: 'secondary', em_tratamento: 'warning', monitorando: 'default', encerrado: 'success',
+  identified: 'secondary', under_treatment: 'warning', monitoring: 'default', closed: 'success',
 }
 
 const statusLabel: Record<string, string> = {
-  identificado: 'Identificado', em_tratamento: 'Em Tratamento', monitorando: 'Monitorando', encerrado: 'Encerrado',
+  identified: 'Identificado', under_treatment: 'Em Tratamento', monitoring: 'Monitorando', closed: 'Encerrado',
 }
 
 function nivelRisco(prob: number, imp: number) {
@@ -33,20 +33,20 @@ function nivelRisco(prob: number, imp: number) {
 }
 
 export default async function RiscosPage({ searchParams }: { searchParams: Promise<{ q?: string; aba?: string }> }) {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
   const { q, aba = 'lista' } = await searchParams
 
-  let query = supabase.from('riscos').select('*').eq('empresa_id', empresaId ?? '')
-  if (q) query = query.or(`titulo.ilike.%${q}%,descricao.ilike.%${q}%,responsavel.ilike.%${q}%,categoria.ilike.%${q}%`)
+  let query = supabase.from('risks').select('*').eq('company_id', companyId ?? '')
+  if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%,responsible.ilike.%${q}%,category.ilike.%${q}%`)
 
-  const { data: riscos } = empresaId
+  const { data: riscos } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
   const itens = riscos ?? []
-  const criticos = itens.filter((r: any) => r.probabilidade_inerente * r.impacto_inerente >= 15).length
-  const altos = itens.filter((r: any) => { const s = r.probabilidade_inerente * r.impacto_inerente; return s >= 9 && s < 15 }).length
-  const abertos = itens.filter((r: any) => r.status !== 'encerrado').length
+  const criticos = itens.filter((r: any) => r.inherent_probability * r.inherent_impact >= 15).length
+  const altos = itens.filter((r: any) => { const s = r.inherent_probability * r.inherent_impact; return s >= 9 && s < 15 }).length
+  const abertos = itens.filter((r: any) => r.status !== 'closed').length
 
   return (
     <div className="space-y-5">
@@ -129,22 +129,22 @@ export default async function RiscosPage({ searchParams }: { searchParams: Promi
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {itens.map((item: any) => {
-                        const inerente = nivelRisco(item.probabilidade_inerente, item.impacto_inerente)
-                        const residual = item.probabilidade_residual && item.impacto_residual
-                          ? nivelRisco(item.probabilidade_residual, item.impacto_residual)
+                        const inerente = nivelRisco(item.inherent_probability, item.inherent_impact)
+                        const residual = item.residual_probability && item.residual_impact
+                          ? nivelRisco(item.residual_probability, item.residual_impact)
                           : null
                         return (
                           <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                             <td className="py-3 px-4">
-                              <p className="font-medium text-gray-900 max-w-[200px] truncate">{item.titulo}</p>
-                              {item.responsavel && <p className="text-xs text-gray-400">{item.responsavel}</p>}
+                              <p className="font-medium text-gray-900 max-w-[200px] truncate">{item.title}</p>
+                              {item.responsible && <p className="text-xs text-gray-400">{item.responsible}</p>}
                             </td>
-                            <td className="py-3 px-4 text-gray-600 text-xs">{categoriaLabel[item.categoria] ?? item.categoria}</td>
+                            <td className="py-3 px-4 text-gray-600 text-xs">{categoriaLabel[item.category] ?? item.category}</td>
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-1.5">
                                 <div className={`w-2.5 h-2.5 rounded-full ${inerente.color}`} />
                                 <Badge variant={inerente.variant} className="text-xs">{inerente.label}</Badge>
-                                <span className="text-xs text-gray-400">({item.probabilidade_inerente}×{item.impacto_inerente})</span>
+                                <span className="text-xs text-gray-400">({item.inherent_probability}×{item.inherent_impact})</span>
                               </div>
                             </td>
                             <td className="py-3 px-4">
@@ -156,9 +156,9 @@ export default async function RiscosPage({ searchParams }: { searchParams: Promi
                               ) : <span className="text-xs text-gray-400">—</span>}
                             </td>
                             <td className="py-3 px-4">
-                              {item.estrategia ? (
-                                <Badge variant={estrategiaVariant[item.estrategia] ?? 'secondary'} className="capitalize text-xs">
-                                  {item.estrategia}
+                              {item.strategy ? (
+                                <Badge variant={estrategiaVariant[item.strategy] ?? 'secondary'} className="capitalize text-xs">
+                                  {item.strategy}
                                 </Badge>
                               ) : <span className="text-xs text-gray-400">—</span>}
                             </td>
@@ -182,11 +182,11 @@ export default async function RiscosPage({ searchParams }: { searchParams: Promi
                 {/* Mobile */}
                 <div className="md:hidden divide-y divide-gray-100">
                   {itens.map((item: any) => {
-                    const inerente = nivelRisco(item.probabilidade_inerente, item.impacto_inerente)
+                    const inerente = nivelRisco(item.inherent_probability, item.inherent_impact)
                     return (
                       <div key={item.id} className="p-4 space-y-2">
                         <div className="flex items-start justify-between gap-2">
-                          <p className="font-medium text-gray-900 text-sm">{item.titulo}</p>
+                          <p className="font-medium text-gray-900 text-sm">{item.title}</p>
                           <Link href={`/riscos/${item.id}`}>
                             <Button variant="ghost" size="sm" className="h-7 text-xs">Editar</Button>
                           </Link>
@@ -197,7 +197,7 @@ export default async function RiscosPage({ searchParams }: { searchParams: Promi
                             {statusLabel[item.status] ?? item.status}
                           </Badge>
                         </div>
-                        <p className="text-xs text-gray-500">{categoriaLabel[item.categoria]} {item.responsavel ? `· ${item.responsavel}` : ''}</p>
+                        <p className="text-xs text-gray-500">{categoriaLabel[item.category]} {item.responsible ? `· ${item.responsible}` : ''}</p>
                       </div>
                     )
                   })}

@@ -1,17 +1,17 @@
 import { notFound } from 'next/navigation'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { InventarioWizard } from '@/components/inventario/wizard'
 
 export default async function InventarioFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
 
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
 
   let item: any = null
-  if (!isNew && empresaId) {
+  if (!isNew && companyId) {
     const { data } = await supabase
-      .from('inventario_dados')
+      .from('data_inventory')
       .select('*')
       .eq('id', id)
       .single()
@@ -21,7 +21,7 @@ export default async function InventarioFormPage({ params }: { params: Promise<{
 
   return (
     <InventarioWizard
-      empresaId={empresaId ?? ''}
+      companyId={companyId ?? ''}
       id={isNew ? undefined : id}
       initialData={item}
     />

@@ -2,45 +2,45 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 
 export async function salvarDadosEmpresa(formData: FormData) {
   const supabase = await createClient()
-  const { user, empresaId } = await getUserEmpresa()
-  if (!user || !empresaId) throw new Error('Não autenticado')
+  const { user, companyId } = await getUserCompany()
+  if (!user || !companyId) throw new Error('Não autenticado')
 
-  await supabase.from('empresas').update({
-    nome: formData.get('nome') as string,
-    cnpj: formData.get('cnpj') as string || null,
-    setor: formData.get('setor') as string || null,
+  await supabase.from('companies').update({
+    name: formData.get('name') as string,
+    tax_id: formData.get('tax_id') as string || null,
+    sector: formData.get('sector') as string || null,
     slug: formData.get('slug') as string,
-  }).eq('id', empresaId)
+  }).eq('id', companyId)
 
   revalidatePath('/configuracoes')
 }
 
 export async function salvarDPO(formData: FormData) {
   const supabase = await createClient()
-  const { user, empresaId } = await getUserEmpresa()
-  if (!user || !empresaId) throw new Error('Não autenticado')
+  const { user, companyId } = await getUserCompany()
+  if (!user || !companyId) throw new Error('Não autenticado')
 
-  await supabase.from('empresas').update({
-    dpo_nome: formData.get('dpo_nome') as string || null,
+  await supabase.from('companies').update({
+    dpo_name: formData.get('dpo_name') as string || null,
     dpo_email: formData.get('dpo_email') as string || null,
-    dpo_telefone: formData.get('dpo_telefone') as string || null,
-  }).eq('id', empresaId)
+    dpo_phone: formData.get('dpo_phone') as string || null,
+  }).eq('id', companyId)
 
   revalidatePath('/configuracoes')
 }
 
 export async function salvarPolitica(formData: FormData) {
   const supabase = await createClient()
-  const { user, empresaId } = await getUserEmpresa()
-  if (!user || !empresaId) throw new Error('Não autenticado')
+  const { user, companyId } = await getUserCompany()
+  if (!user || !companyId) throw new Error('Não autenticado')
 
-  await supabase.from('empresas').update({
-    politica_privacidade_url: formData.get('politica_url') as string || null,
-  }).eq('id', empresaId)
+  await supabase.from('companies').update({
+    privacy_policy_url: formData.get('privacy_policy_url') as string || null,
+  }).eq('id', companyId)
 
   revalidatePath('/configuracoes')
 }

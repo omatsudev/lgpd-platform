@@ -1,19 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
 
-export async function getUserEmpresa() {
+export async function getUserCompany() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { user: null, empresa: null, empresaId: null, supabase }
+  if (!user) return { user: null, company: null, companyId: null, supabase }
 
   const { data } = await supabase
-    .from('user_empresas')
+    .from('user_companies')
     .select(`
-      empresa_id,
+      company_id,
       role,
-      empresas (
-        id, nome, cnpj, slug, setor,
-        dpo_nome, dpo_email, dpo_telefone,
-        percentual_adequacao, politica_privacidade_url,
+      companies (
+        id, name, tax_id, slug, sector,
+        dpo_name, dpo_email, dpo_phone,
+        compliance_score, privacy_policy_url,
         created_at, updated_at
       )
     `)
@@ -24,8 +24,8 @@ export async function getUserEmpresa() {
 
   return {
     user,
-    empresa: (data?.empresas as any) ?? null,
-    empresaId: data?.empresa_id ?? null,
+    company: (data?.companies as any) ?? null,
+    companyId: data?.company_id ?? null,
     supabase,
   }
 }

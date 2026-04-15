@@ -1,60 +1,60 @@
--- Módulo de Gestão de Incidentes de Segurança (LGPD Art. 48)
+-- Security Incident Management Module (LGPD Art. 48)
 
-create table public.incidentes (
+create table public.incidents (
   id uuid default uuid_generate_v4() primary key,
-  empresa_id uuid references public.empresas(id) on delete cascade not null,
+  company_id uuid references public.companies(id) on delete cascade not null,
 
-  -- Identificação
-  titulo text not null,
-  tipo text not null check (tipo in (
-    'vazamento_dados', 'acesso_nao_autorizado', 'perda_dados',
-    'alteracao_indevida', 'uso_indevido', 'ransomware', 'phishing', 'outro'
+  -- Identification
+  title text not null,
+  type text not null check (type in (
+    'data_breach', 'unauthorized_access', 'data_loss',
+    'improper_modification', 'misuse', 'ransomware', 'phishing', 'other'
   )),
-  severidade text not null default 'media' check (severidade in ('baixa', 'media', 'alta', 'critica')),
-  status text not null default 'identificado' check (status in (
-    'identificado', 'em_investigacao', 'contido', 'resolvido', 'encerrado'
+  severity text not null default 'medium' check (severity in ('low', 'medium', 'high', 'critical')),
+  status text not null default 'identified' check (status in (
+    'identified', 'under_investigation', 'contained', 'resolved', 'closed'
   )),
 
-  -- Datas
-  data_ocorrencia date,
-  data_descoberta date not null,
+  -- Dates
+  occurrence_date date,
+  discovery_date date not null,
 
-  -- Detalhamento
-  descricao text not null,
-  dados_afetados text,
-  categorias_dados_afetados jsonb default '[]',
-  numero_titulares_afetados text,
-  causa_raiz text,
+  -- Detail
+  description text not null,
+  affected_data text,
+  affected_data_categories jsonb default '[]',
+  affected_subjects_count text,
+  root_cause text,
 
-  -- Resposta
-  medidas_imediatas text,
-  medidas_corretivas text,
-  responsavel text,
+  -- Response
+  immediate_measures text,
+  corrective_measures text,
+  responsible text,
 
-  -- Notificações regulatórias (Art. 48 LGPD)
-  notificou_anpd boolean default false,
-  data_notificacao_anpd date,
-  protocolo_anpd text,
-  notificou_titulares boolean default false,
-  data_notificacao_titulares date,
+  -- Regulatory notifications (Art. 48 LGPD)
+  notified_anpd boolean default false,
+  anpd_notification_date date,
+  anpd_protocol text,
+  notified_subjects boolean default false,
+  subjects_notification_date date,
 
-  -- Metadados
+  -- Metadata
   created_by uuid references auth.users(id),
   created_at timestamptz default now() not null,
   updated_at timestamptz default now() not null
 );
 
 -- RLS
-alter table public.incidentes enable row level security;
+alter table public.incidents enable row level security;
 
-create policy "user_can_manage_incidentes" on public.incidentes
+create policy "user_can_manage_incidents" on public.incidents
   for all using (
-    empresa_id in (
-      select empresa_id from public.user_empresas
+    company_id in (
+      select company_id from public.user_companies
       where user_id = auth.uid()
     )
   );
 
 -- Updated_at trigger
-create trigger set_incidentes_updated_at before update on public.incidentes
+create trigger set_incidents_updated_at before update on public.incidents
   for each row execute function public.set_updated_at();

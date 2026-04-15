@@ -4,53 +4,53 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/ui/search-input'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 
 const categoriaLabel: Record<string, string> = {
-  tecnologia: 'Tecnologia', saude: 'Saúde', financeiro: 'Financeiro',
-  rh: 'RH', marketing: 'Marketing', juridico: 'Jurídico',
-  contabilidade: 'Contabilidade', logistica: 'Logística', outro: 'Outro',
+  technology: 'Tecnologia', healthcare: 'Saúde', financial: 'Financeiro',
+  hr: 'RH', marketing: 'Marketing', legal: 'Jurídico',
+  accounting: 'Contabilidade', logistics: 'Logística', other: 'Outro',
 }
 
 const tipoAcessoLabel: Record<string, string> = {
-  operador: 'Operador', controlador_conjunto: 'Controlador Conjunto',
-  suboperador: 'Suboperador', sem_acesso_dados: 'Sem acesso a dados',
+  processor: 'Operador', joint_controller: 'Controlador Conjunto',
+  sub_processor: 'Suboperador', no_data_access: 'Sem acesso a dados',
 }
 
 const riscoVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
-  baixo: 'success', medio: 'warning', alto: 'destructive', critico: 'destructive',
+  low: 'success', medium: 'warning', high: 'destructive', critical: 'destructive',
 }
 
 const diligenciaVariant: Record<string, 'secondary' | 'warning' | 'success' | 'destructive'> = {
-  pendente: 'secondary', em_analise: 'warning', aprovado: 'success',
-  reprovado: 'destructive', expirado: 'destructive',
+  pending: 'secondary', under_review: 'warning', approved: 'success',
+  rejected: 'destructive', expired: 'destructive',
 }
 
 const diligenciaLabel: Record<string, string> = {
-  pendente: 'Pendente', em_analise: 'Em Análise', aprovado: 'Aprovado',
-  reprovado: 'Reprovado', expirado: 'Expirado',
+  pending: 'Pendente', under_review: 'Em Análise', approved: 'Aprovado',
+  rejected: 'Reprovado', expired: 'Expirado',
 }
 
 export default async function FornecedoresPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
   const { q } = await searchParams
 
-  let query = supabase.from('fornecedores').select('*').eq('empresa_id', empresaId ?? '')
-  if (q) query = query.or(`nome.ilike.%${q}%,cnpj.ilike.%${q}%,categoria.ilike.%${q}%,contato_email.ilike.%${q}%`)
+  let query = supabase.from('suppliers').select('*').eq('company_id', companyId ?? '')
+  if (q) query = query.or(`name.ilike.%${q}%,tax_id.ilike.%${q}%,category.ilike.%${q}%,contact_email.ilike.%${q}%`)
 
-  const { data: fornecedores } = empresaId
+  const { data: fornecedores } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
   const itens = fornecedores ?? []
   const hoje = new Date()
 
-  const semDPA = itens.filter((f: any) => f.tipo_acesso !== 'sem_acesso_dados' && !f.possui_dpa).length
+  const semDPA = itens.filter((f: any) => f.access_type !== 'no_data_access' && !f.has_dpa).length
   const avaliacaoVencida = itens.filter((f: any) =>
-    f.data_proxima_avaliacao && new Date(f.data_proxima_avaliacao) < hoje
+    f.next_assessment_date && new Date(f.next_assessment_date) < hoje
   ).length
-  const internacionais = itens.filter((f: any) => f.transferencia_internacional).length
+  const internacionais = itens.filter((f: any) => f.international_transfer).length
 
   return (
     <div className="space-y-5">
@@ -135,40 +135,40 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {itens.map((item: any) => {
-                      const vencida = item.data_proxima_avaliacao && new Date(item.data_proxima_avaliacao) < hoje
+                      const vencida = item.next_assessment_date && new Date(item.next_assessment_date) < hoje
                       return (
                         <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-1.5">
-                              {item.transferencia_internacional && (
+                              {item.international_transfer && (
                                 <Globe className="h-3.5 w-3.5 text-blue-400 shrink-0" aria-label="Transferência internacional" />
                               )}
                               <div>
-                                <p className="font-medium text-gray-900">{item.nome}</p>
-                                {item.cnpj && <p className="text-xs text-gray-400">{item.cnpj}</p>}
+                                <p className="font-medium text-gray-900">{item.name}</p>
+                                {item.tax_id && <p className="text-xs text-gray-400">{item.tax_id}</p>}
                               </div>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-gray-600 text-xs">{categoriaLabel[item.categoria] ?? item.categoria}</td>
-                          <td className="py-3 px-4 text-gray-600 text-xs">{tipoAcessoLabel[item.tipo_acesso] ?? item.tipo_acesso}</td>
+                          <td className="py-3 px-4 text-gray-600 text-xs">{categoriaLabel[item.category] ?? item.category}</td>
+                          <td className="py-3 px-4 text-gray-600 text-xs">{tipoAcessoLabel[item.access_type] ?? item.access_type}</td>
                           <td className="py-3 px-4">
-                            {item.tipo_acesso === 'sem_acesso_dados'
+                            {item.access_type === 'no_data_access'
                               ? <span className="text-xs text-gray-400">N/A</span>
-                              : item.possui_dpa
+                              : item.has_dpa
                                 ? <Badge variant="success" className="text-xs">Assinado</Badge>
                                 : <Badge variant="destructive" className="text-xs">Pendente</Badge>}
                           </td>
                           <td className="py-3 px-4">
-                            <Badge variant={riscoVariant[item.nivel_risco] ?? 'secondary'} className="capitalize text-xs">
-                              {item.nivel_risco}
+                            <Badge variant={riscoVariant[item.risk_level] ?? 'secondary'} className="capitalize text-xs">
+                              {item.risk_level}
                             </Badge>
                           </td>
                           <td className="py-3 px-4">
-                            <Badge variant={diligenciaVariant[item.status_diligencia] ?? 'secondary'} className="text-xs">
-                              {diligenciaLabel[item.status_diligencia] ?? item.status_diligencia}
+                            <Badge variant={diligenciaVariant[item.due_diligence_status] ?? 'secondary'} className="text-xs">
+                              {diligenciaLabel[item.due_diligence_status] ?? item.due_diligence_status}
                             </Badge>
                             {vencida && (
-                              <p className="text-xs text-red-500 mt-0.5">Venceu {formatDate(item.data_proxima_avaliacao)}</p>
+                              <p className="text-xs text-red-500 mt-0.5">Venceu {formatDate(item.next_assessment_date)}</p>
                             )}
                           </td>
                           <td className="py-3 px-4 text-right">
@@ -190,27 +190,27 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-1.5">
-                          {item.transferencia_internacional && <Globe className="h-3.5 w-3.5 text-blue-400" />}
-                          <p className="font-medium text-gray-900 text-sm">{item.nome}</p>
+                          {item.international_transfer && <Globe className="h-3.5 w-3.5 text-blue-400" />}
+                          <p className="font-medium text-gray-900 text-sm">{item.name}</p>
                         </div>
-                        {item.cnpj && <p className="text-xs text-gray-400">{item.cnpj}</p>}
+                        {item.tax_id && <p className="text-xs text-gray-400">{item.tax_id}</p>}
                       </div>
                       <Link href={`/fornecedores/${item.id}`}>
                         <Button variant="ghost" size="sm" className="h-7 text-xs">Editar</Button>
                       </Link>
                     </div>
                     <div className="flex gap-2 flex-wrap">
-                      <Badge variant={riscoVariant[item.nivel_risco] ?? 'secondary'} className="capitalize text-xs">{item.nivel_risco}</Badge>
-                      <Badge variant={diligenciaVariant[item.status_diligencia] ?? 'secondary'} className="text-xs">
-                        {diligenciaLabel[item.status_diligencia] ?? item.status_diligencia}
+                      <Badge variant={riscoVariant[item.risk_level] ?? 'secondary'} className="capitalize text-xs">{item.risk_level}</Badge>
+                      <Badge variant={diligenciaVariant[item.due_diligence_status] ?? 'secondary'} className="text-xs">
+                        {diligenciaLabel[item.due_diligence_status] ?? item.due_diligence_status}
                       </Badge>
-                      {item.tipo_acesso !== 'sem_acesso_dados' && (
-                        item.possui_dpa
+                      {item.access_type !== 'no_data_access' && (
+                        item.has_dpa
                           ? <Badge variant="success" className="text-xs">DPA ok</Badge>
                           : <Badge variant="destructive" className="text-xs">Sem DPA</Badge>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500">{categoriaLabel[item.categoria]} · {tipoAcessoLabel[item.tipo_acesso]}</p>
+                    <p className="text-xs text-gray-500">{categoriaLabel[item.category]} · {tipoAcessoLabel[item.access_type]}</p>
                   </div>
                 ))}
               </div>

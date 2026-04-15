@@ -13,15 +13,15 @@ export default async function EmpresasPage({ searchParams }: { searchParams: Pro
   const { q } = await searchParams
 
   const { data: vinculos } = await supabase
-    .from('user_empresas')
-    .select('empresa_id, role, empresas(id, nome, cnpj, setor, slug, percentual_adequacao)')
+    .from('user_companies')
+    .select('company_id, role, companies(id, name, tax_id, sector, slug, compliance_score)')
     .eq('user_id', user!.id)
     .order('created_at')
 
-  const todas = (vinculos ?? []).map((v: any) => v.empresas).filter(Boolean)
+  const todas = (vinculos ?? []).map((v: any) => v.companies).filter(Boolean)
   const empresas = q
     ? todas.filter((e: any) =>
-        [e.nome, e.cnpj, e.setor].some((f: string | null) => f?.toLowerCase().includes(q.toLowerCase()))
+        [e.name, e.tax_id, e.sector].some((f: string | null) => f?.toLowerCase().includes(q.toLowerCase()))
       )
     : todas
 
@@ -59,13 +59,13 @@ export default async function EmpresasPage({ searchParams }: { searchParams: Pro
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-semibold text-gray-900">{empresa.nome}</span>
-                        {empresa.setor && <Badge variant="secondary">{empresa.setor}</Badge>}
+                        <span className="font-semibold text-gray-900">{empresa.name}</span>
+                        {empresa.sector && <Badge variant="secondary">{empresa.sector}</Badge>}
                       </div>
-                      {empresa.cnpj && <p className="text-xs text-gray-400 mt-0.5">CNPJ: {empresa.cnpj}</p>}
+                      {empresa.tax_id && <p className="text-xs text-gray-400 mt-0.5">CNPJ: {empresa.tax_id}</p>}
                       <div className="flex items-center gap-2 mt-2">
-                        <Progress value={empresa.percentual_adequacao ?? 0} className="w-24 h-1.5" />
-                        <span className="text-xs font-medium text-gray-600">{empresa.percentual_adequacao ?? 0}% adequada</span>
+                        <Progress value={empresa.compliance_score ?? 0} className="w-24 h-1.5" />
+                        <span className="text-xs font-medium text-gray-600">{empresa.compliance_score ?? 0}% adequada</span>
                       </div>
                     </div>
                   </div>

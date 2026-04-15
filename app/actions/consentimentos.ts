@@ -6,12 +6,12 @@ import { createClient } from '@/lib/supabase/server'
 
 export type FinalidadeData = {
   id?: string
-  empresa_id: string
-  nome: string
-  descricao: string
-  base_legal: string
-  obrigatorio: boolean
-  ativo: boolean
+  company_id: string
+  name: string
+  description: string
+  legal_basis: string
+  required: boolean
+  active: boolean
 }
 
 export async function salvarFinalidade(data: FinalidadeData) {
@@ -20,18 +20,18 @@ export async function salvarFinalidade(data: FinalidadeData) {
   if (!user) throw new Error('Não autenticado')
 
   const payload = {
-    empresa_id: data.empresa_id,
-    nome: data.nome,
-    descricao: data.descricao,
-    base_legal: data.base_legal,
-    obrigatorio: data.obrigatorio,
-    ativo: data.ativo,
+    company_id: data.company_id,
+    name: data.name,
+    description: data.description,
+    legal_basis: data.legal_basis,
+    required: data.required,
+    active: data.active,
   }
 
   if (data.id) {
-    await supabase.from('consentimento_finalidades').update(payload).eq('id', data.id)
+    await supabase.from('consent_purposes').update(payload).eq('id', data.id)
   } else {
-    await supabase.from('consentimento_finalidades').insert(payload)
+    await supabase.from('consent_purposes').insert(payload)
   }
 
   revalidatePath('/consentimentos')
@@ -44,7 +44,7 @@ export async function deletarFinalidade(formData: FormData) {
   if (!user) throw new Error('Não autenticado')
 
   const id = formData.get('id') as string
-  await supabase.from('consentimento_finalidades').delete().eq('id', id)
+  await supabase.from('consent_purposes').delete().eq('id', id)
 
   revalidatePath('/consentimentos')
   redirect('/consentimentos')
@@ -59,11 +59,11 @@ export async function revogarConsentimento(formData: FormData) {
   const motivo = formData.get('motivo') as string
 
   await supabase
-    .from('consentimentos')
+    .from('consents')
     .update({
-      revogado: true,
-      revogado_em: new Date().toISOString(),
-      motivo_revogacao: motivo || null,
+      revoked: true,
+      revoked_at: new Date().toISOString(),
+      revocation_reason: motivo || null,
     })
     .eq('id', id)
 

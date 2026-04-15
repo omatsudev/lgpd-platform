@@ -1,107 +1,107 @@
-// Scanner de conformidade LGPD para sites
-// Analisa headers HTTP, HTML e scripts detectados
+// LGPD compliance scanner for websites
+// Analyzes HTTP headers, HTML and detected scripts
 
 export type Cookie = {
-  nome: string
-  valor?: string
-  dominio?: string
+  name: string
+  value?: string
+  domain?: string
   path?: string
-  expiracao?: string
+  expiration?: string
   httpOnly?: boolean
   secure?: boolean
   sameSite?: string
-  categoria: 'necessario' | 'funcional' | 'analitico' | 'marketing' | 'desconhecido'
+  category: 'necessary' | 'functional' | 'analytical' | 'marketing' | 'unknown'
 }
 
-export type Tecnologia = {
-  nome: string
-  categoria: 'analytics' | 'advertising' | 'social' | 'cms' | 'framework' | 'chat' | 'outro'
-  risco: 'alto' | 'medio' | 'baixo'
-  descricao: string
+export type Technology = {
+  name: string
+  category: 'analytics' | 'advertising' | 'social' | 'cms' | 'framework' | 'chat' | 'other'
+  risk: 'high' | 'medium' | 'low'
+  description: string
 }
 
-export type Problema = {
-  nivel: 'critico' | 'alto' | 'medio' | 'baixo'
-  titulo: string
-  descricao: string
+export type Issue = {
+  level: 'critical' | 'high' | 'medium' | 'low'
+  title: string
+  description: string
 }
 
-export type Recomendacao = {
-  titulo: string
-  descricao: string
+export type Recommendation = {
+  title: string
+  description: string
 }
 
 export type ScanResult = {
   cookies: Cookie[]
-  tecnologias: Tecnologia[]
-  tem_banner_cookies: boolean
-  tem_politica_privacidade: boolean
-  url_politica_privacidade: string | null
-  score_conformidade: number
-  problemas: Problema[]
-  recomendacoes: Recomendacao[]
+  technologies: Technology[]
+  has_cookie_banner: boolean
+  has_privacy_policy: boolean
+  privacy_policy_url: string | null
+  compliance_score: number
+  issues: Issue[]
+  recommendations: Recommendation[]
 }
 
-// ─── Mapa de tecnologias conhecidas ──────────────────────────────────────
+// ─── Known technology map ──────────────────────────────────────
 
 const TECH_SIGNATURES: Array<{
   pattern: RegExp
-  tech: Omit<Tecnologia, never>
+  tech: Technology
 }> = [
-  { pattern: /google-analytics\.com|gtag|ga\s*\(|_ga\b/i, tech: { nome: 'Google Analytics', categoria: 'analytics', risco: 'alto', descricao: 'Rastreamento de comportamento via Google' } },
-  { pattern: /googletagmanager\.com|GTM-/i, tech: { nome: 'Google Tag Manager', categoria: 'analytics', risco: 'alto', descricao: 'Gerenciador de tags do Google' } },
-  { pattern: /facebook\.net|fbq\(|fb-pixel|_fbp\b/i, tech: { nome: 'Facebook Pixel', categoria: 'advertising', risco: 'alto', descricao: 'Pixel de rastreamento do Meta/Facebook' } },
-  { pattern: /connect\.facebook\.net/i, tech: { nome: 'Facebook SDK', categoria: 'social', risco: 'alto', descricao: 'SDK social do Facebook' } },
-  { pattern: /hotjar\.com|hotjar/i, tech: { nome: 'Hotjar', categoria: 'analytics', risco: 'medio', descricao: 'Gravação de sessão e mapas de calor' } },
-  { pattern: /clarity\.ms|microsoft clarity/i, tech: { nome: 'Microsoft Clarity', categoria: 'analytics', risco: 'medio', descricao: 'Ferramenta de analytics da Microsoft' } },
-  { pattern: /linkedin\.com\/insight|_linkedin_/i, tech: { nome: 'LinkedIn Insight Tag', categoria: 'advertising', risco: 'alto', descricao: 'Tag de rastreamento do LinkedIn' } },
-  { pattern: /tiktok\.com\/i18n\/pixel|ttq\./i, tech: { nome: 'TikTok Pixel', categoria: 'advertising', risco: 'alto', descricao: 'Pixel de rastreamento do TikTok' } },
-  { pattern: /rd\.station|rdstation/i, tech: { nome: 'RD Station', categoria: 'analytics', risco: 'medio', descricao: 'Plataforma de automação de marketing brasileira' } },
-  { pattern: /hubspot\.com\/|_hstc\b/i, tech: { nome: 'HubSpot', categoria: 'analytics', risco: 'medio', descricao: 'CRM e automação de marketing' } },
-  { pattern: /intercom\.io|intercomSettings/i, tech: { nome: 'Intercom', categoria: 'chat', risco: 'medio', descricao: 'Chat e suporte ao cliente' } },
-  { pattern: /crisp\.chat|CRISP_WEBSITE_ID/i, tech: { nome: 'Crisp Chat', categoria: 'chat', risco: 'baixo', descricao: 'Widget de chat' } },
-  { pattern: /wp-content|wp-includes|wordpress/i, tech: { nome: 'WordPress', categoria: 'cms', risco: 'baixo', descricao: 'CMS WordPress' } },
-  { pattern: /cdn\.shopify\.com|Shopify\.theme/i, tech: { nome: 'Shopify', categoria: 'cms', risco: 'baixo', descricao: 'Plataforma de e-commerce Shopify' } },
-  { pattern: /doubleclick\.net|googlesyndication/i, tech: { nome: 'Google Ads', categoria: 'advertising', risco: 'alto', descricao: 'Rede de publicidade do Google' } },
-  { pattern: /mixpanel\.com|mixpanel\.track/i, tech: { nome: 'Mixpanel', categoria: 'analytics', risco: 'medio', descricao: 'Analytics de produto' } },
-  { pattern: /segment\.com|analytics\.js/i, tech: { nome: 'Segment', categoria: 'analytics', risco: 'medio', descricao: 'Plataforma de dados de clientes' } },
-  { pattern: /sentry\.io|Sentry\.init/i, tech: { nome: 'Sentry', categoria: 'outro', risco: 'baixo', descricao: 'Monitoramento de erros' } },
+  { pattern: /google-analytics\.com|gtag|ga\s*\(|_ga\b/i, tech: { name: 'Google Analytics', category: 'analytics', risk: 'high', description: 'Rastreamento de comportamento via Google' } },
+  { pattern: /googletagmanager\.com|GTM-/i, tech: { name: 'Google Tag Manager', category: 'analytics', risk: 'high', description: 'Gerenciador de tags do Google' } },
+  { pattern: /facebook\.net|fbq\(|fb-pixel|_fbp\b/i, tech: { name: 'Facebook Pixel', category: 'advertising', risk: 'high', description: 'Pixel de rastreamento do Meta/Facebook' } },
+  { pattern: /connect\.facebook\.net/i, tech: { name: 'Facebook SDK', category: 'social', risk: 'high', description: 'SDK social do Facebook' } },
+  { pattern: /hotjar\.com|hotjar/i, tech: { name: 'Hotjar', category: 'analytics', risk: 'medium', description: 'Gravação de sessão e mapas de calor' } },
+  { pattern: /clarity\.ms|microsoft clarity/i, tech: { name: 'Microsoft Clarity', category: 'analytics', risk: 'medium', description: 'Ferramenta de analytics da Microsoft' } },
+  { pattern: /linkedin\.com\/insight|_linkedin_/i, tech: { name: 'LinkedIn Insight Tag', category: 'advertising', risk: 'high', description: 'Tag de rastreamento do LinkedIn' } },
+  { pattern: /tiktok\.com\/i18n\/pixel|ttq\./i, tech: { name: 'TikTok Pixel', category: 'advertising', risk: 'high', description: 'Pixel de rastreamento do TikTok' } },
+  { pattern: /rd\.station|rdstation/i, tech: { name: 'RD Station', category: 'analytics', risk: 'medium', description: 'Plataforma de automação de marketing brasileira' } },
+  { pattern: /hubspot\.com\/|_hstc\b/i, tech: { name: 'HubSpot', category: 'analytics', risk: 'medium', description: 'CRM e automação de marketing' } },
+  { pattern: /intercom\.io|intercomSettings/i, tech: { name: 'Intercom', category: 'chat', risk: 'medium', description: 'Chat e suporte ao cliente' } },
+  { pattern: /crisp\.chat|CRISP_WEBSITE_ID/i, tech: { name: 'Crisp Chat', category: 'chat', risk: 'low', description: 'Widget de chat' } },
+  { pattern: /wp-content|wp-includes|wordpress/i, tech: { name: 'WordPress', category: 'cms', risk: 'low', description: 'CMS WordPress' } },
+  { pattern: /cdn\.shopify\.com|Shopify\.theme/i, tech: { name: 'Shopify', category: 'cms', risk: 'low', description: 'Plataforma de e-commerce Shopify' } },
+  { pattern: /doubleclick\.net|googlesyndication/i, tech: { name: 'Google Ads', category: 'advertising', risk: 'high', description: 'Rede de publicidade do Google' } },
+  { pattern: /mixpanel\.com|mixpanel\.track/i, tech: { name: 'Mixpanel', category: 'analytics', risk: 'medium', description: 'Analytics de produto' } },
+  { pattern: /segment\.com|analytics\.js/i, tech: { name: 'Segment', category: 'analytics', risk: 'medium', description: 'Plataforma de dados de clientes' } },
+  { pattern: /sentry\.io|Sentry\.init/i, tech: { name: 'Sentry', category: 'other', risk: 'low', description: 'Monitoramento de erros' } },
 ]
 
-// ─── Parser de Set-Cookie header ─────────────────────────────────────────
+// ─── Set-Cookie header parser ─────────────────────────────────────────────
 
 function parseCookieHeader(header: string): Partial<Cookie> {
   const parts = header.split(';').map(p => p.trim())
   const [nameVal, ...attrs] = parts
-  const [nome, valor] = (nameVal ?? '').split('=')
+  const [rawName, rawValue] = (nameVal ?? '').split('=')
   const attrMap: Record<string, string> = {}
   attrs.forEach(a => {
     const [k, v] = a.split('=')
     attrMap[(k ?? '').toLowerCase().trim()] = (v ?? '').trim()
   })
   return {
-    nome: (nome ?? '').trim(),
-    valor: valor ? valor.trim().substring(0, 20) + (valor.length > 20 ? '...' : '') : undefined,
+    name: (rawName ?? '').trim(),
+    value: rawValue ? rawValue.trim().substring(0, 20) + (rawValue.length > 20 ? '...' : '') : undefined,
     path: attrMap['path'],
-    expiracao: attrMap['expires'] ?? attrMap['max-age'],
+    expiration: attrMap['expires'] ?? attrMap['max-age'],
     httpOnly: 'httponly' in attrMap,
     secure: 'secure' in attrMap,
     sameSite: attrMap['samesite'],
   }
 }
 
-function categorizarCookie(nome: string): Cookie['categoria'] {
-  const n = nome.toLowerCase()
-  if (/^_ga|^_gid|^_gat|^__utm|hotjar|hj_|_hjSession|_hjid/.test(n)) return 'analitico'
+function categorizeCookie(name: string): Cookie['category'] {
+  const n = name.toLowerCase()
+  if (/^_ga|^_gid|^_gat|^__utm|hotjar|hj_|_hjSession|_hjid/.test(n)) return 'analytical'
   if (/^_fbp|^_fbc|^fr$|_gcl_|^__adroll|doubleclick|_uetsid|_uetvid/.test(n)) return 'marketing'
-  if (/sess|session|token|auth|csrf|xsrf|phpsessid|jsessionid/.test(n)) return 'necessario'
-  if (/prefer|lang|locale|theme|currency/.test(n)) return 'funcional'
-  return 'desconhecido'
+  if (/sess|session|token|auth|csrf|xsrf|phpsessid|jsessionid/.test(n)) return 'necessary'
+  if (/prefer|lang|locale|theme|currency/.test(n)) return 'functional'
+  return 'unknown'
 }
 
-// ─── Detecção de banner de cookies ───────────────────────────────────────
+// ─── Cookie banner detection ───────────────────────────────────────────────
 
-function detectarBannerCookies(html: string): boolean {
+function detectCookieBanner(html: string): boolean {
   const patterns = [
     /cookie.{0,30}(banner|notice|consent|policy|bar|popup|modal)/i,
     /(banner|notice|consent|popup|modal).{0,30}cookie/i,
@@ -115,9 +115,9 @@ function detectarBannerCookies(html: string): boolean {
   return patterns.some(p => p.test(html))
 }
 
-// ─── Detecção de política de privacidade ─────────────────────────────────
+// ─── Privacy policy detection ─────────────────────────────────────────────
 
-function detectarPolitica(html: string, baseUrl: string): { existe: boolean; url: string | null } {
+function detectPrivacyPolicy(html: string, baseUrl: string): { exists: boolean; url: string | null } {
   const patterns = [
     /href=["']([^"']*politic[^"']*privacidade[^"']*|[^"']*privacy[^"']*policy[^"']*)["']/i,
     /href=["']([^"']*aviso[^"']*privacidade[^"']*)["']/i,
@@ -131,24 +131,24 @@ function detectarPolitica(html: string, baseUrl: string): { existe: boolean; url
       if (url.startsWith('/')) {
         try { url = new URL(url, baseUrl).href } catch { /* ignore */ }
       }
-      return { existe: true, url }
+      return { exists: true, url }
     }
   }
 
-  // Texto simples sem link
+  // Plain text without link
   if (/política de privacidade|aviso de privacidade|privacy policy/i.test(html)) {
-    return { existe: true, url: null }
+    return { exists: true, url: null }
   }
 
-  return { existe: false, url: null }
+  return { exists: false, url: null }
 }
 
-// ─── Função principal de scan ─────────────────────────────────────────────
+// ─── Main scan function ─────────────────────────────────────────────────────
 
-export async function escanearSite(url: string): Promise<ScanResult> {
+export async function scanSite(url: string): Promise<ScanResult> {
   const baseUrl = new URL(url).origin
 
-  // Fetch da página
+  // Fetch the page
   const response = await fetch(url, {
     headers: {
       'User-Agent': 'Mozilla/5.0 (compatible; LGPDScanner/1.0)',
@@ -161,102 +161,102 @@ export async function escanearSite(url: string): Promise<ScanResult> {
   const html = await response.text()
   const cookieHeaders = response.headers.getSetCookie?.() ?? []
 
-  // Cookies do header
+  // Cookies from headers
   const cookies: Cookie[] = cookieHeaders.map(h => {
     const parsed = parseCookieHeader(h)
     return {
-      nome: parsed.nome ?? 'desconhecido',
-      valor: parsed.valor,
+      name: parsed.name ?? 'unknown',
+      value: parsed.value,
       path: parsed.path,
-      expiracao: parsed.expiracao,
+      expiration: parsed.expiration,
       httpOnly: parsed.httpOnly,
       secure: parsed.secure,
       sameSite: parsed.sameSite,
-      categoria: categorizarCookie(parsed.nome ?? ''),
+      category: categorizeCookie(parsed.name ?? ''),
     }
   })
 
-  // Tecnologias detectadas no HTML
-  const tecsSeen = new Set<string>()
-  const tecnologias: Tecnologia[] = []
+  // Technologies detected in HTML
+  const techsSeen = new Set<string>()
+  const technologies: Technology[] = []
   for (const sig of TECH_SIGNATURES) {
-    if (sig.pattern.test(html) && !tecsSeen.has(sig.tech.nome)) {
-      tecsSeen.add(sig.tech.nome)
-      tecnologias.push(sig.tech)
+    if (sig.pattern.test(html) && !techsSeen.has(sig.tech.name)) {
+      techsSeen.add(sig.tech.name)
+      technologies.push(sig.tech)
     }
   }
 
-  const tem_banner_cookies = detectarBannerCookies(html)
-  const politica = detectarPolitica(html, baseUrl)
+  const has_cookie_banner = detectCookieBanner(html)
+  const privacyPolicy = detectPrivacyPolicy(html, baseUrl)
 
-  // ─── Análise de problemas ────────────────────────────────────────────
+  // ─── Issue analysis ────────────────────────────────────────────
 
-  const problemas: Problema[] = []
-  const recomendacoes: Recomendacao[] = []
+  const issues: Issue[] = []
+  const recommendations: Recommendation[] = []
 
-  const temCookiesMarketing = cookies.some(c => c.categoria === 'marketing') ||
-    tecnologias.some(t => t.categoria === 'advertising')
-  const temAnalytics = cookies.some(c => c.categoria === 'analitico') ||
-    tecnologias.some(t => t.categoria === 'analytics')
-  const temCookiesNaoSeguro = cookies.some(c => !c.secure)
-  const temCookiesSemSameSite = cookies.some(c => !c.sameSite)
-  const temTransferencia = tecnologias.some(t =>
-    ['Google Analytics', 'Facebook Pixel', 'Google Tag Manager', 'LinkedIn Insight Tag', 'TikTok Pixel'].includes(t.nome)
+  const hasMarketingCookies = cookies.some(c => c.category === 'marketing') ||
+    technologies.some(t => t.category === 'advertising')
+  const hasAnalytics = cookies.some(c => c.category === 'analytical') ||
+    technologies.some(t => t.category === 'analytics')
+  const hasInsecureCookies = cookies.some(c => !c.secure)
+  const hasMissingSameSite = cookies.some(c => !c.sameSite)
+  const hasInternationalTransfer = technologies.some(t =>
+    ['Google Analytics', 'Facebook Pixel', 'Google Tag Manager', 'LinkedIn Insight Tag', 'TikTok Pixel'].includes(t.name)
   )
 
-  if (!politica.existe) {
-    problemas.push({ nivel: 'critico', titulo: 'Política de Privacidade ausente', descricao: 'Nenhuma Política de Privacidade foi encontrada no site. Obrigatório pela LGPD (Art. 9).' })
-    recomendacoes.push({ titulo: 'Publicar Política de Privacidade', descricao: 'Crie e publique uma Política de Privacidade clara e acessível com link no rodapé.' })
+  if (!privacyPolicy.exists) {
+    issues.push({ level: 'critical', title: 'Política de Privacidade ausente', description: 'Nenhuma Política de Privacidade foi encontrada no site. Obrigatório pela LGPD (Art. 9).' })
+    recommendations.push({ title: 'Publicar Política de Privacidade', description: 'Crie e publique uma Política de Privacidade clara e acessível com link no rodapé.' })
   }
 
-  if ((temCookiesMarketing || temAnalytics) && !tem_banner_cookies) {
-    problemas.push({ nivel: 'critico', titulo: 'Banner de cookies ausente', descricao: 'O site usa cookies de rastreamento mas não apresenta banner de consentimento.' })
-    recomendacoes.push({ titulo: 'Implementar banner de consentimento', descricao: 'Adicione um banner informando sobre o uso de cookies e coletando consentimento antes de ativá-los.' })
+  if ((hasMarketingCookies || hasAnalytics) && !has_cookie_banner) {
+    issues.push({ level: 'critical', title: 'Banner de cookies ausente', description: 'O site usa cookies de rastreamento mas não apresenta banner de consentimento.' })
+    recommendations.push({ title: 'Implementar banner de consentimento', description: 'Adicione um banner informando sobre o uso de cookies e coletando consentimento antes de ativá-los.' })
   }
 
-  if (temTransferencia) {
-    problemas.push({ nivel: 'alto', titulo: 'Transferência internacional de dados', descricao: 'Scripts de terceiros (Google, Meta, etc.) transferem dados para servidores fora do Brasil. Exige base legal adequada (LGPD Art. 33).' })
-    recomendacoes.push({ titulo: 'Documentar transferências internacionais', descricao: 'Identifique todos os destinos, inclua na Política de Privacidade e garanta mecanismo legal (SCC ou consentimento).' })
+  if (hasInternationalTransfer) {
+    issues.push({ level: 'high', title: 'Transferência internacional de dados', description: 'Scripts de terceiros (Google, Meta, etc.) transferem dados para servidores fora do Brasil. Exige base legal adequada (LGPD Art. 33).' })
+    recommendations.push({ title: 'Documentar transferências internacionais', description: 'Identifique todos os destinos, inclua na Política de Privacidade e garanta mecanismo legal (SCC ou consentimento).' })
   }
 
-  const cookiesMarketing = tecnologias.filter(t => t.categoria === 'advertising')
-  if (cookiesMarketing.length > 0) {
-    problemas.push({ nivel: 'alto', titulo: `${cookiesMarketing.length} ferramenta(s) de publicidade detectada(s)`, descricao: `${cookiesMarketing.map(t => t.nome).join(', ')} coletam dados para fins de publicidade. Requer consentimento explícito.` })
+  const advertisingTools = technologies.filter(t => t.category === 'advertising')
+  if (advertisingTools.length > 0) {
+    issues.push({ level: 'high', title: `${advertisingTools.length} ferramenta(s) de publicidade detectada(s)`, description: `${advertisingTools.map(t => t.name).join(', ')} coletam dados para fins de publicidade. Requer consentimento explícito.` })
   }
 
-  if (temCookiesNaoSeguro && cookies.some(c => !c.secure && c.categoria !== 'necessario')) {
-    problemas.push({ nivel: 'medio', titulo: 'Cookies sem flag Secure', descricao: 'Alguns cookies são transmitidos por HTTP não seguro, expondo dados dos titulares.' })
-    recomendacoes.push({ titulo: 'Adicionar flag Secure aos cookies', descricao: 'Configure todos os cookies com Secure=true para forçar transmissão apenas via HTTPS.' })
+  if (hasInsecureCookies && cookies.some(c => !c.secure && c.category !== 'necessary')) {
+    issues.push({ level: 'medium', title: 'Cookies sem flag Secure', description: 'Alguns cookies são transmitidos por HTTP não seguro, expondo dados dos titulares.' })
+    recommendations.push({ title: 'Adicionar flag Secure aos cookies', description: 'Configure todos os cookies com Secure=true para forçar transmissão apenas via HTTPS.' })
   }
 
-  if (temCookiesSemSameSite) {
-    problemas.push({ nivel: 'baixo', titulo: 'Cookies sem atributo SameSite', descricao: 'Cookies sem SameSite podem ser enviados em requisições cross-site, aumentando risco de CSRF.' })
-    recomendacoes.push({ titulo: 'Configurar SameSite nos cookies', descricao: 'Defina SameSite=Strict ou SameSite=Lax em todos os cookies.' })
+  if (hasMissingSameSite) {
+    issues.push({ level: 'low', title: 'Cookies sem atributo SameSite', description: 'Cookies sem SameSite podem ser enviados em requisições cross-site, aumentando risco de CSRF.' })
+    recommendations.push({ title: 'Configurar SameSite nos cookies', description: 'Defina SameSite=Strict ou SameSite=Lax em todos os cookies.' })
   }
 
-  if (cookies.length === 0 && tecnologias.length === 0) {
-    recomendacoes.push({ titulo: 'Manter monitoramento contínuo', descricao: 'Execute o scan periodicamente para detectar novos scripts adicionados por terceiros ou atualizações de CMS.' })
+  if (cookies.length === 0 && technologies.length === 0) {
+    recommendations.push({ title: 'Manter monitoramento contínuo', description: 'Execute o scan periodicamente para detectar novos scripts adicionados por terceiros ou atualizações de CMS.' })
   }
 
   // ─── Score ────────────────────────────────────────────────────────────
 
   let score = 100
-  for (const p of problemas) {
-    if (p.nivel === 'critico') score -= 25
-    else if (p.nivel === 'alto') score -= 15
-    else if (p.nivel === 'medio') score -= 8
+  for (const issue of issues) {
+    if (issue.level === 'critical') score -= 25
+    else if (issue.level === 'high') score -= 15
+    else if (issue.level === 'medium') score -= 8
     else score -= 3
   }
   score = Math.max(0, score)
 
   return {
     cookies,
-    tecnologias,
-    tem_banner_cookies,
-    tem_politica_privacidade: politica.existe,
-    url_politica_privacidade: politica.url,
-    score_conformidade: score,
-    problemas,
-    recomendacoes,
+    technologies,
+    has_cookie_banner,
+    has_privacy_policy: privacyPolicy.exists,
+    privacy_policy_url: privacyPolicy.url,
+    compliance_score: score,
+    issues,
+    recommendations,
   }
 }

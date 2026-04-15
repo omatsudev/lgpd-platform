@@ -8,27 +8,27 @@ export async function atualizarItemChecklist(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Não autenticado')
 
-  const empresa_id = formData.get('empresa_id') as string
+  const company_id = formData.get('company_id') as string
   const item_key = formData.get('item_key') as string
-  const categoria = formData.get('categoria') as string
+  const category = formData.get('categoria') as string
   const status = formData.get('status') as string
-  const observacao = formData.get('observacao') as string
-  const responsavel = formData.get('responsavel') as string
-  const data_conclusao = formData.get('data_conclusao') as string
+  const notes = formData.get('observacao') as string
+  const responsible = formData.get('responsavel') as string
+  const completion_date = formData.get('data_conclusao') as string
 
-  await supabase.from('checklist_itens').upsert(
+  await supabase.from('checklist_items').upsert(
     {
-      empresa_id,
+      company_id,
       item_key,
-      categoria,
+      category,
       status,
-      observacao: observacao || null,
-      responsavel: responsavel || null,
-      data_conclusao: data_conclusao || null,
+      notes: notes || null,
+      responsible: responsible || null,
+      completion_date: completion_date || null,
       updated_by: user.id,
       updated_at: new Date().toISOString(),
     },
-    { onConflict: 'empresa_id,item_key' }
+    { onConflict: 'company_id,item_key' }
   )
 
   revalidatePath('/checklist')

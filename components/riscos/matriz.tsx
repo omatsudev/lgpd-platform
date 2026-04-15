@@ -18,7 +18,7 @@ export function RiscoMatriz({ itens }: { itens: any[] }) {
   // Agrupa riscos por (prob_inerente, imp_inerente)
   const mapa: Record<string, any[]> = {}
   for (const r of itens) {
-    const key = `${r.probabilidade_inerente}-${r.impacto_inerente}`
+    const key = `${r.inherent_probability}-${r.inherent_impact}`
     if (!mapa[key]) mapa[key] = []
     mapa[key].push(r)
   }
@@ -56,9 +56,9 @@ export function RiscoMatriz({ itens }: { itens: any[] }) {
                     className={`flex-1 min-h-[72px] rounded-lg ${cellColor(prob, imp)} p-1.5 flex flex-col gap-1`}
                   >
                     {cell.map((r: any) => (
-                      <Link key={r.id} href={`/riscos/${r.id}`}>
+                      <Link key={r.id} href={`/risks/${r.id}`}>
                         <div className="bg-white/80 hover:bg-white text-xs rounded px-1.5 py-1 truncate text-gray-900 font-medium shadow-sm transition-colors cursor-pointer">
-                          {r.titulo}
+                          {r.title}
                         </div>
                       </Link>
                     ))}

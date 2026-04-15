@@ -1,45 +1,45 @@
 import { Plus, CheckCircle2, XCircle, MinusCircle, ClipboardList } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/ui/search-input'
-import { getUserEmpresa } from '@/lib/supabase/queries'
+import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 
 const canalLabel: Record<string, string> = {
-  web: 'Web', app: 'App', presencial: 'Presencial', email: 'E-mail', api: 'API',
+  web: 'Web', app: 'App', in_person: 'Presencial', email: 'E-mail', api: 'API',
 }
 
 export default async function ConsentimentosPage({ searchParams }: { searchParams: Promise<{ q?: string; aba?: string }> }) {
-  const { empresaId, supabase } = await getUserEmpresa()
+  const { companyId, supabase } = await getUserCompany()
   const { q, aba = 'registros' } = await searchParams
 
   // Finalidades
-  const { data: finalidades } = empresaId
+  const { data: finalidades } = companyId
     ? await supabase
-        .from('consentimento_finalidades')
+        .from('consent_purposes')
         .select('*')
-        .eq('empresa_id', empresaId)
+        .eq('company_id', companyId)
         .order('created_at', { ascending: false })
     : { data: [] }
 
   // Consentimentos com join de finalidade
   let registrosQuery = supabase
-    .from('consentimentos')
-    .select('*, consentimento_finalidades(nome)')
-    .eq('empresa_id', empresaId ?? '')
-  if (q) registrosQuery = registrosQuery.or(`titular_email.ilike.%${q}%,titular_nome.ilike.%${q}%,titular_cpf.ilike.%${q}%`)
+    .from('consents')
+    .select('*, consent_purposes(name)')
+    .eq('company_id', companyId ?? '')
+  if (q) registrosQuery = registrosQuery.or(`subject_email.ilike.%${q}%,subject_name.ilike.%${q}%,subject_tax_id.ilike.%${q}%`)
 
-  const { data: registros } = empresaId
+  const { data: registros } = companyId
     ? await registrosQuery.order('created_at', { ascending: false }).limit(200)
     : { data: [] }
 
   const itens = finalidades ?? []
   const regs = registros ?? []
-  const ativos = regs.filter((r: any) => r.aceito && !r.revogado).length
-  const revogados = regs.filter((r: any) => r.revogado).length
-  const recusados = regs.filter((r: any) => !r.aceito).length
+  const ativos = regs.filter((r: any) => r.accepted && !r.revoked).length
+  const revogados = regs.filter((r: any) => r.revoked).length
+  const recusados = regs.filter((r: any) => !r.accepted).length
 
   return (
     <div className="space-y-5">
@@ -100,9 +100,9 @@ export default async function ConsentimentosPage({ searchParams }: { searchParam
       {/* Aba: Registros de consentimento */}
       {aba === 'registros' && (
         <Card>
-          <CardHeader className="pb-3">
+          <CardContent className="pt-4 pb-3">
             <SearchInput defaultValue={q ?? ''} placeholder="Buscar por e-mail, nome, CPF..." />
-          </CardHeader>
+          </CardContent>
           <CardContent className="p-0">
             {regs.length === 0 ? (
               <div className="py-12 text-center">
@@ -126,22 +126,22 @@ export default async function ConsentimentosPage({ searchParams }: { searchParam
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {regs.map((reg: any) => {
-                        const status = reg.revogado ? 'revogado' : reg.aceito ? 'ativo' : 'recusado'
+                        const status = reg.revoked ? 'revogado' : reg.accepted ? 'ativo' : 'recusado'
                         return (
                           <tr key={reg.id} className="hover:bg-gray-50 transition-colors">
                             <td className="py-3 px-4">
-                              <p className="font-medium text-gray-900 text-xs">{reg.titular_email}</p>
-                              {reg.titular_nome && <p className="text-gray-500 text-xs">{reg.titular_nome}</p>}
+                              <p className="font-medium text-gray-900 text-xs">{reg.subject_email}</p>
+                              {reg.subject_name && <p className="text-gray-500 text-xs">{reg.subject_name}</p>}
                             </td>
                             <td className="py-3 px-4 text-gray-600 text-xs max-w-[160px] truncate">
-                              {(reg.consentimento_finalidades as any)?.nome ?? '—'}
+                              {(reg.consent_purposes as any)?.name ?? '—'}
                             </td>
                             <td className="py-3 px-4">
                               {status === 'ativo' && <Badge variant="success">Ativo</Badge>}
                               {status === 'revogado' && <Badge variant="destructive">Revogado</Badge>}
                               {status === 'recusado' && <Badge variant="warning">Recusado</Badge>}
                             </td>
-                            <td className="py-3 px-4 text-gray-500 text-xs">{canalLabel[reg.canal] ?? reg.canal}</td>
+                            <td className="py-3 px-4 text-gray-500 text-xs">{canalLabel[reg.channel] ?? reg.channel}</td>
                             <td className="py-3 px-4 text-gray-500 text-xs font-mono">{formatDateTime(reg.created_at)}</td>
                             <td className="py-3 px-4 text-right">
                               <Link href={`/consentimentos/${reg.id}`}>
@@ -157,13 +157,13 @@ export default async function ConsentimentosPage({ searchParams }: { searchParam
 
                 <div className="md:hidden divide-y divide-gray-100">
                   {regs.map((reg: any) => {
-                    const status = reg.revogado ? 'revogado' : reg.aceito ? 'ativo' : 'recusado'
+                    const status = reg.revoked ? 'revogado' : reg.accepted ? 'ativo' : 'recusado'
                     return (
                       <div key={reg.id} className="p-4 space-y-2">
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{reg.titular_email}</p>
-                            {reg.titular_nome && <p className="text-xs text-gray-500">{reg.titular_nome}</p>}
+                            <p className="text-sm font-medium text-gray-900">{reg.subject_email}</p>
+                            {reg.subject_name && <p className="text-xs text-gray-500">{reg.subject_name}</p>}
                           </div>
                           <Link href={`/consentimentos/${reg.id}`}>
                             <Button variant="ghost" size="sm" className="h-7 text-xs">Ver</Button>
@@ -173,7 +173,7 @@ export default async function ConsentimentosPage({ searchParams }: { searchParam
                           {status === 'ativo' && <Badge variant="success" className="text-xs">Ativo</Badge>}
                           {status === 'revogado' && <Badge variant="destructive" className="text-xs">Revogado</Badge>}
                           {status === 'recusado' && <Badge variant="warning" className="text-xs">Recusado</Badge>}
-                          <span className="text-xs text-gray-400">{canalLabel[reg.canal] ?? reg.canal}</span>
+                          <span className="text-xs text-gray-400">{canalLabel[reg.channel] ?? reg.channel}</span>
                         </div>
                         <p className="text-xs text-gray-400 font-mono">{formatDateTime(reg.created_at)}</p>
                       </div>
@@ -203,14 +203,14 @@ export default async function ConsentimentosPage({ searchParams }: { searchParam
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-medium text-gray-900">{f.nome}</p>
-                        {f.obrigatorio && <Badge variant="warning" className="text-xs">Obrigatório</Badge>}
-                        {f.ativo
+                        <p className="font-medium text-gray-900">{f.name}</p>
+                        {f.required && <Badge variant="warning" className="text-xs">Obrigatório</Badge>}
+                        {f.active
                           ? <Badge variant="success" className="text-xs">Ativa</Badge>
                           : <Badge variant="secondary" className="text-xs">Inativa</Badge>}
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">{f.descricao}</p>
-                      <p className="text-xs text-gray-400 mt-1">Base legal: {f.base_legal}</p>
+                      <p className="text-sm text-gray-500 mt-1">{f.description}</p>
+                      <p className="text-xs text-gray-400 mt-1">Base legal: {f.legal_basis}</p>
                     </div>
                     <Link href={`/consentimentos/finalidades/${f.id}`}>
                       <Button variant="ghost" size="sm">Editar</Button>

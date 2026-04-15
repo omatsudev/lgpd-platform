@@ -105,8 +105,8 @@ export default function HomePage() {
       <section id="features" className="py-20 bg-gray-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12 space-y-3">
-            <h2 className="text-3xl font-bold" style={{ color: '#0f2d5e' }}>Tudo que você precisa para se adequar</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">Módulos completos que cobrem todos os requisitos da LGPD, desde o mapeamento de dados até a gestão de titulares.</p>
+            <h2 className="text-3xl font-bold" style={{ color: '#0f2d5e' }}>Uma nova forma inteligente e ágil para viabilizar a governança de dados.</h2>
+            <p className="text-gray-500 max-w-2xl mx-auto">Nossa plataforma integra conformidade, tecnologia e inteligência em um único ambiente, permitindo que sua empresa tenha controle total, segurança e visão estratégica sobre os dados.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((f) => (

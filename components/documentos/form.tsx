@@ -14,43 +14,56 @@ import { FileText, Link2, Settings2, Calendar } from 'lucide-react'
 // ─── Constantes ────────────────────────────────────────────────────────────
 
 const TIPOS = [
-  { value: 'politica_privacidade', label: 'Política de Privacidade' },
-  { value: 'aviso_privacidade', label: 'Aviso de Privacidade' },
-  { value: 'politica_seguranca', label: 'Política de Segurança' },
-  { value: 'termo_consentimento', label: 'Termo de Consentimento' },
-  { value: 'contrato_dpa', label: 'Contrato DPA (Data Processing Agreement)' },
-  { value: 'ripd', label: 'RIPD (Relatório de Impacto)' },
-  { value: 'procedimento_interno', label: 'Procedimento Interno' },
-  { value: 'relatorio_auditoria', label: 'Relatório de Auditoria' },
-  { value: 'outro', label: 'Outro' },
+  { value: 'privacy_policy', label: 'Política de Privacidade' },
+  { value: 'privacy_notice', label: 'Aviso de Privacidade' },
+  { value: 'security_policy', label: 'Política de Segurança' },
+  { value: 'consent_form', label: 'Termo de Consentimento' },
+  { value: 'dpa_contract', label: 'Contrato DPA (Data Processing Agreement)' },
+  { value: 'dpia', label: 'RIPD (Relatório de Impacto)' },
+  { value: 'internal_procedure', label: 'Procedimento Interno' },
+  { value: 'audit_report', label: 'Relatório de Auditoria' },
+  { value: 'other', label: 'Outro' },
 ]
 
 const STATUS_OPTIONS = [
-  { value: 'rascunho', label: 'Rascunho' },
-  { value: 'em_revisao', label: 'Em Revisão' },
-  { value: 'aprovado', label: 'Aprovado' },
-  { value: 'publicado', label: 'Publicado' },
-  { value: 'obsoleto', label: 'Obsoleto' },
+  { value: 'draft', label: 'Rascunho' },
+  { value: 'under_review', label: 'Em Revisão' },
+  { value: 'approved', label: 'Aprovado' },
+  { value: 'published', label: 'Publicado' },
+  { value: 'obsolete', label: 'Obsoleto' },
 ]
 
 // ─── Tipos ─────────────────────────────────────────────────────────────────
 
-type FormState = Omit<DocumentoData, 'empresa_id' | 'id'>
+type FormState = {
+  title: string
+  type: string
+  description: string
+  version: string
+  content: string
+  file_url: string
+  file_name: string
+  status: string
+  responsible: string
+  approval_date: string
+  review_date: string
+  expiration_date: string
+}
 
 function defaultState(): FormState {
   return {
-    titulo: '',
-    tipo: '',
-    descricao: '',
-    versao: '1.0',
-    conteudo: '',
-    arquivo_url: '',
-    arquivo_nome: '',
-    status: 'rascunho',
-    responsavel: '',
-    data_aprovacao: '',
-    data_revisao: '',
-    data_expiracao: '',
+    title: '',
+    type: '',
+    description: '',
+    version: '1.0',
+    content: '',
+    file_url: '',
+    file_name: '',
+    status: 'draft',
+    responsible: '',
+    approval_date: '',
+    review_date: '',
+    expiration_date: '',
   }
 }
 
@@ -71,12 +84,12 @@ function SectionHeader({ icon: Icon, title, subtitle }: { icon: any; title: stri
 // ─── Componente principal ─────────────────────────────────────────────────
 
 interface DocumentoFormProps {
-  empresaId: string
+  companyId: string
   id?: string
   initialData?: any
 }
 
-export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps) {
+export function DocumentoForm({ companyId, id, initialData }: DocumentoFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()
@@ -85,18 +98,18 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
   const [data, setData] = useState<FormState>(() => {
     if (!initialData) return defaultState()
     return {
-      titulo: initialData.titulo ?? '',
-      tipo: initialData.tipo ?? '',
-      descricao: initialData.descricao ?? '',
-      versao: initialData.versao ?? '1.0',
-      conteudo: initialData.conteudo ?? '',
-      arquivo_url: initialData.arquivo_url ?? '',
-      arquivo_nome: initialData.arquivo_nome ?? '',
-      status: initialData.status ?? 'rascunho',
-      responsavel: initialData.responsavel ?? '',
-      data_aprovacao: initialData.data_aprovacao ?? '',
-      data_revisao: initialData.data_revisao ?? '',
-      data_expiracao: initialData.data_expiracao ?? '',
+      title: initialData.title ?? '',
+      type: initialData.type ?? '',
+      description: initialData.description ?? '',
+      version: initialData.version ?? '1.0',
+      content: initialData.content ?? '',
+      file_url: initialData.file_url ?? '',
+      file_name: initialData.file_name ?? '',
+      status: initialData.status ?? 'draft',
+      responsible: initialData.responsible ?? '',
+      approval_date: initialData.approval_date ?? '',
+      review_date: initialData.review_date ?? '',
+      expiration_date: initialData.expiration_date ?? '',
     }
   })
 
@@ -105,8 +118,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
 
   const validate = () => {
     const errs: Record<string, string> = {}
-    if (!data.titulo.trim()) errs.titulo = 'Título é obrigatório'
-    if (!data.tipo) errs.tipo = 'Tipo é obrigatório'
+    if (!data.title.trim()) errs.title = 'Título é obrigatório'
+    if (!data.type) errs.type = 'Tipo é obrigatório'
     return errs
   }
 
@@ -119,7 +132,22 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
     setErrors({})
     setSaving(true)
     try {
-      await salvarDocumento({ ...data, empresa_id: empresaId, id })
+      await salvarDocumento({
+        id,
+        company_id: companyId,
+        title: data.title,
+        type: data.type,
+        description: data.description,
+        version: data.version,
+        content: data.content,
+        file_url: data.file_url,
+        file_name: data.file_name,
+        status: data.status,
+        responsible: data.responsible,
+        approval_date: data.approval_date,
+        review_date: data.review_date,
+        expiration_date: data.expiration_date,
+      })
     } catch {
       setSaving(false)
     }
@@ -140,20 +168,20 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="titulo">Título *</Label>
+            <Label htmlFor="title">Título *</Label>
             <Input
-              id="titulo"
-              value={data.titulo}
-              onChange={e => update('titulo', e.target.value)}
+              id="title"
+              value={data.title}
+              onChange={e => update('title', e.target.value)}
               placeholder="Ex: Política de Privacidade — Versão 2025"
             />
-            {errors.titulo && <p className="text-xs text-red-500">{errors.titulo}</p>}
+            {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>Tipo de documento *</Label>
-              <Select value={data.tipo} onValueChange={v => update('tipo', v)}>
+              <Select value={data.type} onValueChange={v => update('type', v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
@@ -163,15 +191,15 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
                   ))}
                 </SelectContent>
               </Select>
-              {errors.tipo && <p className="text-xs text-red-500">{errors.tipo}</p>}
+              {errors.type && <p className="text-xs text-red-500">{errors.type}</p>}
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="versao">Versão</Label>
               <Input
                 id="versao"
-                value={data.versao}
-                onChange={e => update('versao', e.target.value)}
+                value={data.version}
+                onChange={e => update('version', e.target.value)}
                 placeholder="Ex: 1.0, 2.1"
               />
             </div>
@@ -181,8 +209,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
             <Label htmlFor="descricao">Descrição</Label>
             <Textarea
               id="descricao"
-              value={data.descricao}
-              onChange={e => update('descricao', e.target.value)}
+              value={data.description}
+              onChange={e => update('description', e.target.value)}
               placeholder="Breve descrição do propósito e escopo do documento..."
               rows={2}
             />
@@ -201,8 +229,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
               <Label htmlFor="arquivo_url">URL do documento (link externo)</Label>
               <Input
                 id="arquivo_url"
-                value={data.arquivo_url}
-                onChange={e => update('arquivo_url', e.target.value)}
+                value={data.file_url}
+                onChange={e => update('file_url', e.target.value)}
                 placeholder="https://..."
                 type="url"
               />
@@ -211,8 +239,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
               <Label htmlFor="arquivo_nome">Nome do arquivo (referência)</Label>
               <Input
                 id="arquivo_nome"
-                value={data.arquivo_nome}
-                onChange={e => update('arquivo_nome', e.target.value)}
+                value={data.file_name}
+                onChange={e => update('file_name', e.target.value)}
                 placeholder="Ex: politica-privacidade-v2.pdf"
               />
             </div>
@@ -222,8 +250,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
             <Label htmlFor="conteudo">Conteúdo / Observações</Label>
             <Textarea
               id="conteudo"
-              value={data.conteudo}
-              onChange={e => update('conteudo', e.target.value)}
+              value={data.content}
+              onChange={e => update('content', e.target.value)}
               placeholder="Resumo do conteúdo, pontos principais, ou texto completo do documento..."
               rows={8}
             />
@@ -255,8 +283,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
               <Label htmlFor="responsavel">Responsável</Label>
               <Input
                 id="responsavel"
-                value={data.responsavel}
-                onChange={e => update('responsavel', e.target.value)}
+                value={data.responsible}
+                onChange={e => update('responsible', e.target.value)}
                 placeholder="Nome ou setor responsável"
               />
             </div>
@@ -276,8 +304,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
               <Input
                 id="data_aprovacao"
                 type="date"
-                value={data.data_aprovacao}
-                onChange={e => update('data_aprovacao', e.target.value)}
+                value={data.approval_date}
+                onChange={e => update('approval_date', e.target.value)}
               />
             </div>
             <div className="space-y-1.5">
@@ -285,8 +313,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
               <Input
                 id="data_revisao"
                 type="date"
-                value={data.data_revisao}
-                onChange={e => update('data_revisao', e.target.value)}
+                value={data.review_date}
+                onChange={e => update('review_date', e.target.value)}
               />
             </div>
             <div className="space-y-1.5">
@@ -294,8 +322,8 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
               <Input
                 id="data_expiracao"
                 type="date"
-                value={data.data_expiracao}
-                onChange={e => update('data_expiracao', e.target.value)}
+                value={data.expiration_date}
+                onChange={e => update('expiration_date', e.target.value)}
               />
             </div>
           </div>
@@ -313,7 +341,7 @@ export function DocumentoForm({ empresaId, id, initialData }: DocumentoFormProps
           </form>
         )}
         <div className="flex gap-3 sm:ml-auto">
-          <Button variant="outline" onClick={() => router.push('/documentos')} disabled={saving}>
+          <Button variant="outline" onClick={() => router.push('/documents')} disabled={saving}>
             Cancelar
           </Button>
           <Button onClick={handleSave} disabled={saving}>
