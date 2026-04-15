@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Database, GraduationCap, AlertTriangle, Users, CheckCircle, ArrowRight, Building2, Shield, Megaphone, Scale, DollarSign, ChevronRight } from 'lucide-react'
+import { BarChart2, GraduationCap, UserCheck, FolderOpen, AlertOctagon, ClipboardCheck, Globe, Search, Megaphone, CheckCircle, ArrowRight, AlertTriangle, Scale, DollarSign, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { AnimatedBadges } from '@/components/home/animated-badges'
@@ -8,12 +8,15 @@ import { ShieldIllustration } from '@/components/home/shield-illustration'
 import { Logo } from '@/components/logo'
 
 const features = [
-  { icon: Database, title: 'Inventário de Dados', description: 'Mapeie todos os dados pessoais tratados com base legal e finalidade.', color: '#0f2d5e', bg: '#e8eef7' },
-  { icon: GraduationCap, title: 'Treinamentos', description: 'Treine colaboradores com vídeos e PDFs. Envio automático via WhatsApp.', color: '#0097a7', bg: '#e0f7fa' },
-  { icon: AlertTriangle, title: 'Canal de Denúncias', description: 'Canal público para reporte de violações com anonimato garantido.', color: '#0f2d5e', bg: '#e8eef7' },
-  { icon: Users, title: 'Direitos dos Titulares', description: 'Gerencie solicitações de acesso, exclusão e correção com controle de prazo.', color: '#0097a7', bg: '#e0f7fa' },
-  { icon: Shield, title: 'Página Pública LGPD', description: 'Cada empresa recebe uma página com QR Code e formulários prontos.', color: '#0f2d5e', bg: '#e8eef7' },
-  { icon: Building2, title: 'Multi-Empresa (DPO)', description: 'DPOs e advogados gerenciam múltiplas empresas em um único painel.', color: '#0097a7', bg: '#e0f7fa' },
+  { icon: BarChart2,      title: 'Data Mapping Pro',                   description: 'Mapeie, organize e visualize os dados da sua empresa com total controle.',                              color: '#0f2d5e', bg: '#e8eef7' },
+  { icon: GraduationCap, title: 'Academy LGPD',                        description: 'Capacite sua equipe de forma prática, automatizada e em conformidade com a lei.',                       color: '#0097a7', bg: '#e0f7fa' },
+  { icon: UserCheck,     title: 'Direitos dos Titulares',              description: 'Gerencie solicitações de titulares com agilidade e segurança jurídica.',                               color: '#0f2d5e', bg: '#e8eef7' },
+  { icon: FolderOpen,    title: 'Governança de Documentos',            description: 'Centralize e organize documentos essenciais da sua estrutura de compliance.',                          color: '#0097a7', bg: '#e0f7fa' },
+  { icon: AlertOctagon,  title: 'Gestão de Incidentes',                description: 'Registre, acompanhe e responda incidentes com rapidez e controle.',                                   color: '#0f2d5e', bg: '#e8eef7' },
+  { icon: ClipboardCheck,title: 'ConsentFlow',                         description: 'Gerencie consentimentos de forma simples, rastreável e automatizada.',                                color: '#0097a7', bg: '#e0f7fa' },
+  { icon: Globe,         title: 'Gestão de Cookies & Adequação de Sites', description: 'Garanta que seu site esteja conforme a LGPD com gestão eficiente de cookies.',                    color: '#0f2d5e', bg: '#e8eef7' },
+  { icon: Search,        title: 'Due Diligence',                       description: 'Avalie riscos e parceiros com mais segurança e padronização.',                                         color: '#0097a7', bg: '#e0f7fa' },
+  { icon: Megaphone,     title: 'Canal de Denúncias',                  description: 'Receba relatos com sigilo e fortaleça a integridade da sua organização.',                             color: '#0f2d5e', bg: '#e8eef7' },
 ]
 
 const planos = [
