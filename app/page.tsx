@@ -34,56 +34,72 @@ const planos = [
   },
 ]
 
+const navLinks = [
+  { label: 'Inicio', href: '#' },
+  { label: 'Produtos', href: '#features' },
+  { label: 'Soluções', href: '#features' },
+  { label: 'Sobre nós', href: '#sobre' },
+  { label: 'Case de sucesso', href: '#cases' },
+  { label: 'Contato', href: '#contato' },
+]
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
-      <nav className="border-b border-gray-100 sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
-          <Link href="/">
-            <Image src="/logo.jpg" alt="Serra Privacy" width={130} height={46} className="object-contain rounded-lg" priority />
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
+          <Link href="/" className="flex-shrink-0">
+            <Image src="/logo.jpg" alt="Serra Privacy" width={120} height={42} className="object-contain rounded-lg" priority />
           </Link>
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
-            <Link href="#features" className="hover:text-gray-900 transition-colors">Funcionalidades</Link>
-            <Link href="#planos" className="hover:text-gray-900 transition-colors">Planos</Link>
-            <Link href="/sobre" className="hover:text-gray-900 transition-colors">Sobre</Link>
+
+          <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-700">
+            {navLinks.map(l => (
+              <Link key={l.label} href={l.href} className="hover:text-gray-900 transition-colors whitespace-nowrap">
+                {l.label}
+              </Link>
+            ))}
+            <Link href="/login" className="hover:text-gray-900 transition-colors">Login</Link>
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/login">
-              <Button variant="ghost" size="sm" style={{ color: '#0f2d5e' }}>Entrar</Button>
-            </Link>
-            <Link href="/cadastro">
-              <Button size="sm" className="text-white" style={{ background: 'linear-gradient(90deg, #0f2d5e, #00bcd4)', border: 'none' }}>
-                Começar grátis
-              </Button>
-            </Link>
-          </div>
+
+          <Link href="/cadastro" className="flex-shrink-0">
+            <Button size="sm" className="rounded-full px-5 font-semibold text-white" style={{ background: '#111827', border: 'none' }}>
+              Demonstração
+            </Button>
+          </Link>
         </div>
       </nav>
 
       {/* Hero */}
       <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f2d5e 0%, #0a1f42 60%, #001133 100%)' }}>
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 h-64 w-64 rounded-full bg-cyan-400 blur-3xl" />
-          <div className="absolute bottom-10 right-10 h-96 w-96 rounded-full bg-blue-400 blur-3xl" />
+        {/* Glow blobs */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 h-80 w-80 rounded-full opacity-10 blur-3xl" style={{ background: '#00bcd4' }} />
+          <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full opacity-10 blur-3xl" style={{ background: '#0097a7' }} />
         </div>
-        <div className="relative max-w-6xl mx-auto px-6 py-20 flex flex-col lg:flex-row items-center gap-12">
-          <div className="flex-1 text-center lg:text-left space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium border" style={{ background: 'rgba(0,188,212,0.15)', borderColor: 'rgba(0,188,212,0.4)', color: '#00bcd4' }}>
-              <Lock className="h-3.5 w-3.5" />
-              Plataforma certificada de adequação LGPD
-            </div>
+
+        <div className="relative max-w-7xl mx-auto px-6 py-24 flex flex-col lg:flex-row items-center gap-16">
+          {/* Left */}
+          <div className="flex-1 space-y-6 text-center lg:text-left">
             <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
-              Sua empresa em conformidade com a{' '}
-              <span style={{ color: '#00bcd4' }}>LGPD</span>{' '}
-              de forma simples
+              Sua Plataforma Inteligente<br />de Governança de Dados
             </h1>
-            <p className="text-lg text-blue-200 max-w-xl">
-              Plataforma SaaS completa para adequação à Lei Geral de Proteção de Dados. Para empresas e DPOs que gerenciam múltiplos clientes.
+
+            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+              {['LGPD', 'IA', 'ESG'].map(tag => (
+                <span key={tag} className="px-3 py-1 rounded-sm text-xs font-bold tracking-widest text-white" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <p className="text-base text-blue-200 max-w-md leading-relaxed">
+              Gerencie, proteja e transforme seus dados em vantagem competitiva – tudo em uma única plataforma.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
               <Link href="/cadastro">
-                <Button size="lg" className="gap-2 text-white font-semibold px-8" style={{ background: 'linear-gradient(90deg, #00bcd4, #0097a7)', border: 'none' }}>
+                <Button size="lg" className="gap-2 font-semibold text-white px-8" style={{ background: 'linear-gradient(90deg, #00bcd4, #0097a7)', border: 'none' }}>
                   Começar grátis <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -93,17 +109,28 @@ export default function HomePage() {
                 </Button>
               </Link>
             </div>
-            <p className="text-sm text-blue-300">Sem cartão de crédito • 14 dias grátis</p>
+
+            <p className="text-xs text-blue-400">Sem cartão de crédito • 14 dias grátis</p>
           </div>
-          <div className="flex-shrink-0">
-            <Image src="/logo.jpg" alt="Serra Privacy" width={320} height={115} className="object-contain rounded-2xl shadow-2xl" priority />
+
+          {/* Right — shield illustration */}
+          <div className="flex-shrink-0 flex items-center justify-center">
+            <div className="relative flex items-center justify-center" style={{ width: 260, height: 260 }}>
+              {/* Outer glow ring */}
+              <div className="absolute inset-0 rounded-full opacity-20 blur-2xl" style={{ background: 'radial-gradient(circle, #00bcd4, transparent 70%)' }} />
+              {/* Shield emoji as large illustration */}
+              <div className="relative flex flex-col items-center justify-center rounded-full"
+                style={{ width: 220, height: 220, background: 'radial-gradient(circle at 40% 35%, #1e4fa8, #0a1f42)' }}>
+                <span style={{ fontSize: 110, lineHeight: 1, filter: 'drop-shadow(0 8px 24px rgba(0,188,212,0.4))' }}>🛡️</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Features */}
       <section id="features" className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12 space-y-3">
             <h2 className="text-3xl font-bold" style={{ color: '#0f2d5e' }}>Uma nova forma inteligente e ágil para viabilizar a governança de dados.</h2>
             <p className="text-gray-500 max-w-2xl mx-auto">Nossa plataforma integra conformidade, tecnologia e inteligência em um único ambiente, permitindo que sua empresa tenha controle total, segurança e visão estratégica sobre os dados.</p>
@@ -126,7 +153,7 @@ export default function HomePage() {
 
       {/* Planos */}
       <section id="planos" className="py-20">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12 space-y-3">
             <h2 className="text-3xl font-bold" style={{ color: '#0f2d5e' }}>Planos e preços</h2>
             <p className="text-gray-500">Escolha o plano ideal para o tamanho da sua empresa</p>
@@ -177,7 +204,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-100 py-8" style={{ background: '#0f2d5e' }}>
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <Image src="/logo.jpg" alt="Serra Privacy" width={110} height={40} className="object-contain rounded-lg" />
           <p className="text-sm text-blue-200">© 2026 Serra Privacy. Todos os direitos reservados.</p>
           <div className="flex gap-6 text-sm text-blue-300">
