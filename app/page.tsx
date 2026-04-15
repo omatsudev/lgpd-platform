@@ -115,7 +115,7 @@ export default function HomePage() {
 
           {/* Right — padlock */}
           <div className="flex-shrink-0 flex items-center justify-center">
-            <Image src="/padlock-transparent.png" alt="Padlock" width={280} height={340} className="object-contain drop-shadow-2xl" />
+            <Image src="/padlock.png" alt="Padlock" width={280} height={340} className="object-contain drop-shadow-2xl" />
           </div>
         </div>
       </section>
