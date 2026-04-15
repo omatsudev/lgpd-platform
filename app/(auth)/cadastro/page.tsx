@@ -11,7 +11,7 @@ export default function CadastroPage() {
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #0f2d5e 0%, #0a1f42 60%, #001133 100%)' }}>
       <div className="w-full max-w-lg space-y-6">
         <div className="flex justify-center">
-          <Image src="/logo.jpg" alt="Serra Privacy" width={180} height={65} className="object-contain rounded-xl" priority />
+          <Image src="/logo-transparent.png" alt="Serra Privacy" width={180} height={80} className="object-contain" priority />
         </div>
 
         <Card className="shadow-2xl border-0">
@@ -46,7 +46,7 @@ export default function CadastroPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="empresa_nome">Nome da empresa</Label>
-                  <Input id="empresa_nome" name="empresa_nome" placeholder="Razão social" />
+                  <Input id="empresa_nome" name="empresa_nome" placeholder="Razão social" required />
                 </div>
               </div>
               <div className="space-y-2">

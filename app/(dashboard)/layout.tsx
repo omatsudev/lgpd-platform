@@ -1,9 +1,42 @@
+import { redirect } from 'next/navigation'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Header } from '@/components/dashboard/header'
 import { getUserCompany } from '@/lib/supabase/queries'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, company: empresa } = await getUserCompany()
+  const { user, company: empresa, companyId } = await getUserCompany()
+
+  if (!user) redirect('/login')
+
+  // Se o usuário não tem empresa ainda, cria uma automaticamente
+  if (user && !companyId) {
+    const supabase = await createClient()
+    const userName = (user.user_metadata?.name as string) || user.email || 'Usuário'
+    const nomeFinal = `Empresa de ${userName.split('@')[0]}`
+    const slug = nomeFinal
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      + '-' + Date.now()
+
+    const { data: newCompany } = await supabase
+      .from('companies')
+      .insert({ name: nomeFinal, owner_id: user.id, slug })
+      .select('id')
+      .single()
+
+    if (newCompany) {
+      await supabase.from('user_companies').insert({
+        user_id: user.id,
+        company_id: newCompany.id,
+        role: 'admin',
+      })
+    }
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">

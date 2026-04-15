@@ -27,18 +27,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(new URL(`/cadastro?error=${authError.message}`, request.url), { status: 303 })
   }
 
-  if (authData.user && tipo !== 'dpo' && empresa_nome) {
-    const slug = empresa_nome
+  if (authData.user && tipo !== 'dpo') {
+    const nomeFinal = empresa_nome?.trim() || (name?.trim() ? `Empresa de ${name.trim()}` : 'Minha Empresa')
+    const slug = nomeFinal
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9\s-]/g, '')
       .trim()
       .replace(/\s+/g, '-')
+      + '-' + Date.now()
 
     const { data: company } = await supabase
       .from('companies')
-      .insert({ name: empresa_nome, owner_id: authData.user.id, slug })
+      .insert({ name: nomeFinal, owner_id: authData.user.id, slug })
       .select('id')
       .single()
 
