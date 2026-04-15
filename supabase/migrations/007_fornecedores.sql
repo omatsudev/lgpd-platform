@@ -1,7 +1,7 @@
 -- LGPD Supplier Management and Due Diligence Module
 
 create table public.suppliers (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
 
   -- Identification

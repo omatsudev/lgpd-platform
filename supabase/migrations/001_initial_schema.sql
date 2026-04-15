@@ -2,13 +2,12 @@
 -- Run in Supabase SQL Editor
 
 -- Enable UUID extension
-create extension if not exists "uuid-ossp";
 
 -- =============================================
 -- TABLE: companies
 -- =============================================
 create table public.companies (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   name text not null,
   tax_id text,
   slug text unique not null,
@@ -28,7 +27,7 @@ create table public.companies (
 -- TABLE: user_companies (multi-tenant: DPO manages multiple companies)
 -- =============================================
 create table public.user_companies (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
   company_id uuid references public.companies(id) on delete cascade not null,
   role text not null check (role in ('admin', 'dpo', 'empresa', 'colaborador')),
@@ -40,7 +39,7 @@ create table public.user_companies (
 -- TABLE: data_inventory
 -- =============================================
 create table public.data_inventory (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
   data_type text not null,
   purpose text not null,
@@ -58,7 +57,7 @@ create table public.data_inventory (
 -- TABLE: trainings
 -- =============================================
 create table public.trainings (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
   title text not null,
   description text,
@@ -74,7 +73,7 @@ create table public.trainings (
 -- TABLE: training_employees
 -- =============================================
 create table public.training_employees (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   training_id uuid references public.trainings(id) on delete cascade not null,
   employee_id uuid references auth.users(id) on delete cascade,
   employee_name text not null,
@@ -92,7 +91,7 @@ create table public.training_employees (
 -- TABLE: complaints
 -- =============================================
 create table public.complaints (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
   anonymous boolean default true not null,
   name text,
@@ -111,7 +110,7 @@ create table public.complaints (
 -- TABLE: data_subject_requests
 -- =============================================
 create table public.data_subject_requests (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
   type text not null check (type in ('access', 'deletion', 'correction', 'portability', 'objection')),
   name text not null,
@@ -130,7 +129,7 @@ create table public.data_subject_requests (
 -- TABLE: audit_logs
 -- =============================================
 create table public.audit_logs (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete set null,
   user_id uuid references auth.users(id) on delete set null,
   user_email text not null,
@@ -147,7 +146,7 @@ create table public.audit_logs (
 -- TABLE: notifications
 -- =============================================
 create table public.notifications (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
   title text not null,
   message text not null,

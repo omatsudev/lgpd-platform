@@ -1,7 +1,7 @@
 -- Security Incident Management Module (LGPD Art. 48)
 
 create table public.incidents (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
 
   -- Identification

@@ -1,7 +1,7 @@
 -- LGPD Risk Management Module
 
-create table public.risks (
-  id uuid default uuid_generate_v4() primary key,
+create table if not exists public.risks (
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
 
   -- Identification

@@ -2,7 +2,7 @@
 
 -- Consent purposes configured by the company
 create table public.consent_purposes (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
   name text not null,
   description text not null,
@@ -15,7 +15,7 @@ create table public.consent_purposes (
 
 -- Consent records from data subjects
 create table public.consents (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   company_id uuid references public.companies(id) on delete cascade not null,
   purpose_id uuid references public.consent_purposes(id) on delete cascade not null,
 
