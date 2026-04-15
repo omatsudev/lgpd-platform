@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Database, GraduationCap, AlertTriangle, Users, CheckCircle, ArrowRight, Building2, Shield, Lock, Megaphone, Scale, DollarSign, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { AnimatedBadges } from '@/components/home/animated-badges'
 
 const features = [
   { icon: Database, title: 'Inventário de Dados', description: 'Mapeie todos os dados pessoais tratados com base legal e finalidade.', color: '#0f2d5e', bg: '#e8eef7' },
@@ -50,7 +51,7 @@ export default function HomePage() {
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
           <Link href="/" className="flex-shrink-0">
-            <Image src="/logo.jpg" alt="Serra Privacy" width={120} height={42} className="object-contain rounded-lg" priority />
+            <Image src="/logo.jpg" alt="Serra Privacy" width={130} height={46} className="object-contain" priority />
           </Link>
 
           <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-700">
@@ -85,13 +86,7 @@ export default function HomePage() {
               Sua Plataforma Inteligente<br />de Governança de Dados
             </h1>
 
-            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
-              {['LGPD', 'IA', 'ESG'].map(tag => (
-                <span key={tag} className="px-3 py-1 rounded-sm text-xs font-bold tracking-widest text-white" style={{ background: 'rgba(255,255,255,0.15)' }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <AnimatedBadges />
 
             <p className="text-base text-blue-200 max-w-md leading-relaxed">
               Gerencie, proteja e transforme seus dados em vantagem competitiva – tudo em uma única plataforma.
