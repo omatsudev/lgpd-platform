@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Database, GraduationCap, AlertTriangle, Users, CheckCircle, ArrowRight, Building2, Shield, Lock } from 'lucide-react'
+import { Database, GraduationCap, AlertTriangle, Users, CheckCircle, ArrowRight, Building2, Shield, Lock, Megaphone, Scale, DollarSign, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -124,6 +124,54 @@ export default function HomePage() {
                 <span style={{ fontSize: 110, lineHeight: 1, filter: 'drop-shadow(0 8px 24px rgba(0,188,212,0.4))' }}>🛡️</span>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Riscos */}
+      <section id="riscos" className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="flex items-start justify-between mb-10">
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+              Riscos que sua empresa está correndo:
+            </h2>
+            <span className="text-5xl ml-4 flex-shrink-0">⚠️</span>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                icon: Megaphone,
+                title: 'Danos à Reputação e Marca:',
+                text: 'Vazamento de dados pode destruir a confiança do cliente, resultando em perda de mercado e valor da marca.',
+              },
+              {
+                icon: Scale,
+                title: 'Ações Judiciais:',
+                text: 'Clientes podem mover ações individuais ou coletivas por danos materiais ou morais decorrentes de uso indevido de seus dados.',
+              },
+              {
+                icon: AlertTriangle,
+                title: 'Operações Interrompidas:',
+                text: 'A paralisação da base de dados pode travar o funcionamento da empresa.',
+              },
+              {
+                icon: DollarSign,
+                title: 'Sanções Administrativas (ANPD):',
+                text: 'Além de multas pecuniárias de 2% do faturamento (até R$ 50 milhões por infração), a ANPD pode emitir advertências, bloqueio de dados ou interrupção do tratamento de dados.',
+              },
+            ].map((item) => (
+              <div key={item.title} className="flex items-center gap-4 rounded-xl px-6 py-5" style={{ background: '#b2ebf2' }}>
+                {/* Arrow */}
+                <ChevronRight className="h-8 w-8 flex-shrink-0" style={{ color: '#00838f' }} strokeWidth={3} />
+                {/* Text */}
+                <p className="flex-1 text-sm text-gray-800 leading-relaxed">
+                  <span className="font-bold">{item.title}</span>{' '}{item.text}
+                </p>
+                {/* Icon */}
+                <item.icon className="h-7 w-7 flex-shrink-0" style={{ color: '#00838f' }} />
+              </div>
+            ))}
           </div>
         </div>
       </section>
