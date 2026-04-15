@@ -9,7 +9,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login')
 
-  // Se o usuário não tem empresa ainda, cria uma automaticamente
+  // Se o usuário não tem empresa, cria uma e redireciona para recarregar
   if (user && !companyId) {
     const supabase = await createClient()
     const userName = (user.user_metadata?.name as string) || user.email || 'Usuário'
@@ -35,6 +35,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         company_id: newCompany.id,
         role: 'admin',
       })
+      // Redireciona para recarregar a página com a empresa criada
+      // (o trigger do banco semeia os dados automaticamente)
+      redirect('/dashboard')
     }
   }
 
