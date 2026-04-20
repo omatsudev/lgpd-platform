@@ -1,6 +1,7 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 
-export async function getUserCompany() {
+export const getUserCompany = cache(async function getUserCompany() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { user: null, company: null, companyId: null, supabase }
@@ -29,4 +30,4 @@ export async function getUserCompany() {
     companyId: ucData.company_id,
     supabase,
   }
-}
+})
