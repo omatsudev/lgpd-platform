@@ -6,9 +6,20 @@ import { Button } from '@/components/ui/button'
 interface HeaderProps {
   companyName?: string
   userName?: string
+  companies?: { id: string; name: string }[]
+  currentCompanyId?: string | null
+  switchCompanyAction?: (formData: FormData) => Promise<void>
 }
 
-export function Header({ companyName = 'Minha Empresa', userName = 'Usuário' }: HeaderProps) {
+export function Header({
+  companyName = 'Minha Empresa',
+  userName = 'Usuário',
+  companies = [],
+  currentCompanyId,
+  switchCompanyAction,
+}: HeaderProps) {
+  const hasMultiple = companies.length > 1
+
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-gray-200 bg-white px-4 md:px-6 shadow-sm">
       {/* Spacer for mobile hamburger button */}
@@ -16,7 +27,25 @@ export function Header({ companyName = 'Minha Empresa', userName = 'Usuário' }:
 
       <div className="flex items-center gap-2 text-sm text-gray-600 min-w-0">
         <Building2 className="h-4 w-4 flex-shrink-0" style={{ color: '#0f2d5e' }} />
-        <span className="font-semibold truncate" style={{ color: '#0f2d5e' }}>{companyName}</span>
+
+        {hasMultiple && switchCompanyAction ? (
+          <form action={switchCompanyAction} className="flex items-center">
+            <select
+              name="companyId"
+              defaultValue={currentCompanyId ?? ''}
+              onChange={e => e.currentTarget.form?.requestSubmit()}
+              className="font-semibold text-sm border-none outline-none bg-transparent cursor-pointer pr-1 max-w-[180px] md:max-w-xs truncate"
+              style={{ color: '#0f2d5e' }}
+            >
+              {companies.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+            <ChevronDown className="h-3 w-3 flex-shrink-0" style={{ color: '#0f2d5e' }} />
+          </form>
+        ) : (
+          <span className="font-semibold truncate" style={{ color: '#0f2d5e' }}>{companyName}</span>
+        )}
       </div>
 
       <div className="ml-auto flex items-center gap-2">
