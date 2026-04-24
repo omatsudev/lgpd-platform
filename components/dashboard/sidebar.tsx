@@ -11,28 +11,30 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/checklist', label: 'Checklist LGPD', icon: ClipboardList },
-  { href: '/cookies', label: 'Verificador de Site', icon: Cookie },
-  { href: '/inventario', label: 'Inventário de Dados', icon: Database },
-  { href: '/riscos', label: 'Gestão de Riscos', icon: TriangleAlert },
-  { href: '/relatorio', label: 'Relatório LGPD', icon: BarChart2 },
-  { href: '/incidentes', label: 'Gestão de Incidentes', icon: ShieldAlert },
-  { href: '/documentos', label: 'Documentos', icon: FileText },
-  { href: '/consentimentos', label: 'Consentimentos', icon: ClipboardCheck },
-  { href: '/fornecedores', label: 'Fornecedores', icon: Truck },
-  { href: '/treinamentos', label: 'Treinamentos', icon: GraduationCap },
-  { href: '/denuncias', label: 'Canal de Denúncias', icon: AlertTriangle },
-  { href: '/titulares', label: 'Direitos dos Titulares', icon: Users },
-  { href: '/colaboradores', label: 'Colaboradores', icon: Users },
-  { href: '/empresas', label: 'Empresas (DPO)', icon: Building2 },
-  { href: '/logs', label: 'Logs de Auditoria', icon: ScrollText },
-  { href: '/configuracoes', label: 'Configurações', icon: Settings },
+const allNavItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/checklist', label: 'Checklist LGPD', icon: ClipboardList, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/cookies', label: 'Verificador de Site', icon: Cookie, roles: ['empresa', 'admin'] },
+  { href: '/inventario', label: 'Inventário de Dados', icon: Database, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/riscos', label: 'Gestão de Riscos', icon: TriangleAlert, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/relatorio', label: 'Relatório LGPD', icon: BarChart2, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/incidentes', label: 'Gestão de Incidentes', icon: ShieldAlert, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/documentos', label: 'Documentos', icon: FileText, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/consentimentos', label: 'Consentimentos', icon: ClipboardCheck, roles: ['empresa', 'admin'] },
+  { href: '/fornecedores', label: 'Fornecedores', icon: Truck, roles: ['empresa', 'admin'] },
+  { href: '/treinamentos', label: 'Treinamentos', icon: GraduationCap, roles: ['empresa', 'admin'] },
+  { href: '/denuncias', label: 'Canal de Denúncias', icon: AlertTriangle, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/titulares', label: 'Direitos dos Titulares', icon: Users, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/empresas', label: 'Empresas (DPO)', icon: Building2, roles: ['dpo'] },
+  { href: '/logs', label: 'Logs de Auditoria', icon: ScrollText, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/configuracoes', label: 'Configurações', icon: Settings, roles: ['empresa', 'admin', 'dpo'] },
 ]
 
-function NavContent({ onClose }: { onClose?: () => void }) {
+function NavContent({ onClose, role }: { onClose?: () => void; role?: string | null }) {
   const pathname = usePathname()
+  const navItems = allNavItems.filter(item =>
+    !role || item.roles.includes(role)
+  )
   return (
     <>
       <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
@@ -100,7 +102,7 @@ export function MobileMenuButton({ onClick }: { onClick: () => void }) {
   )
 }
 
-export function Sidebar() {
+export function Sidebar({ role }: { role?: string | null }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const pathname = usePathname()
 
@@ -115,7 +117,7 @@ export function Sidebar() {
         className="hidden lg:flex fixed inset-y-0 left-0 z-50 w-64 flex-col"
         style={{ background: 'linear-gradient(180deg, #0f2d5e 0%, #0a1f42 100%)' }}
       >
-        <NavContent />
+        <NavContent role={role} />
       </aside>
 
       {/* Mobile drawer overlay */}
@@ -134,7 +136,7 @@ export function Sidebar() {
         )}
         style={{ background: 'linear-gradient(180deg, #0f2d5e 0%, #0a1f42 100%)' }}
       >
-        <NavContent onClose={() => setMobileOpen(false)} />
+        <NavContent onClose={() => setMobileOpen(false)} role={role} />
       </aside>
 
       {/* Floating mobile menu button */}

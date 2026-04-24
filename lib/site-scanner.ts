@@ -154,7 +154,7 @@ export async function scanSite(url: string): Promise<ScanResult> {
       'User-Agent': 'Mozilla/5.0 (compatible; LGPDScanner/1.0)',
       'Accept': 'text/html',
     },
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(8000),
     redirect: 'follow',
   })
 

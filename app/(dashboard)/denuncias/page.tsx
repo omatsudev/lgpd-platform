@@ -31,7 +31,9 @@ export default async function DenunciasPage({ searchParams }: { searchParams: Pr
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">Canal de Denúncias</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Gerencie as denúncias recebidas pelo canal público</p>
+          <p className="text-sm text-gray-500 mt-0.5">
+            Denúncias recebidas{company?.name ? ` · ${company.name}` : ''}
+          </p>
         </div>
         {company?.slug && (
           <Button variant="outline" size="sm" asChild>

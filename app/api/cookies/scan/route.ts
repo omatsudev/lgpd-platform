@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { scanSite } from '@/lib/site-scanner'
 
@@ -21,16 +20,14 @@ export async function POST(req: NextRequest) {
     }
 
     const domain = new URL(urlNormalizada).hostname
-    const { companyId } = await getUserCompany()
-    const supabase = await createClient()
+    const { companyId, user, supabase } = await getUserCompany()
 
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user || !companyId) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
     // Create record as processing
-    const { data: scan } = await supabase
+    const { data: scan, error: insertError } = await supabase
       .from('site_scans')
       .insert({
         company_id: companyId,
@@ -43,7 +40,11 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (!scan) {
-      return NextResponse.json({ error: 'Erro ao criar scan' }, { status: 500 })
+      console.error('site_scans insert error:', insertError)
+      return NextResponse.json(
+        { error: insertError?.message ?? 'Erro ao criar scan — verifique as permissões do banco' },
+        { status: 500 }
+      )
     }
 
     // Run the scan

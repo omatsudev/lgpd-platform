@@ -1,10 +1,11 @@
-import { Plus, Download } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/ui/search-input'
 import { getUserCompany } from '@/lib/supabase/queries'
+import { ExportButton } from '@/components/inventario/export-button'
 
 const riscoVariant: Record<string, 'destructive' | 'warning' | 'success'> = {
   high: 'destructive',
@@ -46,9 +47,7 @@ export default async function InventarioPage({ searchParams }: { searchParams: P
           <p className="text-sm text-gray-500 mt-0.5">Mapeamento de dados pessoais tratados pela empresa</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-1" /> Exportar
-          </Button>
+          <ExportButton itens={itens} />
           <Link href="/inventario/novo">
             <Button size="sm">
               <Plus className="h-4 w-4 mr-1" /> Novo
@@ -99,7 +98,10 @@ export default async function InventarioPage({ searchParams }: { searchParams: P
                             <Badge variant={statusVariant[status] ?? 'secondary'}>{statusLabel[status] ?? status}</Badge>
                           </td>
                           <td className="py-3 px-4 text-right">
-                            <Link href={`/inventario/${item.id}`}><Button variant="ghost" size="sm">Editar</Button></Link>
+                            <div className="flex items-center justify-end gap-1">
+                              <Link href={`/inventario/${item.id}/ver`}><Button variant="ghost" size="sm">Ver</Button></Link>
+                              <Link href={`/inventario/${item.id}`}><Button variant="ghost" size="sm">Editar</Button></Link>
+                            </div>
                           </td>
                         </tr>
                       )
@@ -118,7 +120,10 @@ export default async function InventarioPage({ searchParams }: { searchParams: P
                     <div key={item.id} className="p-4 space-y-2">
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-medium text-gray-900 text-sm">{nome}</p>
-                        <Link href={`/inventario/${item.id}`}><Button variant="ghost" size="sm" className="h-7 text-xs">Editar</Button></Link>
+                        <div className="flex gap-1">
+                          <Link href={`/inventario/${item.id}/ver`}><Button variant="ghost" size="sm" className="h-7 text-xs">Ver</Button></Link>
+                          <Link href={`/inventario/${item.id}`}><Button variant="ghost" size="sm" className="h-7 text-xs">Editar</Button></Link>
+                        </div>
                       </div>
                       <div className="flex gap-2 flex-wrap">
                         <Badge variant={riscoVariant[risco] ?? 'secondary'} className="text-xs">{riscoLabel[risco] ?? risco}</Badge>
