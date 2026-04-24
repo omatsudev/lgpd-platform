@@ -1,4 +1,4 @@
-import { Plus, CheckCircle2, XCircle, MinusCircle, ClipboardList } from 'lucide-react'
+import { Plus, CheckCircle2, XCircle, MinusCircle, ClipboardList, Send } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -12,7 +12,7 @@ const canalLabel: Record<string, string> = {
 }
 
 export default async function ConsentimentosPage({ searchParams }: { searchParams: Promise<{ q?: string; aba?: string }> }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, company, supabase } = await getUserCompany()
   const { q, aba = 'registros' } = await searchParams
 
   // Finalidades
@@ -197,28 +197,49 @@ export default async function ConsentimentosPage({ searchParams }: { searchParam
               </CardContent>
             </Card>
           ) : (
-            itens.map((f: any) => (
-              <Card key={f.id}>
-                <CardContent className="py-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-medium text-gray-900">{f.name}</p>
-                        {f.required && <Badge variant="warning" className="text-xs">Obrigatório</Badge>}
-                        {f.active
-                          ? <Badge variant="success" className="text-xs">Ativa</Badge>
-                          : <Badge variant="secondary" className="text-xs">Inativa</Badge>}
+            itens.map((f: any) => {
+              const consentUrl = company?.slug
+                ? `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://lgpd-platform.vercel.app'}/lgpd/${company.slug}`
+                : null
+              const whatsappMsg = consentUrl
+                ? encodeURIComponent(`Olá! Para regularizar seu consentimento conforme a LGPD, acesse o link abaixo:\n\n${consentUrl}\n\nFinalidade: ${f.name}`)
+                : null
+              return (
+                <Card key={f.id}>
+                  <CardContent className="py-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-medium text-gray-900">{f.name}</p>
+                          {f.required && <Badge variant="warning" className="text-xs">Obrigatório</Badge>}
+                          {f.active
+                            ? <Badge variant="success" className="text-xs">Ativa</Badge>
+                            : <Badge variant="secondary" className="text-xs">Inativa</Badge>}
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">{f.description}</p>
+                        <p className="text-xs text-gray-400 mt-1">Base legal: {f.legal_basis}</p>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">{f.description}</p>
-                      <p className="text-xs text-gray-400 mt-1">Base legal: {f.legal_basis}</p>
+                      <div className="flex gap-2 flex-shrink-0">
+                        {whatsappMsg && (
+                          <a
+                            href={`https://wa.me/?text=${whatsappMsg}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Button variant="outline" size="sm" className="text-green-700 border-green-300 hover:bg-green-50">
+                              <Send className="h-3 w-3 mr-1" /> WhatsApp
+                            </Button>
+                          </a>
+                        )}
+                        <Link href={`/consentimentos/finalidades/${f.id}`}>
+                          <Button variant="ghost" size="sm">Editar</Button>
+                        </Link>
+                      </div>
                     </div>
-                    <Link href={`/consentimentos/finalidades/${f.id}`}>
-                      <Button variant="ghost" size="sm">Editar</Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+                  </CardContent>
+                </Card>
+              )
+            })
           )}
           <Link href="/consentimentos/finalidades/nova">
             <Button variant="outline" size="sm" className="w-full">

@@ -1,4 +1,4 @@
-import { Plus, Truck, AlertCircle, Globe } from 'lucide-react'
+import { Plus, Truck, AlertCircle, Globe, Scale } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -172,9 +172,21 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
                             )}
                           </td>
                           <td className="py-3 px-4 text-right">
-                            <Link href={`/fornecedores/${item.id}`}>
-                              <Button variant="ghost" size="sm">Editar</Button>
-                            </Link>
+                            <div className="flex items-center justify-end gap-1">
+                              <a
+                                href={`https://www.jusbrasil.com.br/busca?q=${encodeURIComponent(item.tax_id ?? item.name)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Consultar no Jusbrasil"
+                              >
+                                <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                                  <Scale className="h-3.5 w-3.5 mr-1" /> Jusbrasil
+                                </Button>
+                              </a>
+                              <Link href={`/fornecedores/${item.id}`}>
+                                <Button variant="ghost" size="sm">Editar</Button>
+                              </Link>
+                            </div>
                           </td>
                         </tr>
                       )
@@ -195,9 +207,20 @@ export default async function FornecedoresPage({ searchParams }: { searchParams:
                         </div>
                         {item.tax_id && <p className="text-xs text-gray-400">{item.tax_id}</p>}
                       </div>
-                      <Link href={`/fornecedores/${item.id}`}>
-                        <Button variant="ghost" size="sm" className="h-7 text-xs">Editar</Button>
-                      </Link>
+                      <div className="flex gap-1">
+                        <a
+                          href={`https://www.jusbrasil.com.br/busca?q=${encodeURIComponent(item.tax_id ?? item.name)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button variant="ghost" size="sm" className="h-7 text-xs text-blue-600">
+                            <Scale className="h-3 w-3 mr-1" /> Jusbrasil
+                          </Button>
+                        </a>
+                        <Link href={`/fornecedores/${item.id}`}>
+                          <Button variant="ghost" size="sm" className="h-7 text-xs">Editar</Button>
+                        </Link>
+                      </div>
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       <Badge variant={riscoVariant[item.risk_level] ?? 'secondary'} className="capitalize text-xs">{item.risk_level}</Badge>
