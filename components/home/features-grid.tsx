@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import {
   BarChart2, GraduationCap, UserCheck, FolderOpen, AlertOctagon,
   ClipboardCheck, Globe, Search, Megaphone, ClipboardList, TriangleAlert, ScrollText,
@@ -30,7 +30,20 @@ const HIDDEN = [
 
 export function FeaturesGrid() {
   const [expanded, setExpanded] = useState(false)
+  const btnRef = useRef<HTMLButtonElement>(null)
   const shown = expanded ? [...VISIBLE, ...HIDDEN] : VISIBLE
+
+  const toggle = () => {
+    if (expanded) {
+      setExpanded(false)
+      // Após colapsar, rola suavemente para o botão ficar visível
+      setTimeout(() => {
+        btnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 50)
+    } else {
+      setExpanded(true)
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -50,8 +63,9 @@ export function FeaturesGrid() {
 
       <div className="text-center">
         <Button
+          ref={btnRef}
           variant="outline"
-          onClick={() => setExpanded(e => !e)}
+          onClick={toggle}
           className="gap-2 font-medium"
           style={{ borderColor: '#0097a7', color: '#0097a7' }}
         >
