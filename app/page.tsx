@@ -1,23 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { BarChart2, GraduationCap, UserCheck, FolderOpen, AlertOctagon, ClipboardCheck, Globe, Search, Megaphone, CheckCircle, ArrowRight, AlertTriangle, Scale, DollarSign, ChevronRight } from 'lucide-react'
+import { CheckCircle, ArrowRight, AlertTriangle, Scale, DollarSign, ChevronRight, Megaphone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { AnimatedBadges } from '@/components/home/animated-badges'
-
+import { FeaturesGrid } from '@/components/home/features-grid'
 import { Logo } from '@/components/logo'
-
-const features = [
-  { icon: BarChart2,      title: 'Data Mapping Pro',                   description: 'Mapeie, organize e visualize os dados da sua empresa com total controle.',                              color: '#0f2d5e', bg: '#e8eef7' },
-  { icon: GraduationCap, title: 'Academy LGPD',                        description: 'Capacite sua equipe de forma prática, automatizada e em conformidade com a lei.',                       color: '#0097a7', bg: '#e0f7fa' },
-  { icon: UserCheck,     title: 'Direitos dos Titulares',              description: 'Gerencie solicitações de titulares com agilidade e segurança jurídica.',                               color: '#0f2d5e', bg: '#e8eef7' },
-  { icon: FolderOpen,    title: 'Governança de Documentos',            description: 'Centralize e organize documentos essenciais da sua estrutura de compliance.',                          color: '#0097a7', bg: '#e0f7fa' },
-  { icon: AlertOctagon,  title: 'Gestão de Incidentes',                description: 'Registre, acompanhe e responda incidentes com rapidez e controle.',                                   color: '#0f2d5e', bg: '#e8eef7' },
-  { icon: ClipboardCheck,title: 'ConsentFlow',                         description: 'Gerencie consentimentos de forma simples, rastreável e automatizada.',                                color: '#0097a7', bg: '#e0f7fa' },
-  { icon: Globe,         title: 'Gestão de Cookies & Adequação de Sites', description: 'Garanta que seu site esteja conforme a LGPD com gestão eficiente de cookies.',                    color: '#0f2d5e', bg: '#e8eef7' },
-  { icon: Search,        title: 'Due Diligence',                       description: 'Avalie riscos e parceiros com mais segurança e padronização.',                                         color: '#0097a7', bg: '#e0f7fa' },
-  { icon: Megaphone,     title: 'Canal de Denúncias',                  description: 'Receba relatos com sigilo e fortaleça a integridade da sua organização.',                             color: '#0f2d5e', bg: '#e8eef7' },
-]
 
 const planos = [
   {
@@ -175,19 +163,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold" style={{ color: '#0f2d5e' }}>Uma nova forma inteligente e ágil para viabilizar a governança de dados.</h2>
             <p className="text-gray-500 max-w-2xl mx-auto">Nossa plataforma integra conformidade, tecnologia e inteligência em um único ambiente, permitindo que sua empresa tenha controle total, segurança e visão estratégica sobre os dados.</p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((f) => (
-              <Card key={f.title} className="hover:shadow-lg transition-shadow border-gray-100">
-                <CardContent className="pt-6 space-y-3">
-                  <div className="h-11 w-11 rounded-xl flex items-center justify-center" style={{ background: f.bg }}>
-                    <f.icon className="h-6 w-6" style={{ color: f.color }} />
-                  </div>
-                  <h3 className="font-semibold text-gray-900">{f.title}</h3>
-                  <p className="text-sm text-gray-500">{f.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <FeaturesGrid />
         </div>
       </section>
 
