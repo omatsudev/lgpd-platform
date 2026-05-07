@@ -21,19 +21,19 @@ const features = [
 
 const planos = [
   {
-    nome: 'Starter', preco: 'R$ 149', periodo: '/mês',
+    nome: 'Starter',
     descricao: 'Ideal para pequenas empresas',
     features: ['1 empresa', '5 usuários', 'Inventário de dados', 'Canal de denúncias', 'Página pública LGPD'],
     cta: 'Começar grátis', destaque: false,
   },
   {
-    nome: 'Business', preco: 'R$ 349', periodo: '/mês',
+    nome: 'Business',
     descricao: 'Para empresas em crescimento',
     features: ['1 empresa', 'Usuários ilimitados', 'Todos os módulos', 'Treinamentos + WhatsApp', 'Logs jurídicos', 'Suporte prioritário'],
     cta: 'Escolher Business', destaque: true,
   },
   {
-    nome: 'DPO Pro', preco: 'R$ 799', periodo: '/mês',
+    nome: 'DPO Pro',
     descricao: 'Para DPOs e escritórios jurídicos',
     features: ['Até 10 empresas', 'Usuários ilimitados', 'Todos os módulos', 'Relatórios avançados', 'White-label', 'API de integração'],
     cta: 'Falar com consultor', destaque: false,
@@ -195,7 +195,7 @@ export default function HomePage() {
       <section id="planos" className="py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12 space-y-3">
-            <h2 className="text-3xl font-bold" style={{ color: '#0f2d5e' }}>Planos e preços</h2>
+            <h2 className="text-3xl font-bold" style={{ color: '#0f2d5e' }}>Planos</h2>
             <p className="text-gray-500">Escolha o plano ideal para o tamanho da sua empresa</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 items-start">
@@ -210,10 +210,6 @@ export default function HomePage() {
                   <div>
                     <p className="font-bold text-lg" style={{ color: '#0f2d5e' }}>{plano.nome}</p>
                     <p className="text-sm text-gray-400">{plano.descricao}</p>
-                    <div className="mt-3 flex items-baseline gap-1">
-                      <span className="text-3xl font-bold" style={{ color: '#0f2d5e' }}>{plano.preco}</span>
-                      <span className="text-gray-400 text-sm">{plano.periodo}</span>
-                    </div>
                   </div>
                   <ul className="space-y-2">
                     {plano.features.map((f) => (
