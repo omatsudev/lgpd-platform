@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import {
   LayoutDashboard, Database, GraduationCap, AlertTriangle,
   Users, Building2, Settings, ScrollText, Bell, LogOut, Menu, X,
-  ShieldAlert, FileText, ClipboardCheck, Truck, ClipboardList, Cookie, TriangleAlert, BarChart2,
+  ShieldAlert, FileText, ClipboardCheck, Truck, ClipboardList, Cookie, TriangleAlert, BarChart2, Clock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -16,6 +16,7 @@ const allNavItems = [
   { href: '/checklist', label: 'Checklist LGPD', icon: ClipboardList, roles: ['empresa', 'admin', 'dpo'] },
   { href: '/cookies', label: 'Verificador de Site', icon: Cookie, roles: ['empresa', 'admin'] },
   { href: '/inventario', label: 'Inventário de Dados', icon: Database, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/retencao-descarte', label: 'Retenção e Descarte', icon: Clock, roles: ['empresa', 'admin', 'dpo'] },
   { href: '/riscos', label: 'Gestão de Riscos', icon: TriangleAlert, roles: ['empresa', 'admin', 'dpo'] },
   { href: '/relatorio', label: 'Relatório LGPD', icon: BarChart2, roles: ['empresa', 'admin', 'dpo'] },
   { href: '/incidentes', label: 'Gestão de Incidentes', icon: ShieldAlert, roles: ['empresa', 'admin', 'dpo'] },
