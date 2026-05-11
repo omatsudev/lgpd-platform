@@ -1,0 +1,214 @@
+import { Plus, Clock, AlertTriangle, CheckCircle2, Lock, Trash2 } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { SearchInput } from '@/components/ui/search-input'
+import { getUserCompany } from '@/lib/supabase/queries'
+import { formatDate } from '@/lib/utils'
+
+// ─── Mapeamentos ──────────────────────────────────────────────────────────
+
+const statusVariant: Record<string, 'success' | 'warning' | 'destructive' | 'secondary'> = {
+  regular: 'success',
+  proximo_vencimento: 'warning',
+  vencido: 'destructive',
+  bloqueado: 'secondary',
+}
+
+const statusLabel: Record<string, string> = {
+  regular: 'Regular',
+  proximo_vencimento: 'Próximo do Vencimento',
+  vencido: 'Vencido',
+  bloqueado: 'Bloqueado',
+}
+
+const statusIcon: Record<string, any> = {
+  regular: CheckCircle2,
+  proximo_vencimento: AlertTriangle,
+  vencido: Trash2,
+  bloqueado: Lock,
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────
+
+export default async function RetencaoDescartePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string }>
+}) {
+  const { companyId, supabase } = await getUserCompany()
+  const { q, status } = await searchParams
+
+  let query = supabase
+    .from('retencao_descarte')
+    .select('*')
+    .eq('company_id', companyId ?? '')
+
+  if (q) {
+    query = query.or(`tipo_dado.ilike.%${q}%,categoria.ilike.%${q}%`)
+  }
+  if (status) {
+    query = query.eq('status_calculado', status)
+  }
+
+  const { data: registros } = companyId
+    ? await query.order('created_at', { ascending: false })
+    : { data: [] }
+
+  const itens = registros ?? []
+  const vencidos = itens.filter((i: any) => i.status_calculado === 'vencido').length
+  const proximosVenc = itens.filter((i: any) => i.status_calculado === 'proximo_vencimento').length
+  const bloqueados = itens.filter((i: any) => i.status_calculado === 'bloqueado').length
+
+  const FILTROS = [
+    { value: '', label: 'Todos' },
+    { value: 'regular', label: 'Regular' },
+    { value: 'proximo_vencimento', label: 'Próx. vencimento' },
+    { value: 'vencido', label: 'Vencido' },
+    { value: 'bloqueado', label: 'Bloqueado' },
+  ]
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Retenção e Descarte</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Controle de prazos de guarda e ciclo de vida dos dados (LGPD Art. 16)</p>
+        </div>
+        <Link href="/retencao-descarte/novo">
+          <Button size="sm">
+            <Plus className="h-4 w-4 mr-1" /> Novo Registro
+          </Button>
+        </Link>
+      </div>
+
+      {/* Alertas */}
+      {(vencidos > 0 || proximosVenc > 0) && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {vencidos > 0 && (
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="pt-3 pb-3">
+                <div className="flex items-center gap-2 text-sm text-red-700">
+                  <Trash2 className="h-4 w-4 flex-shrink-0" />
+                  <span>
+                    <span className="font-semibold">{vencidos}</span> registro{vencidos > 1 ? 's' : ''} com prazo vencido — descarte necessário.
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          {proximosVenc > 0 && (
+            <Card className="border-yellow-200 bg-yellow-50">
+              <CardContent className="pt-3 pb-3">
+                <div className="flex items-center gap-2 text-sm text-yellow-700">
+                  <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                  <span>
+                    <span className="font-semibold">{proximosVenc}</span> registro{proximosVenc > 1 ? 's' : ''} vence{proximosVenc === 1 ? '' : 'm'} em até 60 dias.
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* Resumo */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: 'Total', value: itens.length, color: 'text-gray-900' },
+          { label: 'Regulares', value: itens.filter((i: any) => i.status_calculado === 'regular').length, color: 'text-green-700' },
+          { label: 'Vencidos', value: vencidos, color: 'text-red-700' },
+          { label: 'Bloqueados', value: bloqueados, color: 'text-gray-700' },
+        ].map(({ label, value, color }) => (
+          <Card key={label}>
+            <CardContent className="pt-4 pb-3">
+              <p className="text-xs text-gray-500">{label}</p>
+              <p className={`text-2xl font-bold ${color}`}>{value}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Filtros e busca */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1">
+          <SearchInput placeholder="Buscar por tipo ou categoria..." defaultValue={q} />
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {FILTROS.map(f => (
+            <Link key={f.value} href={f.value ? `?status=${f.value}` : '/retencao-descarte'}>
+              <Button
+                size="sm"
+                variant={status === f.value || (!status && !f.value) ? 'default' : 'outline'}
+                className="text-xs"
+              >
+                {f.label}
+              </Button>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Lista */}
+      {itens.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <Clock className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+            <p className="text-sm text-gray-500">
+              {q || status ? 'Nenhum registro encontrado.' : 'Nenhum registro de retenção cadastrado ainda.'}
+            </p>
+            {!q && !status && (
+              <Link href="/retencao-descarte/novo">
+                <Button size="sm" className="mt-4">
+                  <Plus className="h-4 w-4 mr-1" /> Criar primeiro registro
+                </Button>
+              </Link>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-2">
+          {itens.map((item: any) => {
+            const StatusIcon = statusIcon[item.status_calculado] ?? CheckCircle2
+            return (
+              <Link key={item.id} href={`/retencao-descarte/${item.id}`}>
+                <Card className="hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer">
+                  <CardContent className="py-3 px-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-medium text-sm text-gray-900 truncate">{item.tipo_dado}</p>
+                          <Badge variant="secondary" className="text-xs shrink-0">{item.categoria}</Badge>
+                        </div>
+                        <div className="flex items-center gap-3 mt-1 flex-wrap">
+                          <span className="text-xs text-gray-500 flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {item.prazo_retencao}
+                          </span>
+                          <span className="text-xs text-gray-500">Início: {item.evento_inicial}</span>
+                          {item.data_vencimento && (
+                            <span className="text-xs text-gray-500">
+                              Venc.: {formatDate(item.data_vencimento)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <Badge
+                        variant={statusVariant[item.status_calculado] ?? 'secondary'}
+                        className="shrink-0 flex items-center gap-1"
+                      >
+                        <StatusIcon className="h-3 w-3" />
+                        {statusLabel[item.status_calculado] ?? item.status_calculado}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}

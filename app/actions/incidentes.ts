@@ -26,6 +26,8 @@ export type IncidenteData = {
   anpd_protocol: string
   notified_subjects: boolean
   subjects_notification_date: string
+  operadores_envolvidos: string
+  relatorio_impacto: string
 }
 
 export async function salvarIncidente(data: IncidenteData) {
@@ -54,6 +56,8 @@ export async function salvarIncidente(data: IncidenteData) {
     anpd_protocol: data.anpd_protocol || null,
     notified_subjects: data.notified_subjects,
     subjects_notification_date: data.subjects_notification_date || null,
+    operadores_envolvidos: data.operadores_envolvidos || null,
+    relatorio_impacto: data.relatorio_impacto || null,
   }
 
   if (data.id) {

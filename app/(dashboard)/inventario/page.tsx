@@ -8,9 +8,9 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { ExportButton } from '@/components/inventario/export-button'
 
 const riscoVariant: Record<string, 'destructive' | 'warning' | 'success'> = {
-  high: 'destructive',
-  medium: 'warning',
-  low: 'success',
+  high: 'destructive', alto: 'destructive',
+  medium: 'warning',   medio: 'warning',
+  low: 'success',      baixo: 'success',
 }
 
 const statusVariant: Record<string, 'default' | 'secondary'> = {
@@ -19,7 +19,9 @@ const statusVariant: Record<string, 'default' | 'secondary'> = {
 }
 
 const riscoLabel: Record<string, string> = {
-  high: 'Alto', medium: 'Médio', low: 'Baixo',
+  high: 'Alto',  alto: 'Alto',
+  medium: 'Médio', medio: 'Médio',
+  low: 'Baixo',  baixo: 'Baixo',
 }
 
 const statusLabel: Record<string, string> = {

@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { salvarIncidente, deletarIncidente, type IncidenteData } from '@/app/actions/incidentes'
-import { AlertTriangle, CheckCircle2, Shield, Users, Wrench, Bell } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Shield, Users, Wrench, Bell, FileText } from 'lucide-react'
 
 // ─── Constantes ────────────────────────────────────────────────────────────
 
@@ -82,6 +82,8 @@ function defaultState(): FormState {
     anpd_protocol: '',
     notified_subjects: false,
     subjects_notification_date: '',
+    operadores_envolvidos: '',
+    relatorio_impacto: '',
   }
 }
 
@@ -149,6 +151,8 @@ export function IncidenteForm({ companyId, id, initialData }: IncidentFormProps)
       anpd_protocol: initialData.anpd_protocol ?? '',
       notified_subjects: initialData.notified_subjects ?? false,
       subjects_notification_date: initialData.subjects_notification_date ?? '',
+      operadores_envolvidos: initialData.operadores_envolvidos ?? '',
+      relatorio_impacto: initialData.relatorio_impacto ?? '',
     }
   })
 
@@ -348,6 +352,31 @@ export function IncidenteForm({ companyId, id, initialData }: IncidentFormProps)
             <Label htmlFor="corrective_measures">Medidas corretivas / preventivas</Label>
             <Textarea id="corrective_measures" value={data.corrective_measures} onChange={e => update('corrective_measures', e.target.value)} placeholder="Quais melhorias foram implementadas para evitar recorrência?" rows={3} />
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="operadores_envolvidos">Operadores envolvidos</Label>
+            <Textarea
+              id="operadores_envolvidos"
+              value={data.operadores_envolvidos}
+              onChange={e => update('operadores_envolvidos', e.target.value)}
+              placeholder="Liste os operadores de dados envolvidos no incidente (fornecedores, parceiros, subcontratados...)"
+              rows={2}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Seção 3b: Relatório de Impacto */}
+      <Card>
+        <CardHeader className="pb-2">
+          <SectionHeader icon={FileText} title="Relatório de Impacto" subtitle="DPIA / Avaliação de impacto à proteção de dados" />
+        </CardHeader>
+        <CardContent>
+          <Textarea
+            value={data.relatorio_impacto}
+            onChange={e => update('relatorio_impacto', e.target.value)}
+            placeholder="Descreva o impacto potencial do incidente aos titulares: riscos identificados, probabilidade de dano, gravidade, mitigações adotadas..."
+            rows={5}
+          />
         </CardContent>
       </Card>
 
