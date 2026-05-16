@@ -5,16 +5,8 @@ import Image from 'next/image'
 
 function IconArrow() {
   return (
-    <svg className="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
       <path d="M5 12h14M13 5l7 7-7 7" />
-    </svg>
-  )
-}
-
-function IconCheck({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-      <path d="m5 13 4 4L19 7" />
     </svg>
   )
 }
@@ -34,17 +26,124 @@ export default function HomePage() {
   return (
     <div style={{ fontFamily: 'var(--font-inter, Inter, system-ui, sans-serif)', color: '#475569', background: '#fff', WebkitFontSmoothing: 'antialiased' }}>
 
+      {/* ── RESPONSIVE STYLES ── */}
+      <style>{`
+        @keyframes floaty {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-12px); }
+        }
+
+        /* ── base ── */
+        .lp-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .lp-section   { padding: 100px 0; }
+
+        .hero-section  { padding: 84px 0 120px; }
+        .hero-grid     { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 72px; align-items: center; }
+        .hero-visual   { position: relative; width: 100%; aspect-ratio: 1/1; max-width: 520px; margin-left: auto; }
+        .hero-h1       { font-size: clamp(40px,5.4vw,64px); }
+        .hero-ctas     { display: flex; gap: 12px; flex-wrap: wrap; margin: 32px 0 20px; }
+        .hero-cta-btn  { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; font-size: 14px; font-weight: 600; border-radius: 999px; text-decoration: none; }
+        .hero-meta     { display: flex; align-items: center; gap: 18px; font-size: 13.5px; color: #94A3B8; margin-top: 8px; flex-wrap: wrap; }
+        .hv-float      { position: absolute; background: white; border-radius: 14px; padding: 14px 16px; box-shadow: 0 20px 40px -15px rgba(15,23,42,0.25); display: flex; gap: 12px; align-items: center; z-index: 3; }
+
+        .nav-row   { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0; }
+        .nav-links { display: flex; gap: 28px; align-items: center; font-size: 14.5px; font-weight: 500; color: #334155; }
+        .nav-btn   { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; font-size: 14px; font-weight: 600; border-radius: 999px; background: #0B1B3D; color: #fff; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+        .logo-img  { object-fit: contain; height: 46px; width: auto; }
+
+        .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 18px; }
+
+        .sec-head    { text-align: center; max-width: 740px; margin: 0 auto 56px; }
+        .sec-head h2 { font-family: var(--font-jakarta,"Plus Jakarta Sans",system-ui,sans-serif); font-size: clamp(30px,3.6vw,44px); font-weight: 800; color: #0F172A; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 14px; }
+        .sec-head p  { font-size: 17px; color: #475569; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+        .feature-card  { background: white; border: 1px solid #EEF1F6; border-radius: 20px; padding: 28px; position: relative; }
+        .feat-icon     { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; margin-bottom: 22px; }
+
+        .modulos-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+        .mod-card     { background: white; border: 1px solid #EEF1F6; border-radius: 28px; padding: 36px 32px; display: flex; flex-direction: column; }
+        .mod-card h3  { font-family: var(--font-jakarta,"Plus Jakarta Sans",system-ui,sans-serif); font-size: 22px; font-weight: 700; color: #0F172A; line-height: 1.25; margin-bottom: 14px; min-height: 56px; }
+
+        .risco-card        { display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 22px; background: white; border: 1px solid #EEF1F6; border-radius: 20px; padding: 22px 24px; }
+        .risco-icon        { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; }
+        .risco-impact      { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 92px; }
+        .risco-impact-lbl  { font-size: 12px; color: #94A3B8; font-weight: 500; }
+        .risco-impact-badge{ font-size: 12px; font-weight: 700; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 999px; }
+
+        .cta-wrap { background: linear-gradient(120deg,#0B1B3D 0%,#1E3263 60%,#2563EB 130%); border-radius: 32px; padding: 64px 56px; position: relative; overflow: hidden; color: white; display: grid; grid-template-columns: 1.4fr auto; gap: 40px; align-items: center; }
+        .cta-btns { display: flex; gap: 12px; flex-wrap: wrap; position: relative; }
+
+        .foot-grid   { display: grid; grid-template-columns: 1.4fr repeat(3,1fr); gap: 56px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .foot-bottom { padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #94A3B8; flex-wrap: wrap; gap: 12px; }
+
+        /* ── 1024px: tablet landscape ── */
+        @media (max-width: 1024px) {
+          .hero-grid     { grid-template-columns: 1fr; gap: 40px; }
+          .hero-visual   { max-width: 420px; margin: 0 auto; }
+          .features-grid { grid-template-columns: repeat(2,1fr); }
+          .modulos-grid  { grid-template-columns: repeat(2,1fr); }
+          .nav-links a:nth-child(n+5) { display: none; }
+          .nav-links { gap: 20px; }
+          .foot-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+        }
+
+        /* ── 720px: mobile médio ── */
+        @media (max-width: 720px) {
+          .lp-section   { padding: 56px 0; }
+          .lp-container { padding: 0 18px; }
+          .hero-section { padding: 48px 0 64px; }
+          .hero-grid    { gap: 32px; }
+          .hero-h1      { font-size: 34px !important; }
+          .hero-visual  { max-width: 320px; }
+          .hero-ctas    { flex-direction: column; align-items: stretch; margin: 24px 0 16px; }
+          .hero-cta-btn { justify-content: center; width: 100%; }
+          .hero-meta    { font-size: 12.5px; gap: 10px; justify-content: center; }
+          .hv-float     { padding: 10px 12px; gap: 8px; }
+          .nav-links    { display: none; }
+          .nav-row      { padding: 12px 0; }
+          .logo-img     { height: 42px !important; }
+          .eyebrow      { font-size: 11.5px; }
+          .sec-head h2  { font-size: 26px; }
+          .sec-head p   { font-size: 15px; }
+          .features-grid{ grid-template-columns: 1fr; }
+          .feature-card { padding: 22px; }
+          .feat-icon    { width: 48px !important; height: 48px !important; }
+          .modulos-grid { grid-template-columns: 1fr; }
+          .mod-card     { padding: 28px 24px; }
+          .mod-card h3  { font-size: 19px; min-height: unset; }
+          .risco-card   { grid-template-columns: 44px 1fr; gap: 14px; padding: 18px; }
+          .risco-icon   { width: 44px !important; height: 44px !important; border-radius: 10px; }
+          .risco-card h3{ font-size: 15px; }
+          .risco-card p { font-size: 13.5px; }
+          .risco-impact { grid-column: 1/-1; flex-direction: row; align-items: center; min-width: unset; }
+          .risco-impact-badge { padding: 4px 10px; font-size: 11px; }
+          .cta-wrap     { grid-template-columns: 1fr; padding: 36px 24px; border-radius: 24px; }
+          .cta-btns     { flex-direction: column; }
+          .cta-btns a   { width: 100%; justify-content: center; }
+          .foot-grid    { grid-template-columns: 1fr; gap: 28px; }
+          .foot-bottom  { flex-direction: column; align-items: flex-start; }
+        }
+
+        /* ── 420px: mobile pequeno ── */
+        @media (max-width: 420px) {
+          .hero-h1   { font-size: 30px !important; }
+          .hv-float  { transform: scale(0.85); transform-origin: top left; }
+          .eyebrow   { font-size: 11px; }
+        }
+      `}</style>
+
       {/* ── TOPBAR ── */}
       <div style={{ background: '#0B1B3D', color: '#B7C2DA', fontSize: '12.5px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="lp-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', gap: 20, alignItems: 'center', padding: '8px 0' }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '2px 8px', borderRadius: 999, background: 'rgba(255,255,255,0.06)', color: '#DAE2F2' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z" /></svg>
               LGPD · ISO 27001 · SOC 2
             </span>
-            <span className="hide-mobile" style={{ display: 'none' }}>Conformidade total para sua empresa</span>
+            <span style={{ display: 'none' }}>Conformidade total para sua empresa</span>
           </div>
-          <div style={{ display: 'flex', gap: 20, alignItems: 'center', padding: '8px 0' }}>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center', padding: '8px 0' }}>
             <a href="#contato" style={{ color: '#B7C2DA', textDecoration: 'none' }}>+55 (11) 4002-8922</a>
             <a href="#contato" style={{ color: '#B7C2DA', textDecoration: 'none' }}>contato@serraprivacy.com.br</a>
           </div>
@@ -53,12 +152,12 @@ export default function HomePage() {
 
       {/* ── NAV ── */}
       <nav style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,0.92)', backdropFilter: 'saturate(180%) blur(10px)', borderBottom: '1px solid #EEF1F6' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, paddingTop: 16, paddingBottom: 16 }}>
-          <Link href="/" aria-label="Serra Privacy" style={{ display: 'inline-flex', alignItems: 'center' }}>
-            <Image src="/logo-transparent.png" alt="Serra Privacy" width={130} height={46} style={{ objectFit: 'contain', height: 46, width: 'auto' }} priority />
+        <div className="lp-container nav-row">
+          <Link href="/" aria-label="Serra Privacy" style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+            <Image src="/logo-transparent.png" alt="Serra Privacy" width={130} height={46} className="logo-img" priority />
           </Link>
 
-          <div style={{ display: 'flex', gap: 28, alignItems: 'center', fontSize: '14.5px', fontWeight: 500, color: '#334155' }}>
+          <div className="nav-links">
             {[
               { label: 'Início', href: '#' },
               { label: 'Produtos', href: '#features' },
@@ -68,141 +167,116 @@ export default function HomePage() {
               { label: 'Contato', href: '#contato' },
               { label: 'Login', href: '/login' },
             ].map(l => (
-              <Link key={l.label} href={l.href} style={{ color: '#334155', textDecoration: 'none', padding: '6px 0' }}>{l.label}</Link>
+              <Link key={l.label} href={l.href} style={{ color: '#334155', textDecoration: 'none', padding: '6px 0', whiteSpace: 'nowrap' }}>{l.label}</Link>
             ))}
           </div>
 
-          <Link href="/cadastro" style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '11px 18px', fontSize: 14, fontWeight: 600, borderRadius: 999,
-            background: '#0B1B3D', color: '#fff', textDecoration: 'none', border: 'none',
-            transition: 'background 0.15s ease',
-          }}>
+          <Link href="/cadastro" className="nav-btn">
             Solicitar demonstração <IconArrow />
           </Link>
         </div>
       </nav>
 
       {/* ── HERO ── */}
-      <header style={{ position: 'relative', background: 'linear-gradient(180deg, #FBFCFE 0%, #FFFFFF 100%)', overflow: 'hidden', padding: '84px 0 120px' }}>
-        {/* bg glows */}
+      <header className="hero-section" style={{ position: 'relative', background: 'linear-gradient(180deg, #FBFCFE 0%, #FFFFFF 100%)', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 12% 18%, rgba(37,99,235,0.06), transparent 40%), radial-gradient(circle at 92% 12%, rgba(109,40,217,0.05), transparent 50%)', pointerEvents: 'none' }} />
 
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', position: 'relative', display: 'grid', gridTemplateColumns: '1.05fr 0.95fr', gap: 72, alignItems: 'center' }}>
-          {/* Left */}
-          <div>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', background: '#EFF4FF', color: '#1D4ED8', borderRadius: 999, fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.02em' }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2563EB', display: 'inline-block' }} />
-              Plataforma de Governança · LGPD · IA · ESG
-            </span>
-
-            <h1 style={{ fontFamily: 'var(--font-jakarta, "Plus Jakarta Sans", system-ui, sans-serif)', fontSize: 'clamp(40px, 5.4vw, 64px)', fontWeight: 800, color: '#0B1B3D', margin: '24px 0 22px', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
-              Sua plataforma{' '}
-              <span style={{ color: '#2563EB', position: 'relative', whiteSpace: 'nowrap' }}>
-                inteligente
-                <span style={{ position: 'absolute', left: 0, right: 0, bottom: 4, height: 10, background: 'linear-gradient(90deg, rgba(37,99,235,0.18), rgba(37,99,235,0.04))', borderRadius: 6, zIndex: -1, display: 'block' }} />
+        <div className="lp-container" style={{ position: 'relative' }}>
+          <div className="hero-grid">
+            {/* Left */}
+            <div>
+              <span className="eyebrow" style={{ background: '#EFF4FF', color: '#1D4ED8' }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2563EB', display: 'inline-block', flexShrink: 0 }} />
+                Plataforma de Governança · LGPD · IA · ESG
               </span>
-              {' '}de governança de dados
-            </h1>
 
-            <p style={{ fontSize: 18, color: '#475569', maxWidth: 520, lineHeight: 1.65 }}>
-              Gerencie, proteja e transforme seus dados em vantagem competitiva. Conformidade contínua à LGPD em um único ambiente — automatizado, auditável e seguro.
-            </p>
-
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', margin: '32px 0 20px' }}>
-              <Link href="/cadastro" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 18px',
-                fontSize: 14, fontWeight: 600, borderRadius: 999, textDecoration: 'none',
-                background: 'linear-gradient(135deg, #1D4ED8, #2563EB 60%, #3B82F6)', color: '#fff',
-                boxShadow: '0 6px 16px -6px rgba(37,99,235,0.6), inset 0 1px 0 rgba(255,255,255,0.18)',
-              }}>
-                Solicitar demonstração <IconArrow />
-              </Link>
-              <Link href="#features" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 18px',
-                fontSize: 14, fontWeight: 600, borderRadius: 999, textDecoration: 'none',
-                background: 'white', color: '#0B1B3D', border: '1px solid #E5E9F0',
-              }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="6 4 20 12 6 20 6 4" /></svg>
-                Conheça a plataforma
-              </Link>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 18, fontSize: '13.5px', color: '#94A3B8', marginTop: 8 }}>
-              {['Implementação em 24h', 'Suporte 100% em português', 'Equipe certificada'].map(item => (
-                <span key={item} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="3"><path d="m5 13 4 4L19 7" /></svg>
-                  {item}
+              <h1 className="hero-h1" style={{ fontFamily: 'var(--font-jakarta,"Plus Jakarta Sans",system-ui,sans-serif)', fontWeight: 800, color: '#0B1B3D', margin: '24px 0 22px', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                Sua plataforma{' '}
+                <span style={{ color: '#2563EB', position: 'relative', whiteSpace: 'nowrap' }}>
+                  inteligente
+                  <span style={{ position: 'absolute', left: 0, right: 0, bottom: 4, height: 10, background: 'linear-gradient(90deg, rgba(37,99,235,0.18), rgba(37,99,235,0.04))', borderRadius: 6, zIndex: -1, display: 'block' }} />
                 </span>
-              ))}
-            </div>
-          </div>
+                {' '}de governança de dados
+              </h1>
 
-          {/* Right — visual */}
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1', maxWidth: 520, marginLeft: 'auto' }}>
-            {/* glow shape */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'radial-gradient(circle at 50% 50%, rgba(37,99,235,0.18) 0%, transparent 55%), radial-gradient(circle at 30% 25%, rgba(96,165,250,0.22) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(109,40,217,0.12) 0%, transparent 55%)',
-              borderRadius: '50%', filter: 'blur(4px)',
-            }} />
-            {/* padlock */}
-            <div style={{ position: 'absolute', inset: '8%', display: 'grid', placeItems: 'center', zIndex: 2 }}>
-              <Image
-                src="/padlock-transparent.png"
-                alt="Cadeado de segurança de dados"
-                width={400} height={400}
-                style={{ width: '86%', height: 'auto', filter: 'drop-shadow(0 30px 50px rgba(37,99,235,0.35)) drop-shadow(0 10px 20px rgba(15,23,42,0.12))', animation: 'floaty 6s ease-in-out infinite' }}
-                priority
-              />
-            </div>
+              <p style={{ fontSize: 18, color: '#475569', maxWidth: 520, lineHeight: 1.65 }}>
+                Gerencie, proteja e transforme seus dados em vantagem competitiva. Conformidade contínua à LGPD em um único ambiente — automatizado, auditável e seguro.
+              </p>
 
-            {/* float card 1 */}
-            <div style={{ position: 'absolute', top: '12%', left: '-4%', background: 'white', borderRadius: 14, padding: '14px 16px', boxShadow: '0 20px 40px -15px rgba(15,23,42,0.25)', display: 'flex', gap: 12, alignItems: 'center', zIndex: 3 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: '#E4F7EE', color: '#059669', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m5 13 4 4L19 7" /></svg>
+              <div className="hero-ctas">
+                <Link href="/cadastro" className="hero-cta-btn" style={{ background: 'linear-gradient(135deg, #1D4ED8, #2563EB 60%, #3B82F6)', color: '#fff', boxShadow: '0 6px 16px -6px rgba(37,99,235,0.6), inset 0 1px 0 rgba(255,255,255,0.18)' }}>
+                  Solicitar demonstração <IconArrow />
+                </Link>
+                <Link href="#features" className="hero-cta-btn" style={{ background: 'white', color: '#0B1B3D', border: '1px solid #E5E9F0' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="6 4 20 12 6 20 6 4" /></svg>
+                  Conheça a plataforma
+                </Link>
               </div>
-              <div>
-                <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>Conformidade LGPD</div>
-                <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 700 }}>98% completo</div>
+
+              <div className="hero-meta">
+                {['Implementação em 24h', 'Suporte 100% em português', 'Equipe certificada'].map(item => (
+                  <span key={item} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="3"><path d="m5 13 4 4L19 7" /></svg>
+                    {item}
+                  </span>
+                ))}
               </div>
             </div>
 
-            {/* float card 2 */}
-            <div style={{ position: 'absolute', bottom: '14%', right: '-6%', background: 'white', borderRadius: 14, padding: '14px 16px', boxShadow: '0 20px 40px -15px rgba(15,23,42,0.25)', display: 'flex', gap: 12, alignItems: 'center', zIndex: 3 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: '#EAF1FF', color: '#2563EB', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 12h4l3-8 4 16 3-8h4" /></svg>
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>Incidentes ativos</div>
-                <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 700 }}>2 monitorados</div>
-              </div>
-            </div>
+            {/* Right — visual */}
+            <div className="hero-visual">
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 50%, rgba(37,99,235,0.18) 0%, transparent 55%), radial-gradient(circle at 30% 25%, rgba(96,165,250,0.22) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(109,40,217,0.12) 0%, transparent 55%)', borderRadius: '50%', filter: 'blur(4px)' }} />
 
-            {/* float card 3 */}
-            <div style={{ position: 'absolute', bottom: '28%', left: '-8%', background: 'white', borderRadius: 14, padding: '14px 16px', boxShadow: '0 20px 40px -15px rgba(15,23,42,0.25)', display: 'flex', gap: 12, alignItems: 'center', zIndex: 3 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: '#F0EAFE', color: '#6D28D9', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" /></svg>
+              <div style={{ position: 'absolute', inset: '8%', display: 'grid', placeItems: 'center', zIndex: 2 }}>
+                <Image
+                  src="/padlock.png"
+                  alt="Cadeado de segurança de dados"
+                  width={400} height={400}
+                  style={{ width: '86%', height: 'auto', filter: 'drop-shadow(0 30px 50px rgba(37,99,235,0.35)) drop-shadow(0 10px 20px rgba(15,23,42,0.12))', animation: 'floaty 6s ease-in-out infinite' }}
+                  priority
+                />
               </div>
-              <div>
-                <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>IA · Análise de risco</div>
-                <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 700 }}>Tempo real</div>
+
+              {/* float 1 — top left */}
+              <div className="hv-float" style={{ top: '12%', left: '-4%' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#E4F7EE', color: '#059669', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m5 13 4 4L19 7" /></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>Conformidade LGPD</div>
+                  <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 700 }}>98% completo</div>
+                </div>
+              </div>
+
+              {/* float 2 — bottom right */}
+              <div className="hv-float" style={{ bottom: '14%', right: '-6%' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#EAF1FF', color: '#2563EB', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 12h4l3-8 4 16 3-8h4" /></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>Incidentes ativos</div>
+                  <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 700 }}>2 monitorados</div>
+                </div>
+              </div>
+
+              {/* float 3 — mid left */}
+              <div className="hv-float" style={{ bottom: '28%', left: '-8%' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#F0EAFE', color: '#6D28D9', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" /></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>IA · Análise de risco</div>
+                  <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 700 }}>Tempo real</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        <style>{`
-          @keyframes floaty {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-          }
-        `}</style>
       </header>
 
       {/* ── TRUST STRIP ── */}
       <div style={{ borderTop: '1px solid #EEF1F6', background: '#F7F9FC', padding: '28px 0' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', gap: 48, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+        <div className="lp-container" style={{ display: 'flex', alignItems: 'center', gap: 48, flexWrap: 'wrap', justifyContent: 'space-between' }}>
           <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#94A3B8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Empresas que confiam na Serra Privacy</span>
           <div style={{ display: 'flex', gap: 40, alignItems: 'center', flexWrap: 'wrap' }}>
             {[
@@ -212,7 +286,7 @@ export default function HomePage() {
               { glyph: '◼', name: 'Pravo Legal' },
               { glyph: '⬡', name: 'Carbono & Co.' },
             ].map(({ glyph, name }) => (
-              <span key={name} style={{ fontFamily: 'var(--font-jakarta, "Plus Jakarta Sans", sans-serif)', fontWeight: 700, fontSize: 18, color: '#94A3B8', letterSpacing: '-0.01em', opacity: 0.85 }}>
+              <span key={name} style={{ fontFamily: 'var(--font-jakarta,"Plus Jakarta Sans",sans-serif)', fontWeight: 700, fontSize: 18, color: '#94A3B8', letterSpacing: '-0.01em', opacity: 0.85 }}>
                 <span style={{ color: '#64748B', marginRight: 4 }}>{glyph}</span>{name}
               </span>
             ))}
@@ -221,15 +295,15 @@ export default function HomePage() {
       </div>
 
       {/* ── RISCOS ── */}
-      <section id="riscos" style={{ background: '#F7F9FC', padding: '100px 0', position: 'relative' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 56px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', background: '#FEE2E2', color: '#DC2626', borderRadius: 999, fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.02em', marginBottom: 18 }}>
+      <section id="riscos" className="lp-section" style={{ background: '#F7F9FC' }}>
+        <div className="lp-container">
+          <div className="sec-head" style={{ maxWidth: 760 }}>
+            <span className="eyebrow" style={{ background: '#FEE2E2', color: '#DC2626' }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#DC2626', display: 'inline-block' }} />
               Riscos &amp; impacto
             </span>
-            <h2 style={{ fontFamily: 'var(--font-jakarta, "Plus Jakarta Sans", sans-serif)', fontSize: 'clamp(28px, 3.2vw, 40px)', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em', lineHeight: 1.15, marginTop: 18, marginBottom: 14 }}>Riscos que sua empresa está correndo</h2>
-            <p style={{ fontSize: 17, color: '#475569' }}>Identifique as principais ameaças ao seu negócio e tome ações para proteger seus dados, sua reputação e a continuidade das suas operações.</p>
+            <h2 style={{ marginTop: 0 }}>Riscos que sua empresa está correndo</h2>
+            <p>Identifique as principais ameaças ao seu negócio e tome ações para proteger seus dados, sua reputação e a continuidade das suas operações.</p>
           </div>
 
           <div style={{ display: 'grid', gap: 14, maxWidth: 920, margin: '0 auto' }}>
@@ -263,15 +337,15 @@ export default function HomePage() {
                 impact: 'MÉDIO', impactHigh: false,
               },
             ].map((r) => (
-              <div key={r.title} style={{ display: 'grid', gridTemplateColumns: '64px 1fr auto', alignItems: 'center', gap: 22, background: 'white', border: '1px solid #EEF1F6', borderRadius: 20, padding: '22px 24px', transition: 'border-color 0.2s ease, transform 0.2s ease' }}>
-                <div style={{ width: 56, height: 56, borderRadius: 14, background: r.bg, color: r.fg, display: 'grid', placeItems: 'center' }}>{r.icon}</div>
+              <div key={r.title} className="risco-card">
+                <div className="risco-icon" style={{ background: r.bg, color: r.fg }}>{r.icon}</div>
                 <div>
-                  <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '16.5px', fontWeight: 700, color: '#0F172A', marginBottom: 4, letterSpacing: '-0.005em' }}>{r.title}</h3>
-                  <p style={{ fontSize: '14.5px', color: '#475569', lineHeight: 1.55 }}>{r.text}</p>
+                  <h3 style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, color: '#0F172A', marginBottom: 4, letterSpacing: '-0.005em' }}>{r.title}</h3>
+                  <p style={{ color: '#475569', lineHeight: 1.55 }}>{r.text}</p>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, minWidth: 92 }}>
-                  <span style={{ fontSize: 12, color: '#94A3B8', fontWeight: 500 }}>Impacto</span>
-                  <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', padding: '6px 14px', borderRadius: 999, background: r.impactHigh ? '#FFE4E6' : '#FEF3C7', color: r.impactHigh ? '#DC2626' : '#D97706' }}>{r.impact}</span>
+                <div className="risco-impact">
+                  <span className="risco-impact-lbl">Impacto</span>
+                  <span className="risco-impact-badge" style={{ background: r.impactHigh ? '#FFE4E6' : '#FEF3C7', color: r.impactHigh ? '#DC2626' : '#D97706' }}>{r.impact}</span>
                 </div>
               </div>
             ))}
@@ -280,18 +354,18 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURES ── */}
-      <section id="features" style={{ padding: '100px 0' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ textAlign: 'center', maxWidth: 740, margin: '0 auto 56px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', background: '#EFF4FF', color: '#1D4ED8', borderRadius: 999, fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.02em', marginBottom: 18 }}>
+      <section id="features" className="lp-section">
+        <div className="lp-container">
+          <div className="sec-head">
+            <span className="eyebrow" style={{ background: '#EFF4FF', color: '#1D4ED8' }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2563EB', display: 'inline-block' }} />
               Funcionalidades
             </span>
-            <h2 style={{ fontFamily: 'var(--font-jakarta, "Plus Jakarta Sans", sans-serif)', fontSize: 'clamp(30px, 3.6vw, 44px)', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: 14 }}>Uma nova forma inteligente de viabilizar a governança de dados</h2>
-            <p style={{ fontSize: 17, color: '#475569' }}>Nossa plataforma integra conformidade, tecnologia e inteligência em um único ambiente, com controle total, segurança e visão estratégica.</p>
+            <h2>Uma nova forma inteligente de viabilizar a governança de dados</h2>
+            <p>Nossa plataforma integra conformidade, tecnologia e inteligência em um único ambiente, com controle total, segurança e visão estratégica.</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          <div className="features-grid">
             {[
               { bg: '#EAF1FF', fg: '#2563EB', title: 'Data Mapping Pro', desc: 'Mapeie, organize e visualize os dados da sua empresa com total controle.', icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18" /><rect x="7" y="13" width="3" height="5" /><rect x="12" y="9" width="3" height="9" /><rect x="17" y="5" width="3" height="13" /></svg> },
               { bg: '#E4F7EE', fg: '#059669', title: 'Academy LGPD', desc: 'Capacite sua equipe de forma prática, automatizada e em conformidade com a lei.', icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 10 12 5 2 10l10 5 10-5z" /><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" /></svg> },
@@ -303,9 +377,9 @@ export default function HomePage() {
               { bg: '#FFEDDF', fg: '#EA580C', title: 'Due Diligence', desc: 'Avalie riscos e parceiros com mais segurança e padronização.', icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg> },
               { bg: '#FFE4E6', fg: '#BE123C', title: 'Canal de Denúncias', desc: 'Receba relatos com sigilo e fortaleça a integridade da sua organização.', icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 11l18-8-4 18-4-8-10-2z" /></svg> },
             ].map((feat) => (
-              <div key={feat.title} style={{ background: 'white', border: '1px solid #EEF1F6', borderRadius: 20, padding: 28, transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease', position: 'relative' }}>
-                <div style={{ width: 56, height: 56, borderRadius: 16, background: feat.bg, color: feat.fg, display: 'grid', placeItems: 'center', marginBottom: 22 }}>{feat.icon}</div>
-                <h3 style={{ fontFamily: 'var(--font-jakarta, "Plus Jakarta Sans", sans-serif)', fontSize: 18, fontWeight: 700, color: '#0F172A', marginBottom: 8 }}>{feat.title}</h3>
+              <div key={feat.title} className="feature-card">
+                <div className="feat-icon" style={{ background: feat.bg, color: feat.fg }}>{feat.icon}</div>
+                <h3 style={{ fontFamily: 'var(--font-jakarta,"Plus Jakarta Sans",sans-serif)', fontSize: 18, fontWeight: 700, color: '#0F172A', marginBottom: 8 }}>{feat.title}</h3>
                 <p style={{ fontSize: '14.5px', color: '#475569', lineHeight: 1.6 }}>{feat.desc}</p>
               </div>
             ))}
@@ -314,18 +388,18 @@ export default function HomePage() {
       </section>
 
       {/* ── MÓDULOS ── */}
-      <section id="modulos" style={{ background: '#FBFCFE', padding: '100px 0' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ textAlign: 'center', maxWidth: 740, margin: '0 auto 56px' }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', background: '#EFF4FF', color: '#1D4ED8', borderRadius: 999, fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.02em', marginBottom: 18 }}>
+      <section id="modulos" className="lp-section" style={{ background: '#FBFCFE' }}>
+        <div className="lp-container">
+          <div className="sec-head">
+            <span className="eyebrow" style={{ background: '#EFF4FF', color: '#1D4ED8' }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2563EB', display: 'inline-block' }} />
               Nossos módulos
             </span>
-            <h2 style={{ fontFamily: 'var(--font-jakarta, "Plus Jakarta Sans", sans-serif)', fontSize: 'clamp(30px, 3.6vw, 44px)', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: 14 }}>Soluções completas para cada etapa da sua adequação à LGPD</h2>
-            <p style={{ fontSize: 17, color: '#475569' }}>Tecnologia, metodologia e especialistas para gerar resultados reais — não apenas relatórios.</p>
+            <h2>Soluções completas para cada etapa da sua adequação à LGPD</h2>
+            <p>Tecnologia, metodologia e especialistas para gerar resultados reais — não apenas relatórios.</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+          <div className="modulos-grid">
             {[
               {
                 bg: '#EAF1FF', fg: '#2563EB',
@@ -370,24 +444,24 @@ export default function HomePage() {
                 btnClass: '#6D28D9',
               },
             ].map((mod) => (
-              <div key={mod.title} style={{ background: 'white', border: '1px solid #EEF1F6', borderRadius: 28, padding: '36px 32px', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}>
-                <div style={{ width: 64, height: 64, borderRadius: 18, background: mod.bg, color: mod.fg, display: 'grid', placeItems: 'center', marginBottom: 26 }}>{mod.icon}</div>
-                <h3 style={{ fontFamily: 'var(--font-jakarta, "Plus Jakarta Sans", sans-serif)', fontSize: 22, fontWeight: 700, color: '#0F172A', lineHeight: 1.25, marginBottom: 14, minHeight: 56 }}>{mod.title}</h3>
-                <div style={{ height: 3, width: 36, borderRadius: 3, background: mod.fg, margin: '4px 0 18px' }} />
+              <div key={mod.title} className="mod-card">
+                <div style={{ width: 64, height: 64, borderRadius: 18, background: mod.bg, color: mod.fg, display: 'grid', placeItems: 'center', marginBottom: 26, flexShrink: 0 }}>{mod.icon}</div>
+                <h3>{mod.title}</h3>
+                <div style={{ height: 3, width: 36, borderRadius: 3, background: mod.fg, margin: '4px 0 18px', flexShrink: 0 }} />
                 <p style={{ fontSize: '14.5px', color: '#475569', lineHeight: 1.65, marginBottom: 22 }}>{mod.desc}</p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {mod.items.map((item, i) => (
                     <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 14, color: '#0F172A' }}>
                       <CircleCheck bg={mod.bg} fg={mod.fg} />
                       <span style={{ minWidth: 0, flex: 1 }}>
-                        {item.bold && <strong style={{ fontWeight: 700, color: '#0F172A' }}>{item.bold}</strong>}
+                        {item.bold && <strong style={{ fontWeight: 700 }}>{item.bold}</strong>}
                         {item.rest}
                       </span>
                     </li>
                   ))}
                 </ul>
                 <div style={{ marginTop: 'auto' }}>
-                  <Link href="/cadastro" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '13px 18px', fontSize: 14, fontWeight: 600, borderRadius: 999, border: `1.5px solid ${mod.btnClass}`, color: mod.btnClass, background: 'white', textDecoration: 'none', transition: 'background 0.15s ease' }}>
+                  <Link href="/cadastro" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '13px 18px', fontSize: 14, fontWeight: 600, borderRadius: 999, border: `1.5px solid ${mod.btnClass}`, color: mod.btnClass, background: 'white', textDecoration: 'none' }}>
                     Saiba mais
                   </Link>
                 </div>
@@ -398,15 +472,15 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ── */}
-      <section style={{ padding: '80px 0', background: '#FBFCFE' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ background: 'linear-gradient(120deg, #0B1B3D 0%, #1E3263 60%, #2563EB 130%)', borderRadius: 32, padding: '64px 56px', position: 'relative', overflow: 'hidden', color: 'white', display: 'grid', gridTemplateColumns: '1.4fr auto', gap: 40, alignItems: 'center' }}>
+      <section className="lp-section" style={{ background: '#FBFCFE' }}>
+        <div className="lp-container">
+          <div className="cta-wrap">
             <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 90% 10%, rgba(255,255,255,0.18), transparent 40%), radial-gradient(circle at 10% 100%, rgba(96,165,250,0.25), transparent 50%)', pointerEvents: 'none' }} />
             <div style={{ position: 'relative' }}>
-              <h2 style={{ fontFamily: 'var(--font-jakarta, "Plus Jakarta Sans", sans-serif)', color: 'white', fontSize: 'clamp(28px, 3.4vw, 40px)', fontWeight: 800, marginBottom: 12, lineHeight: 1.15, letterSpacing: '-0.02em' }}>Pronto para colocar a LGPD no piloto automático?</h2>
+              <h2 style={{ fontFamily: 'var(--font-jakarta,"Plus Jakarta Sans",sans-serif)', color: 'white', fontSize: 'clamp(28px,3.4vw,40px)', fontWeight: 800, marginBottom: 12, lineHeight: 1.15, letterSpacing: '-0.02em' }}>Pronto para colocar a LGPD no piloto automático?</h2>
               <p style={{ color: '#C7D2EA', fontSize: '16.5px', maxWidth: 520 }}>Implementação em até 24h. Suporte especializado em português. Equipe certificada e plataforma 100% adequada à LGPD.</p>
             </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', position: 'relative' }}>
+            <div className="cta-btns">
               <Link href="/cadastro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 18px', fontSize: 14, fontWeight: 600, borderRadius: 999, background: 'white', color: '#0B1B3D', textDecoration: 'none', whiteSpace: 'nowrap' }}>
                 Solicitar demonstração <IconArrow />
               </Link>
@@ -420,9 +494,8 @@ export default function HomePage() {
 
       {/* ── FOOTER ── */}
       <footer id="contato" style={{ background: '#0B1B3D', color: '#B7C2DA', padding: '72px 0 32px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr repeat(3, 1fr)', gap: 56, paddingBottom: 48, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-            {/* Brand col */}
+        <div className="lp-container">
+          <div className="foot-grid">
             <div>
               <Link href="/" aria-label="Serra Privacy">
                 <Image src="/logo-transparent.png" alt="Serra Privacy" width={130} height={46} style={{ objectFit: 'contain', height: 46, width: 'auto', filter: 'brightness(0) invert(1)', opacity: 0.92 }} />
@@ -434,19 +507,18 @@ export default function HomePage() {
                   { label: 'Instagram', svg: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" /></svg> },
                   { label: 'YouTube', svg: <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23 7s-.2-1.6-.9-2.3c-.8-.9-1.8-.9-2.2-1C16.6 3.5 12 3.5 12 3.5s-4.6 0-7.9.3c-.5 0-1.4 0-2.2.9C1.2 5.4 1 7 1 7S.8 8.9.8 10.7v1.7c0 1.9.2 3.7.2 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.7.3 7.7.3s4.6 0 7.9-.3c.5 0 1.4 0 2.2-.9.7-.7.9-2.3.9-2.3s.2-1.9.2-3.7v-1.7C23.2 8.9 23 7 23 7zM9.7 14.5V8.3l6 3.1-6 3.1z" /></svg> },
                 ].map(({ label, svg }) => (
-                  <a key={label} href="#" aria-label={label} style={{ width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', color: '#B7C2DA', display: 'grid', placeItems: 'center', transition: 'background 0.2s ease, color 0.2s ease', textDecoration: 'none' }}>{svg}</a>
+                  <a key={label} href="#" aria-label={label} style={{ width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', color: '#B7C2DA', display: 'grid', placeItems: 'center', textDecoration: 'none' }}>{svg}</a>
                 ))}
               </div>
             </div>
 
-            {/* Link cols */}
             {[
               { title: 'Produto', links: ['Funcionalidades', 'Módulos', 'Integrações', 'Roadmap'] },
               { title: 'Soluções', links: ['Para DPOs', 'Para Empresas', 'DPO as a Service', 'Saúde & Financeiro', 'Setor Público'] },
               { title: 'Empresa', links: ['Sobre nós', 'Cases de sucesso', 'Blog', 'Contato', 'Trabalhe conosco'] },
             ].map((col) => (
               <div key={col.title}>
-                <h5 style={{ fontSize: '12.5px', fontWeight: 700, color: 'white', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '8px 0 18px', fontFamily: 'Inter, sans-serif' }}>{col.title}</h5>
+                <h5 style={{ fontSize: '12.5px', fontWeight: 700, color: 'white', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '8px 0 18px' }}>{col.title}</h5>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {col.links.map(link => (
                     <li key={link}><a href="#" style={{ color: '#B7C2DA', fontSize: 14, textDecoration: 'none' }}>{link}</a></li>
@@ -456,7 +528,7 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div style={{ paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, color: '#94A3B8', flexWrap: 'wrap', gap: 12 }}>
+          <div className="foot-bottom">
             <span>© 2026 Serra Privacy. Todos os direitos reservados. CNPJ 00.000.000/0001-00</span>
             <div style={{ display: 'flex', gap: 22 }}>
               {['Privacidade', 'Termos', 'Cookies'].map(l => (
