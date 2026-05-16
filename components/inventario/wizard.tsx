@@ -168,7 +168,9 @@ function defaultData(): FormData {
     legal_bases: [],
     consent_collection_method: '',
     data_source: '',
+    data_sources: [],
     data_subject_category: '',
+    data_subject_categories: [],
     storage_type: '',
     storage_types: [],
     storage_location: '',
@@ -630,28 +632,58 @@ function StepBaseLegal({ data, update }: { data: FormData; update: (f: keyof For
 // ─── Etapa 6 — Titular ───────────────────────────────────────────────────────
 
 function StepTitular({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
+  const toggleFonte = (v: string) => {
+    const cur = data.data_sources
+    update('data_sources', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
+  }
+  const toggleCategoria = (v: string) => {
+    const cur = data.data_subject_categories
+    update('data_subject_categories', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
+  }
+
+  const FONTES = [
+    { value: 'direto',    label: 'Direto do titular' },
+    { value: 'terceiros', label: 'Terceiros'          },
+    { value: 'publico',   label: 'Fonte pública'      },
+  ]
+
+  const CATEGORIAS_TITULAR = [
+    { value: 'cliente',     label: 'Cliente'        },
+    { value: 'funcionario', label: 'Funcionário'    },
+    { value: 'fornecedor',  label: 'Fornecedor'     },
+    { value: 'lead',        label: 'Lead / Prospect'},
+    { value: 'parceiro',    label: 'Parceiro'       },
+    { value: 'outro',       label: 'Outro'          },
+  ]
+
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <Label>Fonte dos dados *</Label>
+        <Label>Fonte dos dados * <span className="text-xs font-normal text-gray-400">(múltipla seleção)</span></Label>
         <div className="grid grid-cols-3 gap-3">
-          {[{ value: 'direto', label: 'Direto do titular' }, { value: 'terceiros', label: 'Terceiros' }, { value: 'publico', label: 'Fonte pública' }].map(opt => (
-            <button key={opt.value} type="button" onClick={() => update('data_source', opt.value)}
-              className={`rounded-lg border p-3 text-sm font-medium transition-colors text-center ${data.data_source === opt.value ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300 text-gray-700'}`}>
-              {opt.label}
-            </button>
-          ))}
+          {FONTES.map(opt => {
+            const active = data.data_sources.includes(opt.value)
+            return (
+              <button key={opt.value} type="button" onClick={() => toggleFonte(opt.value)}
+                className={`rounded-lg border p-3 text-sm font-medium transition-colors text-center ${active ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300 text-gray-700'}`}>
+                {opt.label}
+              </button>
+            )
+          })}
         </div>
       </div>
       <div className="space-y-2">
-        <Label>Categoria do titular *</Label>
+        <Label>Categoria do titular * <span className="text-xs font-normal text-gray-400">(múltipla seleção)</span></Label>
         <div className="grid grid-cols-2 gap-3">
-          {[{ value: 'cliente', label: 'Cliente' }, { value: 'funcionario', label: 'Funcionário' }, { value: 'fornecedor', label: 'Fornecedor' }, { value: 'lead', label: 'Lead / Prospect' }, { value: 'parceiro', label: 'Parceiro' }, { value: 'outro', label: 'Outro' }].map(opt => (
-            <button key={opt.value} type="button" onClick={() => update('data_subject_category', opt.value)}
-              className={`rounded-lg border p-3 text-sm font-medium transition-colors ${data.data_subject_category === opt.value ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300 text-gray-700'}`}>
-              {opt.label}
-            </button>
-          ))}
+          {CATEGORIAS_TITULAR.map(opt => {
+            const active = data.data_subject_categories.includes(opt.value)
+            return (
+              <button key={opt.value} type="button" onClick={() => toggleCategoria(opt.value)}
+                className={`rounded-lg border p-3 text-sm font-medium transition-colors ${active ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300 text-gray-700'}`}>
+                {opt.label}
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>

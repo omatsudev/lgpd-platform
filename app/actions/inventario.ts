@@ -86,8 +86,10 @@ export type InventarioData = {
   legal_bases: string[]                 // múltiplas bases legais (art. 7º LGPD)
   consent_collection_method: string
   // Etapa 6 — Titular
-  data_source: string
-  data_subject_category: string
+  data_source: string                    // legado (primeiro elemento de data_sources)
+  data_sources: string[]                 // múltiplas fontes de dados
+  data_subject_category: string          // legado (primeiro elemento de data_subject_categories)
+  data_subject_categories: string[]      // múltiplas categorias de titular
   // Etapa 7 — Armazenamento e Retenção
   storage_type: string                  // legado (primeiro tipo de storage_types)
   storage_types: string[]               // múltiplos tipos de armazenamento
@@ -141,8 +143,11 @@ export async function salvarInventarioProfissional(data: InventarioData) {
     legal_basis: data.legal_bases[0] ?? data.legal_basis ?? null,
     legal_bases: data.legal_bases,
     consent_collection_method: data.consent_collection_method || null,
-    data_source: data.data_source,
-    data_subject_category: data.data_subject_category,
+    // titular: mantém legado (primeiro item) + array completo
+    data_source: data.data_sources[0] ?? data.data_source ?? null,
+    data_sources: data.data_sources,
+    data_subject_category: data.data_subject_categories[0] ?? data.data_subject_category ?? null,
+    data_subject_categories: data.data_subject_categories,
     // armazenamento: mantém legado (primeiro tipo) + array completo
     storage_type: data.storage_types[0] ?? data.storage_type ?? null,
     storage_types: data.storage_types,
