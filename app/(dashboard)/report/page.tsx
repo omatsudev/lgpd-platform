@@ -14,10 +14,10 @@ function nivelRisco(prob: number, imp: number) {
   return 'Baixo'
 }
 
-function scoreChecklist(itens: any[]) {
+function scoreChecklist(checklistItems: any[]) {
   const total = CHECKLIST.reduce((acc, c) => acc + c.items.length, 0)
   const map: Record<string, string> = {}
-  for (const i of itens) map[i.item_key] = i.status
+  for (const i of checklistItems) map[i.item_key] = i.status
   const na = CHECKLIST.reduce(
     (acc, c) => acc + c.items.filter((i) => map[i.key] === 'not_applicable').length,
     0,
@@ -108,7 +108,7 @@ function TabelaSimples({
 export default async function RelatorioPage() {
   const { company, companyId, supabase } = await getUserCompany()
   const hoje = new Date()
-  const dataRelatorio = hoje.toLocaleDateString('pt-BR', {
+  const reportDate = hoje.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
@@ -116,14 +116,14 @@ export default async function RelatorioPage() {
 
   // Busca paralela de todos os módulos
   const [
-    { data: inventario },
-    { data: incidentes },
-    { data: documentos },
-    { data: riscos },
-    { data: fornecedores },
+    { data: inventory },
+    { data: incidents },
+    { data: documents },
+    { data: risks },
+    { data: suppliers },
     { data: checklistItens },
-    { data: titulares },
-    { data: consentimentos },
+    { data: dataSubjects },
+    { data: consents },
   ] = await Promise.all([
     supabase
       .from('data_inventory')
@@ -161,31 +161,31 @@ export default async function RelatorioPage() {
 
   // Métricas calculadas
   const checklist = scoreChecklist(checklistItens ?? [])
-  const riscosAbertos = (riscos ?? []).filter((r: any) => r.status !== 'closed')
-  const riscosCriticos = riscosAbertos.filter(
+  const openRisks = (risks ?? []).filter((r: any) => r.status !== 'closed')
+  const criticalRisks = openRisks.filter(
     (r: any) => r.inherent_probability * r.inherent_impact >= 15,
   )
-  const fornSemDPA = (fornecedores ?? []).filter(
+  const suppliersWithoutDPA = (suppliers ?? []).filter(
     (f: any) => f.access_type !== 'no_data_access' && !f.has_dpa,
   )
-  const docVencidos = (documentos ?? []).filter(
+  const expiredDocuments = (documents ?? []).filter(
     (d: any) => d.expiration_date && new Date(d.expiration_date) < hoje,
   )
-  const incAbertos = (incidentes ?? []).filter(
+  const openIncidents = (incidents ?? []).filter(
     (i: any) => !['resolved', 'closed'].includes(i.status),
   )
-  const titPendentes = (titulares ?? []).filter((t: any) => t.status === 'pending')
-  const consentAtivos = (consentimentos ?? []).filter((c: any) => c.accepted && !c.revoked)
+  const pendingDataSubjects = (dataSubjects ?? []).filter((t: any) => t.status === 'pending')
+  const activeConsents = (consents ?? []).filter((c: any) => c.accepted && !c.revoked)
 
   // Score geral de conformidade (média ponderada)
-  const scoreGeral = Math.round(
+  const overallScore = Math.round(
     checklist.pct * 0.4 +
-      (fornSemDPA.length === 0 ? 100 : Math.max(0, 100 - fornSemDPA.length * 20)) * 0.2 +
-      (riscosCriticos.length === 0 ? 100 : Math.max(0, 100 - riscosCriticos.length * 25)) * 0.2 +
-      (incAbertos.length === 0 ? 100 : Math.max(0, 100 - incAbertos.length * 15)) * 0.2,
+      (suppliersWithoutDPA.length === 0 ? 100 : Math.max(0, 100 - suppliersWithoutDPA.length * 20)) * 0.2 +
+      (criticalRisks.length === 0 ? 100 : Math.max(0, 100 - criticalRisks.length * 25)) * 0.2 +
+      (openIncidents.length === 0 ? 100 : Math.max(0, 100 - openIncidents.length * 15)) * 0.2,
   )
 
-  const categoriaLabel: Record<string, string> = {
+  const categoryLabel: Record<string, string> = {
     privacy: 'Privacidade',
     security: 'Segurança',
     legal: 'Legal',
@@ -194,7 +194,7 @@ export default async function RelatorioPage() {
     technological: 'Tecnológico',
   }
 
-  const statusIncLabel: Record<string, string> = {
+  const incidentStatusLabel: Record<string, string> = {
     identified: 'Identificado',
     under_investigation: 'Em investigação',
     contained: 'Contido',
@@ -208,7 +208,7 @@ export default async function RelatorioPage() {
       <div className="print:hidden flex items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Relatório de Conformidade LGPD</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Gerado em {dataRelatorio}</p>
+          <p className="text-sm text-gray-500 mt-0.5">Gerado em {reportDate}</p>
         </div>
         <PrintButton />
       </div>
@@ -232,7 +232,7 @@ export default async function RelatorioPage() {
             )}
           </div>
           <div className="text-right text-sm text-gray-500">
-            <p className="font-semibold text-gray-700">{dataRelatorio}</p>
+            <p className="font-semibold text-gray-700">{reportDate}</p>
             {company?.dpo_name && <p className="mt-1">DPO: {company.dpo_name}</p>}
             {company?.dpo_email && <p>{company.dpo_email}</p>}
           </div>
@@ -243,7 +243,7 @@ export default async function RelatorioPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
             <MetricaBox
               label="Score Geral"
-              value={`${scoreGeral}%`}
+              value={`${overallScore}%`}
               sub="Conformidade estimada"
               destaque
             />
@@ -252,13 +252,13 @@ export default async function RelatorioPage() {
               value={`${checklist.pct}%`}
               sub={`${checklist.done}/${checklist.efetivos} itens`}
             />
-            <MetricaBox label="Riscos Críticos" value={riscosCriticos.length} sub="Em aberto" />
-            <MetricaBox label="Fornecedores sem DPA" value={fornSemDPA.length} sub="Pendentes" />
+            <MetricaBox label="Riscos Críticos" value={criticalRisks.length} sub="Em aberto" />
+            <MetricaBox label="Fornecedores sem DPA" value={suppliersWithoutDPA.length} sub="Pendentes" />
           </div>
           <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
             <p>
               <span className="font-medium">Metodologia:</span> Score ponderado — Checklist (40%),
-              Fornecedores com DPA (20%), Ausência de riscos críticos (20%), Ausência de incidentes
+              Fornecedores com DPA (20%), Ausência de risks críticos (20%), Ausência de incidents
               abertos (20%).
             </p>
           </div>
@@ -271,7 +271,7 @@ export default async function RelatorioPage() {
             for (const i of checklistItens ?? []) checklistMap[i.item_key] = i.status
 
             // Itens pendentes / em andamento (críticos e altos primeiro)
-            const itensPendentes = CHECKLIST.flatMap((cat) =>
+            const pendingItems = CHECKLIST.flatMap((cat) =>
               cat.items
                 .filter(
                   (i) =>
@@ -287,7 +287,7 @@ export default async function RelatorioPage() {
               return (ordem[a.priority] ?? 3) - (ordem[b.priority] ?? 3)
             })
 
-            const prioridadeLabel: Record<string, { label: string; color: string }> = {
+            const priorityLabel: Record<string, { label: string; color: string }> = {
               critical: { label: 'Crítica', color: 'bg-red-100 text-red-700' },
               high: { label: 'Alta', color: 'bg-orange-100 text-orange-700' },
               medium: { label: 'Média', color: 'bg-yellow-100 text-yellow-700' },
@@ -333,11 +333,11 @@ export default async function RelatorioPage() {
                 </div>
 
                 {/* Pendências */}
-                {itensPendentes.length > 0 && (
+                {pendingItems.length > 0 && (
                   <>
                     <p className="text-sm font-semibold text-gray-800 mb-3">
-                      Pendências ({itensPendentes.length} ite
-                      {itensPendentes.length > 1 ? 'ns' : 'm'})
+                      Pendências ({pendingItems.length} ite
+                      {pendingItems.length > 1 ? 'ns' : 'm'})
                     </p>
                     <table className="w-full text-sm border-collapse">
                       <thead>
@@ -360,8 +360,8 @@ export default async function RelatorioPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {itensPendentes.map((item, idx) => {
-                          const prio = prioridadeLabel[item.priority] ?? prioridadeLabel.low
+                        {pendingItems.map((item, idx) => {
+                          const prio = priorityLabel[item.priority] ?? priorityLabel.low
                           return (
                             <tr
                               key={item.key}
@@ -395,7 +395,7 @@ export default async function RelatorioPage() {
                   </>
                 )}
 
-                {itensPendentes.length === 0 && (
+                {pendingItems.length === 0 && (
                   <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
                     <span>✓</span> Todos os itens aplicáveis foram concluídos.
                   </div>
@@ -408,24 +408,24 @@ export default async function RelatorioPage() {
         {/* 3 — Inventário */}
         <Secao titulo="3. Inventário de Dados">
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <MetricaBox label="Total de processos" value={(inventario ?? []).length} />
+            <MetricaBox label="Total de processos" value={(inventory ?? []).length} />
             <MetricaBox
               label="Completos"
-              value={(inventario ?? []).filter((i: any) => i.record_status === 'complete').length}
+              value={(inventory ?? []).filter((i: any) => i.record_status === 'complete').length}
             />
             <MetricaBox
               label="Rascunhos"
               value={
-                (inventario ?? []).filter(
+                (inventory ?? []).filter(
                   (i: any) => i.record_status === 'draft' || !i.record_status,
                 ).length
               }
             />
           </div>
-          {(inventario ?? []).length > 0 && (
+          {(inventory ?? []).length > 0 && (
             <TabelaSimples
               headers={['Processo', 'Setor', 'Base Legal', 'Risco']}
-              rows={(inventario ?? [])
+              rows={(inventory ?? [])
                 .slice(0, 15)
                 .map((i: any) => [
                   i.process_name || i.data_type,
@@ -435,9 +435,9 @@ export default async function RelatorioPage() {
                 ])}
             />
           )}
-          {(inventario ?? []).length > 15 && (
+          {(inventory ?? []).length > 15 && (
             <p className="text-xs text-gray-400 mt-2">
-              * Exibindo 15 de {(inventario ?? []).length} registros.
+              * Exibindo 15 de {(inventory ?? []).length} registros.
             </p>
           )}
         </Secao>
@@ -445,25 +445,25 @@ export default async function RelatorioPage() {
         {/* 4 — Riscos */}
         <Secao titulo="4. Gestão de Riscos">
           <div className="grid grid-cols-4 gap-4 mb-4">
-            <MetricaBox label="Total" value={(riscos ?? []).length} />
-            <MetricaBox label="Críticos" value={riscosCriticos.length} />
+            <MetricaBox label="Total" value={(risks ?? []).length} />
+            <MetricaBox label="Críticos" value={criticalRisks.length} />
             <MetricaBox
               label="Em tratamento"
-              value={(riscos ?? []).filter((r: any) => r.status === 'under_treatment').length}
+              value={(risks ?? []).filter((r: any) => r.status === 'under_treatment').length}
             />
             <MetricaBox
               label="Encerrados"
-              value={(riscos ?? []).filter((r: any) => r.status === 'closed').length}
+              value={(risks ?? []).filter((r: any) => r.status === 'closed').length}
             />
           </div>
-          {riscosAbertos.length > 0 && (
+          {openRisks.length > 0 && (
             <TabelaSimples
               headers={['Risco', 'Categoria', 'Nível', 'Estratégia', 'Status']}
-              rows={riscosAbertos
+              rows={openRisks
                 .slice(0, 10)
                 .map((r: any) => [
                   r.title,
-                  categoriaLabel[r.category] ?? r.category,
+                  categoryLabel[r.category] ?? r.category,
                   nivelRisco(r.inherent_probability, r.inherent_impact),
                   r.strategy ?? '—',
                   r.status,
@@ -475,23 +475,23 @@ export default async function RelatorioPage() {
         {/* 5 — Incidentes */}
         <Secao titulo="5. Incidentes de Segurança">
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <MetricaBox label="Total" value={(incidentes ?? []).length} />
-            <MetricaBox label="Em aberto" value={incAbertos.length} />
+            <MetricaBox label="Total" value={(incidents ?? []).length} />
+            <MetricaBox label="Em aberto" value={openIncidents.length} />
             <MetricaBox
               label="Notificou ANPD"
-              value={(incidentes ?? []).filter((i: any) => i.notified_anpd).length}
+              value={(incidents ?? []).filter((i: any) => i.notified_anpd).length}
             />
           </div>
-          {(incidentes ?? []).length > 0 && (
+          {(incidents ?? []).length > 0 && (
             <TabelaSimples
               headers={['Título', 'Tipo', 'Severidade', 'Status', 'Data']}
-              rows={(incidentes ?? [])
+              rows={(incidents ?? [])
                 .slice(0, 10)
                 .map((i: any) => [
                   i.title,
                   i.type?.replace(/_/g, ' '),
                   i.severity,
-                  statusIncLabel[i.status] ?? i.status,
+                  incidentStatusLabel[i.status] ?? i.status,
                   i.discovery_date ? formatDate(i.discovery_date) : '—',
                 ])}
             />
@@ -501,25 +501,25 @@ export default async function RelatorioPage() {
         {/* 6 — Fornecedores */}
         <Secao titulo="6. Fornecedores e Terceiros">
           <div className="grid grid-cols-4 gap-4 mb-4">
-            <MetricaBox label="Total" value={(fornecedores ?? []).length} />
+            <MetricaBox label="Total" value={(suppliers ?? []).length} />
             <MetricaBox
               label="Com DPA"
-              value={(fornecedores ?? []).filter((f: any) => f.has_dpa).length}
+              value={(suppliers ?? []).filter((f: any) => f.has_dpa).length}
             />
-            <MetricaBox label="Sem DPA" value={fornSemDPA.length} />
+            <MetricaBox label="Sem DPA" value={suppliersWithoutDPA.length} />
             <MetricaBox
               label="Internacionais"
-              value={(fornecedores ?? []).filter((f: any) => f.international_transfer).length}
+              value={(suppliers ?? []).filter((f: any) => f.international_transfer).length}
             />
           </div>
-          {fornSemDPA.length > 0 && (
+          {suppliersWithoutDPA.length > 0 && (
             <>
               <p className="text-sm font-medium text-red-700 mb-2">
                 Fornecedores sem DPA assinado:
               </p>
               <TabelaSimples
                 headers={['Fornecedor', 'Categoria', 'Tipo de acesso', 'Diligência']}
-                rows={fornSemDPA.map((f: any) => [
+                rows={suppliersWithoutDPA.map((f: any) => [
                   f.name,
                   f.category,
                   f.access_type?.replace(/_/g, ' '),
@@ -533,21 +533,21 @@ export default async function RelatorioPage() {
         {/* 7 — Documentos */}
         <Secao titulo="7. Documentos de Conformidade">
           <div className="grid grid-cols-4 gap-4 mb-4">
-            <MetricaBox label="Total" value={(documentos ?? []).length} />
+            <MetricaBox label="Total" value={(documents ?? []).length} />
             <MetricaBox
               label="Publicados"
-              value={(documentos ?? []).filter((d: any) => d.status === 'published').length}
+              value={(documents ?? []).filter((d: any) => d.status === 'published').length}
             />
             <MetricaBox
               label="Em revisão"
-              value={(documentos ?? []).filter((d: any) => d.status === 'under_review').length}
+              value={(documents ?? []).filter((d: any) => d.status === 'under_review').length}
             />
-            <MetricaBox label="Vencidos" value={docVencidos.length} />
+            <MetricaBox label="Vencidos" value={expiredDocuments.length} />
           </div>
-          {(documentos ?? []).length > 0 && (
+          {(documents ?? []).length > 0 && (
             <TabelaSimples
               headers={['Documento', 'Tipo', 'Versão', 'Status', 'Expiração']}
-              rows={(documentos ?? [])
+              rows={(documents ?? [])
                 .slice(0, 10)
                 .map((d: any) => [
                   d.title,
@@ -565,23 +565,23 @@ export default async function RelatorioPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <MetricaBox
               label="Solicitações"
-              value={(titulares ?? []).length}
+              value={(dataSubjects ?? []).length}
               sub="Total recebidas"
             />
-            <MetricaBox label="Pendentes" value={titPendentes.length} sub="Aguardando resposta" />
+            <MetricaBox label="Pendentes" value={pendingDataSubjects.length} sub="Aguardando resposta" />
             <MetricaBox
               label="Consentimentos"
-              value={(consentimentos ?? []).length}
+              value={(consents ?? []).length}
               sub="Total registrados"
             />
-            <MetricaBox label="Ativos" value={consentAtivos.length} sub="Não revogados" />
+            <MetricaBox label="Ativos" value={activeConsents.length} sub="Não revogados" />
           </div>
         </Secao>
 
         {/* Rodapé */}
         <div className="mt-10 pt-6 border-t border-gray-200 text-xs text-gray-400 flex justify-between">
           <span>Relatório gerado pela plataforma Serra Privacy</span>
-          <span>{dataRelatorio}</span>
+          <span>{reportDate}</span>
         </div>
       </div>
     </div>

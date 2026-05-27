@@ -19,10 +19,10 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-function scoreChecklist(itens: any[]) {
+function scoreChecklist(checklistItems: any[]) {
   const total = CHECKLIST.reduce((acc, c) => acc + c.items.length, 0)
   const map: Record<string, string> = {}
-  for (const i of itens) map[i.item_key] = i.status
+  for (const i of checklistItems) map[i.item_key] = i.status
   const na = CHECKLIST.reduce(
     (acc, c) => acc + c.items.filter((i: any) => map[i.key] === 'not_applicable').length,
     0,
@@ -54,14 +54,14 @@ export default async function DashboardPage() {
 
   const [
     { count: inventarioCount },
-    { data: denuncias },
-    { data: titulares },
-    { data: treinamentos },
-    { data: riscos },
-    { data: fornecedores },
-    { data: incidentes },
+    { data: complaints },
+    { data: dataSubjects },
+    { data: trainings },
+    { data: risks },
+    { data: suppliers },
+    { data: incidents },
     { data: checklistItens },
-    { data: documentos },
+    { data: documents },
   ] = await Promise.all([
     supabase
       .from('data_inventory')
@@ -84,113 +84,113 @@ export default async function DashboardPage() {
   ])
 
   // Metrics
-  const denunciasEmAnalise = (denuncias ?? []).filter((d) => d.status === 'under_review').length
-  const titularesPendentes = (titulares ?? []).filter((t) => t.status === 'pending').length
-  const titularesAtrasados = (titulares ?? []).filter(
+  const complaintsUnderReview = (complaints ?? []).filter((d) => d.status === 'under_review').length
+  const pendingDataSubjects = (dataSubjects ?? []).filter((t) => t.status === 'pending').length
+  const overdueDataSubjects = (dataSubjects ?? []).filter(
     (t) =>
       t.status === 'pending' && t.response_deadline && new Date(t.response_deadline) < new Date(),
   ).length
 
-  const todosColabs = (treinamentos ?? []).flatMap((t: any) => t.training_employees ?? [])
-  const colabsTotal = todosColabs.length
-  const colabsConcluidos = todosColabs.filter((c: any) => c.status === 'completed').length
+  const allEmployees = (trainings ?? []).flatMap((t: any) => t.training_employees ?? [])
+  const totalEmployees = allEmployees.length
+  const completedEmployees = allEmployees.filter((c: any) => c.status === 'completed').length
 
-  const riscosAbertos = (riscos ?? []).filter((r) => r.status !== 'closed')
-  const riscosCriticos = riscosAbertos.filter(
+  const openRisks = (risks ?? []).filter((r) => r.status !== 'closed')
+  const criticalRisks = openRisks.filter(
     (r) => r.inherent_probability * r.inherent_impact >= 15,
   )
-  const fornSemDPA = (fornecedores ?? []).filter(
+  const suppliersWithoutDPA = (suppliers ?? []).filter(
     (f) => f.access_type !== 'no_data_access' && !f.has_dpa,
   )
-  const incAbertos = (incidentes ?? []).filter((i) => !['resolved', 'closed'].includes(i.status))
-  const docVencidos = (documentos ?? []).filter(
+  const openIncidents = (incidents ?? []).filter((i) => !['resolved', 'closed'].includes(i.status))
+  const expiredDocuments = (documents ?? []).filter(
     (d) => d.expiration_date && new Date(d.expiration_date) < new Date(),
   )
   const checklist = scoreChecklist(checklistItens ?? [])
 
   // Overall compliance score
-  const scoreGeral = Math.round(
+  const overallScore = Math.round(
     checklist.pct * 0.4 +
-      (fornSemDPA.length === 0 ? 100 : Math.max(0, 100 - fornSemDPA.length * 20)) * 0.2 +
-      (riscosCriticos.length === 0 ? 100 : Math.max(0, 100 - riscosCriticos.length * 25)) * 0.2 +
-      (incAbertos.length === 0 ? 100 : Math.max(0, 100 - incAbertos.length * 15)) * 0.2,
+      (suppliersWithoutDPA.length === 0 ? 100 : Math.max(0, 100 - suppliersWithoutDPA.length * 20)) * 0.2 +
+      (criticalRisks.length === 0 ? 100 : Math.max(0, 100 - criticalRisks.length * 25)) * 0.2 +
+      (openIncidents.length === 0 ? 100 : Math.max(0, 100 - openIncidents.length * 15)) * 0.2,
   )
 
   const scoreColor =
-    scoreGeral >= 70 ? 'text-green-600' : scoreGeral >= 40 ? 'text-yellow-600' : 'text-red-600'
+    overallScore >= 70 ? 'text-green-600' : overallScore >= 40 ? 'text-yellow-600' : 'text-red-600'
   const scoreBg =
-    scoreGeral >= 70
+    overallScore >= 70
       ? 'border-green-200 bg-green-50'
-      : scoreGeral >= 40
+      : overallScore >= 40
         ? 'border-yellow-200 bg-yellow-50'
         : 'border-red-200 bg-red-50'
   const scoreLabel =
-    scoreGeral >= 70
+    overallScore >= 70
       ? 'Boa adequação'
-      : scoreGeral >= 40
+      : overallScore >= 40
         ? 'Adequação parcial'
         : 'Atenção necessária'
 
   // Urgent alerts
-  const alertas = [
-    ...(riscosCriticos.length > 0
+  const alerts = [
+    ...(criticalRisks.length > 0
       ? [
           {
-            title: `${riscosCriticos.length} risco(s) crítico(s) sem tratamento`,
+            title: `${criticalRisks.length} risco(s) crítico(s) sem tratamento`,
             href: '/risks',
             priority: 'high' as const,
           },
         ]
       : []),
-    ...(incAbertos.length > 0
+    ...(openIncidents.length > 0
       ? [
           {
-            title: `${incAbertos.length} incidente(s) em aberto`,
+            title: `${openIncidents.length} incidente(s) em aberto`,
             href: '/incidents',
             priority: 'high' as const,
           },
         ]
       : []),
-    ...(titularesAtrasados > 0
+    ...(overdueDataSubjects > 0
       ? [
           {
-            title: `${titularesAtrasados} solicitação(ões) de titular em atraso`,
+            title: `${overdueDataSubjects} solicitação(ões) de titular em atraso`,
             href: '/data-subjects',
             priority: 'high' as const,
           },
         ]
       : []),
-    ...(fornSemDPA.length > 0
+    ...(suppliersWithoutDPA.length > 0
       ? [
           {
-            title: `${fornSemDPA.length} fornecedor(es) sem DPA assinado`,
+            title: `${suppliersWithoutDPA.length} fornecedor(es) sem DPA assinado`,
             href: '/suppliers',
             priority: 'medium' as const,
           },
         ]
       : []),
-    ...(docVencidos.length > 0
+    ...(expiredDocuments.length > 0
       ? [
           {
-            title: `${docVencidos.length} documento(s) vencido(s)`,
+            title: `${expiredDocuments.length} documento(s) vencido(s)`,
             href: '/documents',
             priority: 'medium' as const,
           },
         ]
       : []),
-    ...(titularesPendentes > 0
+    ...(pendingDataSubjects > 0
       ? [
           {
-            title: `${titularesPendentes} solicitação(ões) de titular pendente(s)`,
+            title: `${pendingDataSubjects} solicitação(ões) de titular pendente(s)`,
             href: '/data-subjects',
             priority: 'medium' as const,
           },
         ]
       : []),
-    ...(denunciasEmAnalise > 0
+    ...(complaintsUnderReview > 0
       ? [
           {
-            title: `${denunciasEmAnalise} denúncia(s) em análise`,
+            title: `${complaintsUnderReview} denúncia(s) em análise`,
             href: '/complaints',
             priority: 'medium' as const,
           },
@@ -223,7 +223,7 @@ export default async function DashboardPage() {
   }
 
   // Module status
-  const modulos = [
+  const modules = [
     { name: 'Checklist LGPD', href: '/checklist', progress: checklist.pct },
     {
       name: 'Inventário de Dados',
@@ -234,9 +234,9 @@ export default async function DashboardPage() {
       name: 'Fornecedores c/ DPA',
       href: '/suppliers',
       progress:
-        (fornecedores ?? []).length > 0
+        (suppliers ?? []).length > 0
           ? Math.round(
-              ((fornecedores ?? []).filter((f) => f.has_dpa).length / (fornecedores ?? []).length) *
+              ((suppliers ?? []).filter((f) => f.has_dpa).length / (suppliers ?? []).length) *
                 100,
             )
           : 0,
@@ -244,15 +244,15 @@ export default async function DashboardPage() {
     {
       name: 'Treinamentos',
       href: '/trainings',
-      progress: colabsTotal > 0 ? Math.round((colabsConcluidos / colabsTotal) * 100) : 0,
+      progress: totalEmployees > 0 ? Math.round((completedEmployees / totalEmployees) * 100) : 0,
     },
     {
       name: 'Riscos encerrados',
       href: '/risks',
       progress:
-        (riscos ?? []).length > 0
+        (risks ?? []).length > 0
           ? Math.round(
-              ((riscos ?? []).filter((r) => r.status === 'closed').length / (riscos ?? []).length) *
+              ((risks ?? []).filter((r) => r.status === 'closed').length / (risks ?? []).length) *
                 100,
             )
           : 0,
@@ -284,13 +284,13 @@ export default async function DashboardPage() {
               </div>
             </div>
             <div className="text-right flex-shrink-0">
-              <span className={`text-2xl md:text-3xl font-bold ${scoreColor}`}>{scoreGeral}%</span>
+              <span className={`text-2xl md:text-3xl font-bold ${scoreColor}`}>{overallScore}%</span>
               <Link href="/report" className="block text-xs text-blue-600 hover:underline mt-0.5">
                 Ver relatório
               </Link>
             </div>
           </div>
-          <Progress value={scoreGeral} className="h-3" />
+          <Progress value={overallScore} className="h-3" />
         </CardContent>
       </Card>
 
@@ -298,10 +298,10 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatsCard
           title="Riscos Críticos"
-          value={riscosCriticos.length}
-          description={`${riscosAbertos.length} abertos no total`}
+          value={criticalRisks.length}
+          description={`${openRisks.length} abertos no total`}
           icon={TriangleAlert}
-          color={riscosCriticos.length > 0 ? 'red' : 'green'}
+          color={criticalRisks.length > 0 ? 'red' : 'green'}
         />
         <StatsCard
           title="Checklist"
@@ -312,17 +312,17 @@ export default async function DashboardPage() {
         />
         <StatsCard
           title="Fornecedores"
-          value={`${(fornecedores ?? []).filter((f) => f.has_dpa).length}/${(fornecedores ?? []).length}`}
+          value={`${(suppliers ?? []).filter((f) => f.has_dpa).length}/${(suppliers ?? []).length}`}
           description="com DPA assinado"
           icon={Truck}
-          color={fornSemDPA.length > 0 ? 'yellow' : 'green'}
+          color={suppliersWithoutDPA.length > 0 ? 'yellow' : 'green'}
         />
         <StatsCard
           title="Titulares"
-          value={titularesPendentes}
-          description={titularesAtrasados > 0 ? `${titularesAtrasados} em atraso!` : 'pendentes'}
+          value={pendingDataSubjects}
+          description={overdueDataSubjects > 0 ? `${overdueDataSubjects} em atraso!` : 'pendentes'}
           icon={Users}
-          color={titularesAtrasados > 0 ? 'red' : titularesPendentes > 0 ? 'yellow' : 'green'}
+          color={overdueDataSubjects > 0 ? 'red' : pendingDataSubjects > 0 ? 'yellow' : 'green'}
         />
       </div>
 
@@ -337,21 +337,21 @@ export default async function DashboardPage() {
         />
         <StatsCard
           title="Treinamentos"
-          value={`${colabsConcluidos}/${colabsTotal}`}
+          value={`${completedEmployees}/${totalEmployees}`}
           description="colaboradores treinados"
           icon={GraduationCap}
           color="green"
         />
         <StatsCard
           title="Incidentes"
-          value={incAbertos.length}
+          value={openIncidents.length}
           description="em aberto"
           icon={AlertTriangle}
-          color={incAbertos.length > 0 ? 'red' : 'green'}
+          color={openIncidents.length > 0 ? 'red' : 'green'}
         />
         <StatsCard
           title="Denúncias"
-          value={denunciasEmAnalise}
+          value={complaintsUnderReview}
           description="em análise"
           icon={AlertTriangle}
           color="yellow"
@@ -368,13 +368,13 @@ export default async function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {alertas.length === 0 ? (
+            {alerts.length === 0 ? (
               <p className="text-sm text-green-600 font-medium">
                 Sem pendências urgentes. Plataforma em dia!
               </p>
             ) : (
               <div className="space-y-2">
-                {alertas.slice(0, 8).map((item, i) => (
+                {alerts.slice(0, 8).map((item, i) => (
                   <Link
                     key={i}
                     href={item.href}
@@ -411,7 +411,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {modulos.map((m) => (
+              {modules.map((m) => (
                 <Link key={m.name} href={m.href} className="block group">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">

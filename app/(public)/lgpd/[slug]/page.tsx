@@ -134,7 +134,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
             </CardHeader>
             <CardContent>
               <form className="space-y-3" action="/api/data-subjects/public" method="POST">
-                <input type="hidden" name="empresa_slug" value={slug} />
+                <input type="hidden" name="company_slug" value={slug} />
                 <div className="space-y-1.5">
                   <Label>Nome completo</Label>
                   <Input name="name" placeholder="Seu nome" required />
@@ -179,7 +179,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
             </CardHeader>
             <CardContent>
               <form className="space-y-3" action="/api/complaints/public" method="POST">
-                <input type="hidden" name="empresa_slug" value={slug} />
+                <input type="hidden" name="company_slug" value={slug} />
                 <div className="space-y-1.5">
                   <Label>Identificação</Label>
                   <div className="flex gap-4">

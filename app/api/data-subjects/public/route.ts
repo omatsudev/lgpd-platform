@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData()
-  const empresa_slug = formData.get('empresa_slug') as string
+  const company_slug = formData.get('company_slug') as string
   const type = formData.get('type') as string
   const name = formData.get('name') as string
   const email = formData.get('email') as string
@@ -15,11 +15,11 @@ export async function POST(request: NextRequest) {
   const { data: company } = await supabase
     .from('companies')
     .select('id')
-    .eq('slug', empresa_slug)
+    .eq('slug', company_slug)
     .single()
 
   if (!company) {
-    return NextResponse.redirect(new URL(`/lgpd/${empresa_slug}?error=empresa_nao_encontrada`, request.url))
+    return NextResponse.redirect(new URL(`/lgpd/${company_slug}?error=empresa_nao_encontrada`, request.url))
   }
 
   // Legal deadline: 15 business days
@@ -37,5 +37,5 @@ export async function POST(request: NextRequest) {
     response_deadline: deadline.toISOString().split('T')[0],
   })
 
-  return NextResponse.redirect(new URL(`/lgpd/${empresa_slug}?success=solicitacao_enviada`, request.url))
+  return NextResponse.redirect(new URL(`/lgpd/${company_slug}?success=solicitacao_enviada`, request.url))
 }

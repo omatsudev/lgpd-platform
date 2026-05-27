@@ -61,10 +61,10 @@ export default function CadastroPage() {
                   <Input id="name" name="name" placeholder="Seu nome" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="empresa_nome">Nome da empresa</Label>
+                  <Label htmlFor="company_name">Nome da empresa</Label>
                   <Input
-                    id="empresa_nome"
-                    name="empresa_nome"
+                    id="company_name"
+                    name="company_name"
                     placeholder="Razão social"
                     required
                   />

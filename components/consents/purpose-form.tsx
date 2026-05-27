@@ -26,13 +26,13 @@ const BASES_LEGAIS = [
   'Proteção ao crédito',
 ]
 
-interface FinalidadeFormProps {
+interface PurposeFormProps {
   companyId: string
   id?: string
   initialData?: any
 }
 
-export function FinalidadeForm({ companyId, id, initialData }: FinalidadeFormProps) {
+export function PurposeForm({ companyId, id, initialData }: PurposeFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()

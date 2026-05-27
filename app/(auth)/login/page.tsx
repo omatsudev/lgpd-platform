@@ -106,7 +106,7 @@ export default function LoginPage() {
               <div className="mt-6 text-center text-sm text-gray-500">
                 Não tem conta?{' '}
                 <Link
-                  href="/cadastro"
+                  href="/register"
                   className="font-semibold hover:underline"
                   style={{ color: '#0097a7' }}
                 >

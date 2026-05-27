@@ -14,11 +14,11 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
   const isNew = id === 'novo'
   const { supabase } = await getUserCompany()
 
-  let empresa: any = null
+  let company: any = null
   if (!isNew) {
     const { data } = await supabase.from('companies').select('*').eq('id', id).single()
-    empresa = data
-    if (!empresa) notFound()
+    company = data
+    if (!company) notFound()
   }
 
   return (
@@ -31,24 +31,24 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {isNew ? 'Nova Empresa' : empresa?.name}
+            {isNew ? 'Nova Empresa' : company?.name}
           </h1>
           <p className="text-sm text-gray-500">
-            {isNew ? 'Cadastrar empresa para gerenciar' : 'Gerenciar adequação LGPD'}
+            {isNew ? 'Cadastrar company para gerenciar' : 'Gerenciar adequação LGPD'}
           </p>
         </div>
       </div>
 
-      {!isNew && empresa && (
+      {!isNew && company && (
         <Card className="border-blue-200 bg-blue-50">
           <CardContent className="pt-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold text-blue-800">Adequação LGPD</span>
               <span className="text-xl font-bold text-blue-600">
-                {empresa.compliance_score ?? 0}%
+                {company.compliance_score ?? 0}%
               </span>
             </div>
-            <Progress value={empresa.compliance_score ?? 0} />
+            <Progress value={company.compliance_score ?? 0} />
           </CardContent>
         </Card>
       )}
@@ -67,8 +67,8 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
                 <Label>Razão Social</Label>
                 <Input
                   name="name"
-                  defaultValue={empresa?.name ?? ''}
-                  placeholder="Nome da empresa"
+                  defaultValue={company?.name ?? ''}
+                  placeholder="Nome da company"
                   required
                 />
               </div>
@@ -76,7 +76,7 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
                 <Label>CNPJ</Label>
                 <Input
                   name="tax_id"
-                  defaultValue={empresa?.tax_id ?? ''}
+                  defaultValue={company?.tax_id ?? ''}
                   placeholder="00.000.000/0001-00"
                 />
               </div>
@@ -86,7 +86,7 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
                 <Label>Setor</Label>
                 <Input
                   name="sector"
-                  defaultValue={empresa?.sector ?? ''}
+                  defaultValue={company?.sector ?? ''}
                   placeholder="Ex: Saúde, Varejo..."
                 />
               </div>
@@ -94,8 +94,8 @@ export default async function EmpresaFormPage({ params }: { params: Promise<{ id
                 <Label>Slug (URL pública)</Label>
                 <Input
                   name="slug"
-                  defaultValue={empresa?.slug ?? ''}
-                  placeholder="nome-da-empresa"
+                  defaultValue={company?.slug ?? ''}
+                  placeholder="nome-da-company"
                   required
                 />
               </div>

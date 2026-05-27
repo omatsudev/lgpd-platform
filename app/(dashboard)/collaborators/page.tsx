@@ -13,7 +13,7 @@ export default async function ColaboradoresPage({
   const { companyId, supabase } = await getUserCompany()
   const { q } = await searchParams
 
-  // Busca todos os training_employees da empresa via join
+  // Busca all os training_employees da empresa via join
   const { data: treinamentosData } = companyId
     ? await supabase
         .from('trainings')
@@ -21,8 +21,8 @@ export default async function ColaboradoresPage({
         .eq('company_id', companyId)
     : { data: [] }
 
-  // Agrupa colaboradores únicos (por email ou nome) e soma treinamentos
-  const colaboradoresMap = new Map<
+  // Agrupa employees únicos (por email ou nome) e soma treinamentos
+  const employeesMap = new Map<
     string,
     {
       name: string
@@ -36,8 +36,8 @@ export default async function ColaboradoresPage({
   for (const t of treinamentosData ?? []) {
     for (const c of (t as any).training_employees ?? []) {
       const key = c.employee_email ?? c.employee_name
-      if (!colaboradoresMap.has(key)) {
-        colaboradoresMap.set(key, {
+      if (!employeesMap.has(key)) {
+        employeesMap.set(key, {
           name: c.employee_name,
           email: c.employee_email,
           whatsapp: c.employee_whatsapp,
@@ -45,20 +45,20 @@ export default async function ColaboradoresPage({
           completed: 0,
         })
       }
-      const col = colaboradoresMap.get(key)!
+      const col = employeesMap.get(key)!
       col.total += 1
       if (c.status === 'completed') col.completed += 1
     }
   }
 
-  const todos = Array.from(colaboradoresMap.values())
-  const colaboradores = q
-    ? todos.filter(
+  const all = Array.from(employeesMap.values())
+  const employees = q
+    ? all.filter(
         (c) =>
           c.name.toLowerCase().includes(q.toLowerCase()) ||
           c.email?.toLowerCase().includes(q.toLowerCase()),
       )
-    : todos
+    : all
 
   return (
     <div className="space-y-5">
@@ -71,12 +71,12 @@ export default async function ColaboradoresPage({
 
       <SearchInput defaultValue={q ?? ''} placeholder="Buscar por nome ou email..." />
 
-      {colaboradores.length === 0 ? (
+      {employees.length === 0 ? (
         <Card>
           <CardContent className="pt-8 pb-8 text-center">
             <p className="text-gray-500 font-medium">Nenhum colaborador cadastrado</p>
             <p className="text-sm text-gray-400 mt-1">
-              Adicione colaboradores em um treinamento para vê-los aqui
+              Adicione employees em um treinamento para vê-los aqui
             </p>
           </CardContent>
         </Card>
@@ -109,7 +109,7 @@ export default async function ColaboradoresPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {colaboradores.map((c, i) => {
+                  {employees.map((c, i) => {
                     const completo = c.completed === c.total && c.total > 0
                     const parcial = c.completed > 0
                     return (
@@ -137,7 +137,7 @@ export default async function ColaboradoresPage({
 
           {/* Mobile cards */}
           <div className="md:hidden grid gap-3">
-            {colaboradores.map((c, i) => {
+            {employees.map((c, i) => {
               const completo = c.completed === c.total && c.total > 0
               const parcial = c.completed > 0
               return (

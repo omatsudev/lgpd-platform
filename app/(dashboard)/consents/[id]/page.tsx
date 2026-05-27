@@ -1,4 +1,4 @@
-import { RevogarForm } from '@/components/consents/revogar-form'
+import { RevokeForm } from '@/components/consents/revoke-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getUserCompany } from '@/lib/supabase/queries'
@@ -31,7 +31,7 @@ export default async function ConsentimentoDetalhePage({
 
   if (!reg) notFound()
 
-  const status = reg.revoked ? 'revogado' : reg.accepted ? 'ativo' : 'recusado'
+  const status = reg.revoked ? 'revoked' : reg.accepted ? 'active' : 'refused'
   const finalidade = reg.consent_purposes as any
 
   return (
@@ -51,29 +51,29 @@ export default async function ConsentimentoDetalhePage({
       {/* Status */}
       <Card
         className={
-          status === 'ativo'
+          status === 'active'
             ? 'border-green-200 bg-green-50'
-            : status === 'revogado'
+            : status === 'revoked'
               ? 'border-red-200 bg-red-50'
               : 'border-yellow-200 bg-yellow-50'
         }
       >
         <CardContent className="pt-4 pb-3">
           <div className="flex items-center gap-3">
-            {status === 'ativo' && <CheckCircle2 className="h-6 w-6 text-green-600" />}
-            {status === 'revogado' && <XCircle className="h-6 w-6 text-red-600" />}
-            {status === 'recusado' && <MinusCircle className="h-6 w-6 text-yellow-600" />}
+            {status === 'active' && <CheckCircle2 className="h-6 w-6 text-green-600" />}
+            {status === 'revoked' && <XCircle className="h-6 w-6 text-red-600" />}
+            {status === 'refused' && <MinusCircle className="h-6 w-6 text-yellow-600" />}
             <div>
               <p className="font-semibold text-gray-900">
                 Consentimento{' '}
-                {status === 'ativo' ? 'Ativo' : status === 'revogado' ? 'Revogado' : 'Recusado'}
+                {status === 'active' ? 'Ativo' : status === 'revoked' ? 'Revogado' : 'Recusado'}
               </p>
-              {status === 'revogado' && reg.revoked_at && (
+              {status === 'revoked' && reg.revoked_at && (
                 <p className="text-xs text-gray-600">
                   Revogado em {formatDateTime(reg.revoked_at)}
                 </p>
               )}
-              {status === 'revogado' && reg.revocation_reason && (
+              {status === 'revoked' && reg.revocation_reason && (
                 <p className="text-xs text-gray-600 mt-0.5">Motivo: {reg.revocation_reason}</p>
               )}
             </div>
@@ -127,7 +127,7 @@ export default async function ConsentimentoDetalhePage({
       </Card>
 
       {/* Revogar (só se ativo) */}
-      {status === 'ativo' && <RevogarForm id={reg.id} />}
+      {status === 'active' && <RevokeForm id={reg.id} />}
     </div>
   )
 }

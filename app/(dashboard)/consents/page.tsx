@@ -18,13 +18,13 @@ const canalLabel: Record<string, string> = {
 export default async function ConsentimentosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; aba?: string }>
+  searchParams: Promise<{ q?: string; tab?: string }>
 }) {
   const { companyId, company, supabase } = await getUserCompany()
-  const { q, aba = 'registros' } = await searchParams
+  const { q, tab = 'records' } = await searchParams
 
   // Finalidades
-  const { data: finalidades } = companyId
+  const { data: purposes } = companyId
     ? await supabase
         .from('consent_purposes')
         .select('*')
@@ -46,9 +46,9 @@ export default async function ConsentimentosPage({
     ? await registrosQuery.order('created_at', { ascending: false }).limit(200)
     : { data: [] }
 
-  const itens = finalidades ?? []
+  const items = purposes ?? []
   const regs = registros ?? []
-  const ativos = regs.filter((r: any) => r.accepted && !r.revoked).length
+  const activeCount = regs.filter((r: any) => r.accepted && !r.revoked).length
   const revogados = regs.filter((r: any) => r.revoked).length
   const recusados = regs.filter((r: any) => !r.accepted).length
 
@@ -61,7 +61,7 @@ export default async function ConsentimentosPage({
             Registro e rastreabilidade de consentimentos LGPD
           </p>
         </div>
-        <Link href="/consents/finalidades/nova">
+        <Link href="/consents/purposes/nova">
           <Button size="sm">
             <Plus className="h-4 w-4 mr-1" /> Nova Finalidade
           </Button>
@@ -72,7 +72,7 @@ export default async function ConsentimentosPage({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Total', value: regs.length, icon: ClipboardList, color: 'text-gray-600' },
-          { label: 'Ativos', value: ativos, icon: CheckCircle2, color: 'text-green-600' },
+          { label: 'Ativos', value: activeCount, icon: CheckCircle2, color: 'text-green-600' },
           { label: 'Revogados', value: revogados, icon: XCircle, color: 'text-red-600' },
           { label: 'Recusados', value: recusados, icon: MinusCircle, color: 'text-yellow-600' },
         ].map((m) => (
@@ -93,25 +93,25 @@ export default async function ConsentimentosPage({
       {/* Abas */}
       <div className="flex gap-1 border-b border-gray-200">
         {[
-          { key: 'registros', label: `Registros (${regs.length})` },
-          { key: 'finalidades', label: `Finalidades (${itens.length})` },
-        ].map((tab) => (
+          { key: 'records', label: `Registros (${regs.length})` },
+          { key: 'purposes', label: `Finalidades (${items.length})` },
+        ].map((navTab) => (
           <Link
-            key={tab.key}
-            href={`/consents?aba=${tab.key}${q ? `&q=${q}` : ''}`}
+            key={navTab.key}
+            href={`/consents?tab=${navTab.key}${q ? `&q=${q}` : ''}`}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              aba === tab.key
+              tab === navTab.key
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            {tab.label}
+            {navTab.label}
           </Link>
         ))}
       </div>
 
       {/* Aba: Registros de consentimento */}
-      {aba === 'registros' && (
+      {tab === 'records' && (
         <Card>
           <CardContent className="pt-4 pb-3">
             <SearchInput defaultValue={q ?? ''} placeholder="Buscar por e-mail, nome, CPF..." />
@@ -248,19 +248,19 @@ export default async function ConsentimentosPage({
       )}
 
       {/* Aba: Finalidades */}
-      {aba === 'finalidades' && (
+      {tab === 'purposes' && (
         <div className="space-y-3">
-          {itens.length === 0 ? (
+          {items.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
                 <p className="text-gray-500 font-medium">Nenhuma finalidade cadastrada</p>
                 <p className="text-sm text-gray-400 mt-1">
-                  Crie finalidades para começar a coletar consentimentos
+                  Crie purposes para começar a coletar consentimentos
                 </p>
               </CardContent>
             </Card>
           ) : (
-            itens.map((f: any) => {
+            items.map((f: any) => {
               const consentUrl = company?.slug
                 ? `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://lgpd-platform.vercel.app'}/lgpd/${company.slug}`
                 : null
@@ -310,7 +310,7 @@ export default async function ConsentimentosPage({
                             </Button>
                           </a>
                         )}
-                        <Link href={`/consents/finalidades/${f.id}`}>
+                        <Link href={`/consents/purposes/${f.id}`}>
                           <Button variant="ghost" size="sm">
                             Editar
                           </Button>
@@ -322,7 +322,7 @@ export default async function ConsentimentosPage({
               )
             })
           )}
-          <Link href="/consents/finalidades/nova">
+          <Link href="/consents/purposes/nova">
             <Button variant="outline" size="sm" className="w-full">
               <Plus className="h-4 w-4 mr-1" /> Nova Finalidade
             </Button>

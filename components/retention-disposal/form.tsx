@@ -22,8 +22,8 @@ import {
   DESTINACOES_FINAIS,
   EVENTOS_INICIAIS,
   FUNDAMENTOS_JURIDICOS,
-  RETENCAO_BASE_TABLE,
-} from '@/lib/retencao-base-table'
+  RETENTION_BASE_TABLE,
+} from '@/lib/retention-base-table'
 import { BookOpen, FileArchive, Lock, Scale, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
@@ -34,20 +34,20 @@ type FormState = Omit<RetentionDisposalData, 'company_id' | 'id'>
 
 function defaultState(): FormState {
   return {
-    tipo_dado: '',
-    categoria: '',
-    prazo_retencao: '',
+    data_type: '',
+    category: '',
+    retention_period: '',
     retention_start_event: '',
-    data_evento: '',
-    data_vencimento: '',
-    fundamento_juridico: '',
-    prazo_prescricional: '',
-    prazo_decadencial: '',
-    possibilidade_bloqueio: false,
+    event_date: '',
+    expiration_date: '',
+    legal_basis: '',
+    prescription_period: '',
+    decadence_period: '',
+    hold_possible: false,
     final_disposition: '',
-    bloqueio_ativo: false,
-    motivo_bloqueio: '',
-    notas: '',
+    hold_active: false,
+    hold_reason: '',
+    notes: '',
   }
 }
 
@@ -114,13 +114,13 @@ function Toggle({
 
 // ─── Componente principal ─────────────────────────────────────────────────
 
-interface RetencaoDescarteFormProps {
+interface RetentionDisposalFormProps {
   companyId: string
   id?: string
   initialData?: any
 }
 
-export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDescarteFormProps) {
+export function RetentionDisposalForm({ companyId, id, initialData }: RetentionDisposalFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()
@@ -130,51 +130,51 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
   const [data, setData] = useState<FormState>(() => {
     if (!initialData) return defaultState()
     return {
-      tipo_dado: initialData.tipo_dado ?? '',
-      categoria: initialData.categoria ?? '',
-      prazo_retencao: initialData.prazo_retencao ?? '',
+      data_type: initialData.data_type ?? '',
+      category: initialData.category ?? '',
+      retention_period: initialData.retention_period ?? '',
       retention_start_event: initialData.retention_start_event ?? '',
-      data_evento: initialData.data_evento ?? '',
-      data_vencimento: initialData.data_vencimento ?? '',
-      fundamento_juridico: initialData.fundamento_juridico ?? '',
-      prazo_prescricional: initialData.prazo_prescricional ?? '',
-      prazo_decadencial: initialData.prazo_decadencial ?? '',
-      possibilidade_bloqueio: initialData.possibilidade_bloqueio ?? false,
+      event_date: initialData.event_date ?? '',
+      expiration_date: initialData.expiration_date ?? '',
+      legal_basis: initialData.legal_basis ?? '',
+      prescription_period: initialData.prescription_period ?? '',
+      decadence_period: initialData.decadence_period ?? '',
+      hold_possible: initialData.hold_possible ?? false,
       final_disposition: initialData.final_disposition ?? '',
-      bloqueio_ativo: initialData.bloqueio_ativo ?? false,
-      motivo_bloqueio: initialData.motivo_bloqueio ?? '',
-      notas: initialData.notas ?? '',
+      hold_active: initialData.hold_active ?? false,
+      hold_reason: initialData.hold_reason ?? '',
+      notes: initialData.notes ?? '',
     }
   })
 
   const update = (field: keyof FormState, value: any) =>
     setData((prev) => ({ ...prev, [field]: value }))
 
-  const preencherDaTabela = (item: (typeof RETENCAO_BASE_TABLE)[0]) => {
+  const fillFromTable = (item: (typeof RETENTION_BASE_TABLE)[0]) => {
     setData((prev) => ({
       ...prev,
-      tipo_dado: item.tipo_dado,
-      categoria: item.categoria,
-      prazo_retencao: item.prazo_retencao,
-      retention_start_event: item.retention_start_event,
-      fundamento_juridico: item.fundamento_juridico,
-      prazo_prescricional: item.prazo_prescricional ?? '',
-      prazo_decadencial: item.prazo_decadencial ?? '',
-      possibilidade_bloqueio: item.possibilidade_bloqueio,
-      final_disposition: item.final_disposition,
+      data_type: item.dataType,
+      category: item.category,
+      retention_period: item.retentionPeriod,
+      retention_start_event: item.startEvent,
+      legal_basis: item.legalBasis,
+      prescription_period: item.prescriptionPeriod ?? '',
+      decadence_period: item.decadencePeriod ?? '',
+      hold_possible: item.holdPossible,
+      final_disposition: item.finalDisposition,
     }))
     setShowBaseTable(false)
   }
 
   const validate = () => {
     const errs: Record<string, string> = {}
-    if (!data.tipo_dado.trim()) errs.tipo_dado = 'Tipo de dado é obrigatório'
-    if (!data.categoria.trim()) errs.categoria = 'Categoria é obrigatória'
-    if (!data.prazo_retencao.trim()) errs.prazo_retencao = 'Prazo de retenção é obrigatório'
+    if (!data.data_type.trim()) errs.data_type = 'Tipo de dado é obrigatório'
+    if (!data.category.trim()) errs.category = 'Categoria é obrigatória'
+    if (!data.retention_period.trim()) errs.retention_period = 'Prazo de retenção é obrigatório'
     if (!data.retention_start_event.trim())
       errs.retention_start_event = 'Evento inicial é obrigatório'
-    if (!data.fundamento_juridico.trim())
-      errs.fundamento_juridico = 'Fundamento jurídico é obrigatório'
+    if (!data.legal_basis.trim())
+      errs.legal_basis = 'Fundamento jurídico é obrigatório'
     return errs
   }
 
@@ -223,16 +223,16 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
 
           {showBaseTable && (
             <div className="mt-3 divide-y divide-blue-200 rounded-lg border border-blue-200 bg-white overflow-hidden">
-              {RETENCAO_BASE_TABLE.map((item) => (
+              {RETENTION_BASE_TABLE.map((item) => (
                 <button
-                  key={item.tipo_dado}
+                  key={item.dataType}
                   type="button"
-                  onClick={() => preencherDaTabela(item)}
+                  onClick={() => fillFromTable(item)}
                   className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors"
                 >
-                  <p className="text-sm font-medium text-gray-900">{item.tipo_dado}</p>
+                  <p className="text-sm font-medium text-gray-900">{item.dataType}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {item.prazo_retencao} · {item.retention_start_event}
+                    {item.retentionPeriod} · {item.startEvent}
                   </p>
                 </button>
               ))}
@@ -252,19 +252,19 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="tipo_dado">Tipo de dado *</Label>
+            <Label htmlFor="data_type">Tipo de dado *</Label>
             <Input
-              id="tipo_dado"
-              value={data.tipo_dado}
-              onChange={(e) => update('tipo_dado', e.target.value)}
+              id="data_type"
+              value={data.data_type}
+              onChange={(e) => update('data_type', e.target.value)}
               placeholder="Ex: Documentos Trabalhistas, Dados de Clientes..."
             />
-            {errors.tipo_dado && <p className="text-xs text-red-500">{errors.tipo_dado}</p>}
+            {errors.data_type && <p className="text-xs text-red-500">{errors.data_type}</p>}
           </div>
 
           <div className="space-y-1.5">
             <Label>Categoria *</Label>
-            <Select value={data.categoria} onValueChange={(v) => update('categoria', v)}>
+            <Select value={data.category} onValueChange={(v) => update('category', v)}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione a categoria" />
               </SelectTrigger>
@@ -276,7 +276,7 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
                 ))}
               </SelectContent>
             </Select>
-            {errors.categoria && <p className="text-xs text-red-500">{errors.categoria}</p>}
+            {errors.category && <p className="text-xs text-red-500">{errors.category}</p>}
           </div>
         </CardContent>
       </Card>
@@ -292,15 +292,15 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="prazo_retencao">Prazo de retenção *</Label>
+            <Label htmlFor="retention_period">Prazo de retenção *</Label>
             <Input
-              id="prazo_retencao"
-              value={data.prazo_retencao}
-              onChange={(e) => update('prazo_retencao', e.target.value)}
+              id="retention_period"
+              value={data.retention_period}
+              onChange={(e) => update('retention_period', e.target.value)}
               placeholder="Ex: 5 anos, 10 anos, 30 dias..."
             />
-            {errors.prazo_retencao && (
-              <p className="text-xs text-red-500">{errors.prazo_retencao}</p>
+            {errors.retention_period && (
+              <p className="text-xs text-red-500">{errors.retention_period}</p>
             )}
           </div>
 
@@ -328,21 +328,21 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="data_evento">Data do evento</Label>
+              <Label htmlFor="event_date">Data do evento</Label>
               <Input
-                id="data_evento"
+                id="event_date"
                 type="date"
-                value={data.data_evento}
-                onChange={(e) => update('data_evento', e.target.value)}
+                value={data.event_date}
+                onChange={(e) => update('event_date', e.target.value)}
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="data_vencimento">Data de vencimento</Label>
+              <Label htmlFor="expiration_date">Data de vencimento</Label>
               <Input
-                id="data_vencimento"
+                id="expiration_date"
                 type="date"
-                value={data.data_vencimento}
-                onChange={(e) => update('data_vencimento', e.target.value)}
+                value={data.expiration_date}
+                onChange={(e) => update('expiration_date', e.target.value)}
               />
               <p className="text-xs text-gray-400">Calculada automaticamente quando possível</p>
             </div>
@@ -351,8 +351,8 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
           <div className="space-y-1.5">
             <Label>Fundamento jurídico *</Label>
             <Select
-              value={data.fundamento_juridico}
-              onValueChange={(v) => update('fundamento_juridico', v)}
+              value={data.legal_basis}
+              onValueChange={(v) => update('legal_basis', v)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o fundamento legal" />
@@ -365,27 +365,27 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
                 ))}
               </SelectContent>
             </Select>
-            {errors.fundamento_juridico && (
-              <p className="text-xs text-red-500">{errors.fundamento_juridico}</p>
+            {errors.legal_basis && (
+              <p className="text-xs text-red-500">{errors.legal_basis}</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="prazo_prescricional">Prazo prescricional</Label>
+              <Label htmlFor="prescription_period">Prazo prescricional</Label>
               <Input
-                id="prazo_prescricional"
-                value={data.prazo_prescricional}
-                onChange={(e) => update('prazo_prescricional', e.target.value)}
+                id="prescription_period"
+                value={data.prescription_period}
+                onChange={(e) => update('prescription_period', e.target.value)}
                 placeholder="Ex: 5 anos"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="prazo_decadencial">Prazo decadencial</Label>
+              <Label htmlFor="decadence_period">Prazo decadencial</Label>
               <Input
-                id="prazo_decadencial"
-                value={data.prazo_decadencial}
-                onChange={(e) => update('prazo_decadencial', e.target.value)}
+                id="decadence_period"
+                value={data.decadence_period}
+                onChange={(e) => update('decadence_period', e.target.value)}
                 placeholder="Ex: 5 anos"
               />
             </div>
@@ -423,28 +423,28 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
           </div>
 
           <Toggle
-            checked={data.possibilidade_bloqueio}
-            onChange={(v) => update('possibilidade_bloqueio', v)}
+            checked={data.hold_possible}
+            onChange={(v) => update('hold_possible', v)}
             label="Possibilidade de bloqueio"
-            description="Os dados podem ser bloqueados antes do descarte (ex.: portabilidade, investigação)"
+            description="Os dados podem ser holdItems antes do descarte (ex.: portabilidade, investigação)"
           />
 
-          {!id && data.possibilidade_bloqueio && (
+          {!id && data.hold_possible && (
             <Toggle
-              checked={data.bloqueio_ativo}
-              onChange={(v) => update('bloqueio_ativo', v)}
+              checked={data.hold_active}
+              onChange={(v) => update('hold_active', v)}
               label="Bloqueio ativo agora"
               description="Marque se os dados já estão em estado de bloqueio"
             />
           )}
 
-          {data.bloqueio_ativo && (
+          {data.hold_active && (
             <div className="space-y-1.5">
-              <Label htmlFor="motivo_bloqueio">Motivo do bloqueio</Label>
+              <Label htmlFor="hold_reason">Motivo do bloqueio</Label>
               <Textarea
-                id="motivo_bloqueio"
-                value={data.motivo_bloqueio}
-                onChange={(e) => update('motivo_bloqueio', e.target.value)}
+                id="hold_reason"
+                value={data.hold_reason}
+                onChange={(e) => update('hold_reason', e.target.value)}
                 placeholder="Descreva o motivo do bloqueio..."
                 rows={2}
               />
@@ -460,8 +460,8 @@ export function RetencaoDescarteForm({ companyId, id, initialData }: RetencaoDes
         </CardHeader>
         <CardContent>
           <Textarea
-            value={data.notas}
-            onChange={(e) => update('notas', e.target.value)}
+            value={data.notes}
+            onChange={(e) => update('notes', e.target.value)}
             placeholder="Informações adicionais, histórico de decisões, observações..."
             rows={3}
           />

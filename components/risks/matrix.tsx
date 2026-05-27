@@ -28,10 +28,10 @@ const IMP_LABELS = [
   'Catastrófico (5)',
 ]
 
-export function RiscoMatriz({ itens }: { itens: any[] }) {
+export function RiskMatrix({ items }: { items: any[] }) {
   // Agrupa riscos por (prob_inerente, imp_inerente)
   const mapa: Record<string, any[]> = {}
-  for (const r of itens) {
+  for (const r of items) {
     const key = `${r.inherent_probability}-${r.inherent_impact}`
     if (!mapa[key]) mapa[key] = []
     mapa[key].push(r)
@@ -108,7 +108,7 @@ export function RiscoMatriz({ itens }: { itens: any[] }) {
         ))}
       </div>
 
-      {itens.length === 0 && (
+      {items.length === 0 && (
         <p className="text-center text-sm text-gray-400 py-8">
           Nenhum risco cadastrado para exibir na matriz
         </p>

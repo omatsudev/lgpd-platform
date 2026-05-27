@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const name = formData.get('name') as string
-  const empresa_nome = formData.get('empresa_nome') as string
+  const company_name = formData.get('company_name') as string
   const tipo = formData.get('type') as string
 
   const supabase = await createClient()
@@ -24,14 +24,14 @@ export async function POST(request: NextRequest) {
   })
 
   if (authError) {
-    return NextResponse.redirect(new URL(`/cadastro?error=${authError.message}`, request.url), {
+    return NextResponse.redirect(new URL(`/register?error=${authError.message}`, request.url), {
       status: 303,
     })
   }
 
   if (authData.user && tipo !== 'dpo') {
     const nomeFinal =
-      empresa_nome?.trim() || (name?.trim() ? `Empresa de ${name.trim()}` : 'Minha Empresa')
+      company_name?.trim() || (name?.trim() ? `Empresa de ${name.trim()}` : 'Minha Empresa')
     const slug =
       nomeFinal
         .toLowerCase()

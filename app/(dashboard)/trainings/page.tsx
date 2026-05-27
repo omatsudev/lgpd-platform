@@ -10,10 +10,10 @@ import Link from 'next/link'
 export default async function TreinamentosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; aba?: string }>
+  searchParams: Promise<{ q?: string; tab?: string }>
 }) {
   const { companyId, supabase } = await getUserCompany()
-  const { q, aba = 'trainings' } = await searchParams
+  const { q, tab = 'trainings' } = await searchParams
 
   let query = supabase
     .from('trainings')
@@ -27,14 +27,14 @@ export default async function TreinamentosPage({
     const colabs = t.training_employees ?? []
     return {
       ...t,
-      total_colaboradores: colabs.length,
+      total_employees: colabs.length,
       concluidos: colabs.filter((c: any) => c.status === 'completed').length,
       em_andamento: colabs.filter((c: any) => c.status === 'in_progress').length,
       nao_iniciados: colabs.filter((c: any) => c.status === 'not_started').length,
     }
   })
 
-  // Dados de colaboradores para a aba
+  // Dados de employees para a tab
   const { data: trainingCollaborators } = companyId
     ? await supabase
         .from('trainings')
@@ -42,7 +42,7 @@ export default async function TreinamentosPage({
         .eq('company_id', companyId)
     : { data: [] }
 
-  const colaboradoresMap = new Map<
+  const employeesMap = new Map<
     string,
     {
       name: string
@@ -55,8 +55,8 @@ export default async function TreinamentosPage({
   for (const t of trainingCollaborators ?? []) {
     for (const c of (t as any).training_employees ?? []) {
       const key = c.employee_email ?? c.employee_name
-      if (!colaboradoresMap.has(key)) {
-        colaboradoresMap.set(key, {
+      if (!employeesMap.has(key)) {
+        employeesMap.set(key, {
           name: c.employee_name,
           email: c.employee_email,
           whatsapp: c.employee_whatsapp,
@@ -64,12 +64,12 @@ export default async function TreinamentosPage({
           completed: 0,
         })
       }
-      const col = colaboradoresMap.get(key)!
+      const col = employeesMap.get(key)!
       col.total += 1
       if (c.status === 'completed') col.completed += 1
     }
   }
-  const colaboradores = Array.from(colaboradoresMap.values()).filter(
+  const employees = Array.from(employeesMap.values()).filter(
     (c) =>
       !q ||
       c.name.toLowerCase().includes(q.toLowerCase()) ||
@@ -82,10 +82,10 @@ export default async function TreinamentosPage({
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">Treinamentos</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            Gerencie treinamentos e acompanhe colaboradores
+            Gerencie treinamentos e acompanhe employees
           </p>
         </div>
-        {aba === 'trainings' && (
+        {tab === 'trainings' && (
           <Link href="/trainings/novo">
             <Button>
               <Plus className="h-4 w-4 mr-1" /> Novo Treinamento
@@ -98,19 +98,19 @@ export default async function TreinamentosPage({
       <div className="flex gap-1 border-b border-gray-200">
         {[
           { key: 'trainings', label: `Treinamentos (${trainings.length})` },
-          { key: 'colaboradores', label: `Colaboradores (${colaboradoresMap.size})`, icon: Users },
-        ].map((tab) => (
+          { key: 'employees', label: `Colaboradores (${employeesMap.size})`, icon: Users },
+        ].map((navTab) => (
           <Link
-            key={tab.key}
-            href={`/trainings?aba=${tab.key}${q ? `&q=${q}` : ''}`}
+            key={navTab.key}
+            href={`/trainings?tab=${navTab.key}${q ? `&q=${q}` : ''}`}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              aba === tab.key
+              tab === navTab.key
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            {tab.icon && <tab.icon className="h-3.5 w-3.5" />}
-            {tab.label}
+            {navTab.icon && <navTab.icon className="h-3.5 w-3.5" />}
+            {navTab.label}
           </Link>
         ))}
       </div>
@@ -118,13 +118,13 @@ export default async function TreinamentosPage({
       <SearchInput
         defaultValue={q ?? ''}
         placeholder={
-          aba === 'colaboradores'
+          tab === 'employees'
             ? 'Buscar por nome ou email...'
             : 'Buscar por título ou descrição...'
         }
       />
 
-      {aba === 'trainings' &&
+      {tab === 'trainings' &&
         (trainings.length === 0 ? (
           <Card>
             <CardContent className="pt-8 pb-8 text-center">
@@ -138,8 +138,8 @@ export default async function TreinamentosPage({
           <div className="grid gap-4">
             {trainings.map((t: any) => {
               const progresso =
-                t.total_colaboradores > 0
-                  ? Math.round((t.concluidos / t.total_colaboradores) * 100)
+                t.total_employees > 0
+                  ? Math.round((t.concluidos / t.total_employees) * 100)
                   : 0
               return (
                 <Card key={t.id}>
@@ -153,7 +153,7 @@ export default async function TreinamentosPage({
                           <Badge variant="warning">{t.em_andamento} em andamento</Badge>
                           <Badge variant="secondary">{t.nao_iniciados} não iniciados</Badge>
                         </div>
-                        {t.total_colaboradores > 0 && (
+                        {t.total_employees > 0 && (
                           <div className="space-y-1">
                             <div className="flex justify-between text-xs text-gray-500">
                               <span>Progresso geral</span>
@@ -186,13 +186,13 @@ export default async function TreinamentosPage({
           </div>
         ))}
 
-      {aba === 'colaboradores' &&
-        (colaboradores.length === 0 ? (
+      {tab === 'employees' &&
+        (employees.length === 0 ? (
           <Card>
             <CardContent className="pt-8 pb-8 text-center">
               <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500 font-medium">Nenhum colaborador cadastrado</p>
-              <p className="text-sm text-gray-400 mt-1">Adicione colaboradores em um treinamento</p>
+              <p className="text-sm text-gray-400 mt-1">Adicione employees em um treinamento</p>
             </CardContent>
           </Card>
         ) : (
@@ -218,7 +218,7 @@ export default async function TreinamentosPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {colaboradores.map((c, i) => {
+                    {employees.map((c, i) => {
                       const completo = c.completed === c.total && c.total > 0
                       const parcial = c.completed > 0
                       return (
@@ -241,7 +241,7 @@ export default async function TreinamentosPage({
               </div>
               {/* Mobile */}
               <div className="md:hidden divide-y divide-gray-100">
-                {colaboradores.map((c, i) => {
+                {employees.map((c, i) => {
                   const completo = c.completed === c.total && c.total > 0
                   const parcial = c.completed > 0
                   return (
