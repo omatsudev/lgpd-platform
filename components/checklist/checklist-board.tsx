@@ -80,8 +80,8 @@ function ItemRow({
   const statusConf = STATUS_CONFIG[form.status]
   const Icon = statusConf.icon
 
-  // Monta e envia o FormData diretamente — sem useTransition para não vazar pending para outros itens
-  const persist = async (payload: ItemState) => {
+  // Monta e envia o FormData — retorna { ok, error? } em vez de throw
+  const persist = async (payload: ItemState): Promise<{ ok: boolean; error?: string }> => {
     const fd = new FormData()
     fd.set('company_id', companyId)
     fd.set('item_key', item.key)
@@ -90,7 +90,7 @@ function ItemRow({
     fd.set('notes', payload.notes ?? '')
     fd.set('responsible', payload.responsible ?? '')
     fd.set('completion_date', payload.completion_date ?? '')
-    await atualizarItemChecklist(fd)
+    return atualizarItemChecklist(fd)
   }
 
   // Clique num botão de status: atualiza imediatamente (otimista) e salva em background
@@ -101,18 +101,15 @@ function ItemRow({
     onStatusChange(item.key, newStatus)
     setSavingStatus(newStatus)
     setSaveError(null)
-    try {
-      await persist({ ...form, status: newStatus })
-    } catch (err) {
-      // Reverte estado otimista e mostra o erro
+    const result = await persist({ ...form, status: newStatus })
+    if (!result.ok) {
+      // Reverte estado otimista e mostra o erro real
       setForm(prev => ({ ...prev, status: previousStatus }))
       onStatusChange(item.key, previousStatus)
-      const msg = err instanceof Error ? err.message : 'Erro ao salvar'
-      setSaveError(msg)
-      console.error('[checklist] save status failed:', msg)
-    } finally {
-      setSavingStatus(null)
+      setSaveError(result.error ?? 'Erro ao salvar')
+      console.error('[checklist] save status failed:', result.error)
     }
+    setSavingStatus(null)
   }
 
   // Botão Salvar: grava responsável, data e observações
@@ -121,18 +118,16 @@ function ItemRow({
     setSavingDetails(true)
     setSavedDetails(false)
     setSaveError(null)
-    try {
-      await persist(form)
+    const result = await persist(form)
+    if (result.ok) {
       setSavedDetails(true)
       if (savedTimer.current) clearTimeout(savedTimer.current)
       savedTimer.current = setTimeout(() => setSavedDetails(false), 2500)
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Erro ao salvar'
-      setSaveError(msg)
-      console.error('[checklist] save details failed:', msg)
-    } finally {
-      setSavingDetails(false)
+    } else {
+      setSaveError(result.error ?? 'Erro ao salvar')
+      console.error('[checklist] save details failed:', result.error)
     }
+    setSavingDetails(false)
   }
 
   return (

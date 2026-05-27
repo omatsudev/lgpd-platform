@@ -168,9 +168,11 @@ export async function salvarInventarioProfissional(data: InventarioData) {
   }
 
   if (data.id) {
-    await supabase.from('data_inventory').update(payload).eq('id', data.id)
+    const { error } = await supabase.from('data_inventory').update(payload).eq('id', data.id)
+    if (error) throw new Error(`Erro ao atualizar inventário: ${error.message}`)
   } else {
-    await supabase.from('data_inventory').insert({ ...payload, created_by: user.id })
+    const { error } = await supabase.from('data_inventory').insert({ ...payload, created_by: user.id })
+    if (error) throw new Error(`Erro ao salvar inventário: ${error.message}`)
   }
 
   revalidatePath('/inventario')
