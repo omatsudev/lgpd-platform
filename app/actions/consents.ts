@@ -62,14 +62,14 @@ export async function revokeConsent(formData: FormData) {
   if (!user) throw new Error('Não autenticado')
 
   const id = formData.get('id') as string
-  const motivo = formData.get('motivo') as string
+  const reason = formData.get('reason') as string
 
   await supabase
     .from('consents')
     .update({
       revoked: true,
       revoked_at: new Date().toISOString(),
-      revocation_reason: motivo || null,
+      revocation_reason: reason || null,
     })
     .eq('id', id)
 

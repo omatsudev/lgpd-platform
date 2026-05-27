@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   const password = formData.get('password') as string
   const name = formData.get('name') as string
   const company_name = formData.get('company_name') as string
-  const tipo = formData.get('type') as string
+  const accountType = formData.get('type') as string
 
   const supabase = await createClient()
 
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     options: {
       data: {
         name,
-        role: tipo === 'dpo' ? 'dpo' : 'company',
+        role: accountType === 'dpo' ? 'dpo' : 'company',
       },
       emailRedirectTo: `${new URL(request.url).origin}/api/auth/callback`,
     },
@@ -29,11 +29,11 @@ export async function POST(request: NextRequest) {
     })
   }
 
-  if (authData.user && tipo !== 'dpo') {
-    const nomeFinal =
+  if (authData.user && accountType !== 'dpo') {
+    const companyFinalName =
       company_name?.trim() || (name?.trim() ? `Empresa de ${name.trim()}` : 'Minha Empresa')
     const slug =
-      nomeFinal
+      companyFinalName
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     const { data: company } = await supabase
       .from('companies')
-      .insert({ name: nomeFinal, owner_id: authData.user.id, slug })
+      .insert({ name: companyFinalName, owner_id: authData.user.id, slug })
       .select('id')
       .single()
 

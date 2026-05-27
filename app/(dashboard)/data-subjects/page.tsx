@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/utils'
 import { Clock, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 
-const tipoMap: Record<string, string> = {
+const typeMap: Record<string, string> = {
   acesso: 'Acesso',
   exclusao: 'Exclusão',
   correcao: 'Correção',
@@ -43,7 +43,7 @@ export default async function TitularesPage({
 
   const { data } = companyId ? await query.order('created_at', { ascending: false }) : { data: [] }
 
-  const solicitacoes = data ?? []
+  const requests = data ?? []
 
   return (
     <div className="space-y-5">
@@ -65,7 +65,7 @@ export default async function TitularesPage({
 
       <SearchInput defaultValue={q ?? ''} placeholder="Buscar por nome, email, tipo..." />
 
-      {solicitacoes.length === 0 ? (
+      {requests.length === 0 ? (
         <Card>
           <CardContent className="pt-8 pb-8 text-center">
             <p className="text-gray-500 font-medium">Nenhuma solicitação recebida</p>
@@ -76,38 +76,38 @@ export default async function TitularesPage({
         </Card>
       ) : (
         <div className="grid gap-3">
-          {solicitacoes.map((s: any) => {
+          {requests.map((s: any) => {
             const status = statusMap[s.status] ?? { label: s.status, variant: 'secondary' as const }
-            const prazoDate = new Date(s.response_deadline)
-            const diasRestantes = Math.ceil(
-              (prazoDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+            const deadlineDate = new Date(s.response_deadline)
+            const daysLeft = Math.ceil(
+              (deadlineDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
             )
-            const atrasado = diasRestantes < 0 && s.status !== 'completed'
+            const overdue = daysLeft < 0 && s.status !== 'completed'
             return (
               <Card
                 key={s.id}
-                className={`hover:shadow-md transition-shadow ${atrasado ? 'border-red-200' : ''}`}
+                className={`hover:shadow-md transition-shadow ${overdue ? 'border-red-200' : ''}`}
               >
                 <CardContent className="pt-4 pb-4">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                     <div className="space-y-1.5 flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="default">{tipoMap[s.type] ?? s.type}</Badge>
+                        <Badge variant="default">{typeMap[s.type] ?? s.type}</Badge>
                         <span className="font-medium text-gray-900">{s.name}</span>
                         <Badge variant={status.variant}>{status.label}</Badge>
                       </div>
                       <p className="text-xs text-gray-500 truncate">{s.email}</p>
                       <p className="text-sm text-gray-500 line-clamp-1">{s.description}</p>
                       <div
-                        className={`flex items-center gap-1 text-xs ${atrasado ? 'text-red-500 font-medium' : 'text-gray-400'}`}
+                        className={`flex items-center gap-1 text-xs ${overdue ? 'text-red-500 font-medium' : 'text-gray-400'}`}
                       >
                         <Clock className="h-3 w-3" />
                         <span>
                           Prazo: {formatDate(s.response_deadline)}
-                          {atrasado
+                          {overdue
                             ? ' (ATRASADO)'
-                            : diasRestantes >= 0 && s.status !== 'completed'
-                              ? ` (${diasRestantes}d restantes)`
+                            : daysLeft >= 0 && s.status !== 'completed'
+                              ? ` (${daysLeft}d restantes)`
                               : ''}
                         </span>
                       </div>

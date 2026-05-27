@@ -21,7 +21,7 @@ export default async function CookiesPage() {
         .limit(20)
     : { data: [] }
 
-  const historico = scans ?? []
+  const history = scans ?? []
 
   return (
     <div className="space-y-5">
@@ -34,11 +34,11 @@ export default async function CookiesPage() {
 
       <ScanForm />
 
-      {historico.length > 0 && (
+      {history.length > 0 && (
         <div className="space-y-3">
           <h2 className="text-sm font-semibold text-gray-700">Scans anteriores</h2>
           <div className="grid gap-2">
-            {historico.map((scan: any) => {
+            {history.map((scan: any) => {
               const score = scan.compliance_score
               const scoreColor =
                 score == null

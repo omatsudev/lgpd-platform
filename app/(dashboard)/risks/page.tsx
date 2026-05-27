@@ -3,46 +3,21 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SearchInput } from '@/components/ui/search-input'
+import { calculateRiskLevel, RISK_LEVEL_LABELS, RISK_LEVEL_VARIANTS } from '@/lib/risk-scoring'
+import {
+  RISK_CATEGORY_LABELS,
+  RISK_STRATEGY_VARIANTS,
+  RISK_STATUS_LABELS,
+} from '@/lib/status-labels'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { AlertTriangle, Plus } from 'lucide-react'
 import Link from 'next/link'
-
-const categoriaLabel: Record<string, string> = {
-  privacy: 'Privacidade',
-  security: 'Segurança',
-  legal: 'Legal',
-  operational: 'Operacional',
-  reputational: 'Reputacional',
-  technological: 'Tecnológico',
-}
-
-const estrategiaVariant: Record<string, 'destructive' | 'warning' | 'default' | 'success'> = {
-  avoid: 'destructive',
-  mitigate: 'warning',
-  transfer: 'default',
-  accept: 'success',
-}
 
 const statusVariant: Record<string, 'secondary' | 'warning' | 'default' | 'success'> = {
   identified: 'secondary',
   under_treatment: 'warning',
   monitoring: 'default',
   closed: 'success',
-}
-
-const statusLabel: Record<string, string> = {
-  identified: 'Identificado',
-  under_treatment: 'Em Tratamento',
-  monitoring: 'Monitorando',
-  closed: 'Encerrado',
-}
-
-function nivelRisco(prob: number, imp: number) {
-  const score = prob * imp
-  if (score >= 15) return { label: 'Crítico', variant: 'destructive' as const, color: 'bg-red-500' }
-  if (score >= 9) return { label: 'Alto', variant: 'destructive' as const, color: 'bg-orange-400' }
-  if (score >= 4) return { label: 'Médio', variant: 'warning' as const, color: 'bg-yellow-400' }
-  return { label: 'Baixo', variant: 'success' as const, color: 'bg-green-400' }
 }
 
 export default async function RiscosPage({
@@ -67,12 +42,12 @@ export default async function RiscosPage({
     : { data: [] }
 
   const items = riscos ?? []
-  const criticos = items.filter((r: any) => r.inherent_probability * r.inherent_impact >= 15).length
-  const altos = items.filter((r: any) => {
+  const criticalItems = items.filter((r: any) => r.inherent_probability * r.inherent_impact >= 15).length
+  const highItems = items.filter((r: any) => {
     const s = r.inherent_probability * r.inherent_impact
     return s >= 9 && s < 15
   }).length
-  const abertos = items.filter((r: any) => r.status !== 'closed').length
+  const openItems = items.filter((r: any) => r.status !== 'closed').length
 
   return (
     <div className="space-y-5">
@@ -94,9 +69,9 @@ export default async function RiscosPage({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Total', value: items.length, color: 'text-gray-900' },
-          { label: 'Críticos', value: criticos, color: 'text-red-600' },
-          { label: 'Altos', value: altos, color: 'text-orange-500' },
-          { label: 'Abertos', value: abertos, color: 'text-blue-600' },
+          { label: 'Críticos', value: criticalItems, color: 'text-red-600' },
+          { label: 'Altos', value: highItems, color: 'text-orange-500' },
+          { label: 'Abertos', value: openItems, color: 'text-blue-600' },
         ].map((m) => (
           <Card key={m.label}>
             <CardContent className="pt-4 pb-3 text-center">
@@ -176,10 +151,10 @@ export default async function RiscosPage({
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {items.map((item: any) => {
-                        const inerente = nivelRisco(item.inherent_probability, item.inherent_impact)
-                        const residual =
+                        const inherentLevel = calculateRiskLevel(item.inherent_probability, item.inherent_impact)
+                        const residualLevel =
                           item.residual_probability && item.residual_impact
-                            ? nivelRisco(item.residual_probability, item.residual_impact)
+                            ? calculateRiskLevel(item.residual_probability, item.residual_impact)
                             : null
                         return (
                           <tr key={item.id} className="hover:bg-gray-50 transition-colors">
@@ -192,13 +167,12 @@ export default async function RiscosPage({
                               )}
                             </td>
                             <td className="py-3 px-4 text-gray-600 text-xs">
-                              {categoriaLabel[item.category] ?? item.category}
+                              {RISK_CATEGORY_LABELS[item.category] ?? item.category}
                             </td>
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-1.5">
-                                <div className={`w-2.5 h-2.5 rounded-full ${inerente.color}`} />
-                                <Badge variant={inerente.variant} className="text-xs">
-                                  {inerente.label}
+                                <Badge variant={RISK_LEVEL_VARIANTS[inherentLevel]} className="text-xs">
+                                  {RISK_LEVEL_LABELS[inherentLevel]}
                                 </Badge>
                                 <span className="text-xs text-gray-400">
                                   ({item.inherent_probability}×{item.inherent_impact})
@@ -206,11 +180,10 @@ export default async function RiscosPage({
                               </div>
                             </td>
                             <td className="py-3 px-4">
-                              {residual ? (
+                              {residualLevel ? (
                                 <div className="flex items-center gap-1.5">
-                                  <div className={`w-2.5 h-2.5 rounded-full ${residual.color}`} />
-                                  <Badge variant={residual.variant} className="text-xs">
-                                    {residual.label}
+                                  <Badge variant={RISK_LEVEL_VARIANTS[residualLevel]} className="text-xs">
+                                    {RISK_LEVEL_LABELS[residualLevel]}
                                   </Badge>
                                 </div>
                               ) : (
@@ -220,7 +193,7 @@ export default async function RiscosPage({
                             <td className="py-3 px-4">
                               {item.strategy ? (
                                 <Badge
-                                  variant={estrategiaVariant[item.strategy] ?? 'secondary'}
+                                  variant={RISK_STRATEGY_VARIANTS[item.strategy] ?? 'secondary'}
                                   className="capitalize text-xs"
                                 >
                                   {item.strategy}
@@ -234,7 +207,7 @@ export default async function RiscosPage({
                                 variant={statusVariant[item.status] ?? 'secondary'}
                                 className="text-xs"
                               >
-                                {statusLabel[item.status] ?? item.status}
+                                {RISK_STATUS_LABELS[item.status] ?? item.status}
                               </Badge>
                             </td>
                             <td className="py-3 px-4 text-right">
@@ -254,7 +227,7 @@ export default async function RiscosPage({
                 {/* Mobile */}
                 <div className="md:hidden divide-y divide-gray-100">
                   {items.map((item: any) => {
-                    const inerente = nivelRisco(item.inherent_probability, item.inherent_impact)
+                    const inherentLevel = calculateRiskLevel(item.inherent_probability, item.inherent_impact)
                     return (
                       <div key={item.id} className="p-4 space-y-2">
                         <div className="flex items-start justify-between gap-2">
@@ -266,18 +239,18 @@ export default async function RiscosPage({
                           </Link>
                         </div>
                         <div className="flex gap-2 flex-wrap">
-                          <Badge variant={inerente.variant} className="text-xs">
-                            {inerente.label}
+                          <Badge variant={RISK_LEVEL_VARIANTS[inherentLevel]} className="text-xs">
+                            {RISK_LEVEL_LABELS[inherentLevel]}
                           </Badge>
                           <Badge
                             variant={statusVariant[item.status] ?? 'secondary'}
                             className="text-xs"
                           >
-                            {statusLabel[item.status] ?? item.status}
+                            {RISK_STATUS_LABELS[item.status] ?? item.status}
                           </Badge>
                         </div>
                         <p className="text-xs text-gray-500">
-                          {categoriaLabel[item.category]}{' '}
+                          {RISK_CATEGORY_LABELS[item.category]}{' '}
                           {item.responsible ? `· ${item.responsible}` : ''}
                         </p>
                       </div>

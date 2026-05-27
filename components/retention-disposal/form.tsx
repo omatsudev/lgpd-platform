@@ -18,10 +18,10 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import {
-  CATEGORIAS_DADOS,
-  DESTINACOES_FINAIS,
-  EVENTOS_INICIAIS,
-  FUNDAMENTOS_JURIDICOS,
+  DATA_CATEGORIES,
+  FINAL_DISPOSITIONS,
+  INITIAL_EVENTS,
+  LEGAL_BASES,
   RETENTION_BASE_TABLE,
 } from '@/lib/retention-base-table'
 import { BookOpen, FileArchive, Lock, Scale, Sparkles } from 'lucide-react'
@@ -269,7 +269,7 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
                 <SelectValue placeholder="Selecione a categoria" />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIAS_DADOS.map((cat) => (
+                {DATA_CATEGORIES.map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {cat}
                   </SelectItem>
@@ -314,7 +314,7 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
                 <SelectValue placeholder="Selecione o evento que inicia a contagem" />
               </SelectTrigger>
               <SelectContent>
-                {EVENTOS_INICIAIS.map((e) => (
+                {INITIAL_EVENTS.map((e) => (
                   <SelectItem key={e} value={e}>
                     {e}
                   </SelectItem>
@@ -358,7 +358,7 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
                 <SelectValue placeholder="Selecione o fundamento legal" />
               </SelectTrigger>
               <SelectContent>
-                {FUNDAMENTOS_JURIDICOS.map((f) => (
+                {LEGAL_BASES.map((f) => (
                   <SelectItem key={f} value={f}>
                     {f}
                   </SelectItem>
@@ -413,7 +413,7 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
                 <SelectValue placeholder="O que fazer com os dados ao fim do prazo" />
               </SelectTrigger>
               <SelectContent>
-                {DESTINACOES_FINAIS.map((d) => (
+                {FINAL_DISPOSITIONS.map((d) => (
                   <SelectItem key={d} value={d}>
                     {d}
                   </SelectItem>

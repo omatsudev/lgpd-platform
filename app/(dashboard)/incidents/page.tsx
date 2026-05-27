@@ -7,14 +7,14 @@ import { formatDate } from '@/lib/utils'
 import { Plus, ShieldAlert } from 'lucide-react'
 import Link from 'next/link'
 
-const severidadeVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
+const severityVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
   low: 'success',
   medium: 'warning',
   high: 'destructive',
   critical: 'destructive',
 }
 
-const severidadeLabel: Record<string, string> = {
+const severityLabel: Record<string, string> = {
   low: 'Baixa',
   medium: 'Média',
   high: 'Alta',
@@ -37,7 +37,7 @@ const statusLabel: Record<string, string> = {
   closed: 'Encerrado',
 }
 
-const tipoLabel: Record<string, string> = {
+const typeLabel: Record<string, string> = {
   data_breach: 'Vazamento de Dados',
   unauthorized_access: 'Acesso Não Autorizado',
   data_loss: 'Perda de Dados',
@@ -65,13 +65,13 @@ export default async function IncidentesPage({
       `title.ilike.%${q}%,type.ilike.%${q}%,description.ilike.%${q}%,responsible.ilike.%${q}%`,
     )
 
-  const { data: incidentes } = companyId
+  const { data: incidentsData } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const items = incidentes ?? []
-  const abertos = items.filter((i: any) => !['resolved', 'closed'].includes(i.status)).length
-  const criticos = items.filter((i: any) => i.severity === 'critical').length
+  const items = incidentsData ?? []
+  const open = items.filter((i: any) => !['resolved', 'closed'].includes(i.status)).length
+  const critical = items.filter((i: any) => i.severity === 'critical').length
 
   return (
     <div className="space-y-5">
@@ -89,19 +89,19 @@ export default async function IncidentesPage({
         </Link>
       </div>
 
-      {(abertos > 0 || criticos > 0) && (
+      {(open > 0 || critical > 0) && (
         <Card className="border-red-200 bg-red-50">
           <CardContent className="pt-4 pb-3">
             <div className="flex items-start gap-2 text-sm text-red-700">
               <ShieldAlert className="h-4 w-4 flex-shrink-0 mt-0.5" />
               <span>
                 <span className="font-medium">Atenção: </span>
-                {abertos > 0 && (
+                {open > 0 && (
                   <>
-                    {abertos} incidente{abertos > 1 ? 's' : ''} em aberto.{' '}
+                    {open} incidente{open > 1 ? 's' : ''} em aberto.{' '}
                   </>
                 )}
-                {criticos > 0 && <>{criticos} de severidade crítica.</>}
+                {critical > 0 && <>{critical} de severidade crítica.</>}
               </span>
             </div>
           </CardContent>
@@ -159,11 +159,11 @@ export default async function IncidentesPage({
                           {item.title}
                         </td>
                         <td className="py-3 px-4 text-gray-600 text-xs">
-                          {tipoLabel[item.type] ?? item.type}
+                          {typeLabel[item.type] ?? item.type}
                         </td>
                         <td className="py-3 px-4">
-                          <Badge variant={severidadeVariant[item.severity] ?? 'secondary'}>
-                            {severidadeLabel[item.severity] ?? item.severity}
+                          <Badge variant={severityVariant[item.severity] ?? 'secondary'}>
+                            {severityLabel[item.severity] ?? item.severity}
                           </Badge>
                         </td>
                         <td className="py-3 px-4">
@@ -212,10 +212,10 @@ export default async function IncidentesPage({
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       <Badge
-                        variant={severidadeVariant[item.severity] ?? 'secondary'}
+                        variant={severityVariant[item.severity] ?? 'secondary'}
                         className="text-xs"
                       >
-                        {severidadeLabel[item.severity] ?? item.severity}
+                        {severityLabel[item.severity] ?? item.severity}
                       </Badge>
                       <Badge
                         variant={statusVariant[item.status] ?? 'secondary'}
@@ -224,7 +224,7 @@ export default async function IncidentesPage({
                         {statusLabel[item.status] ?? item.status}
                       </Badge>
                     </div>
-                    <p className="text-xs text-gray-500">{tipoLabel[item.type] ?? item.type}</p>
+                    <p className="text-xs text-gray-500">{typeLabel[item.type] ?? item.type}</p>
                     {item.discovery_date && (
                       <p className="text-xs text-gray-400">
                         Descoberto: {formatDate(item.discovery_date)}
