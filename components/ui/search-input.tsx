@@ -1,11 +1,14 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation'
-import { Input } from './input'
 import { Search } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
+import { Input } from './input'
 
-export function SearchInput({ defaultValue = '', placeholder = 'Buscar...' }: {
+export function SearchInput({
+  defaultValue = '',
+  placeholder = 'Buscar...',
+}: {
   defaultValue?: string
   placeholder?: string
 }) {
@@ -29,12 +32,7 @@ export function SearchInput({ defaultValue = '', placeholder = 'Buscar...' }: {
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-      <Input
-        value={value}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className="pl-9"
-      />
+      <Input value={value} onChange={handleChange} placeholder={placeholder} className="pl-9" />
     </div>
   )
 }

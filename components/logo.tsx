@@ -7,7 +7,7 @@ interface LogoProps {
 }
 
 export function Logo({ className = '', width = 148, light = false }: LogoProps) {
-  const height = Math.round(width * 635 / 1152)
+  const height = Math.round((width * 635) / 1152)
   return (
     <Image
       src="/logo-transparent.png"

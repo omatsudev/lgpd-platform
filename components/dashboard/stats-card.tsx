@@ -20,7 +20,15 @@ const colorMap = {
   purple: 'bg-purple-50 text-purple-600',
 }
 
-export function StatsCard({ title, value, description, icon: Icon, trend, trendValue, color = 'blue' }: StatsCardProps) {
+export function StatsCard({
+  title,
+  value,
+  description,
+  icon: Icon,
+  trend,
+  trendValue,
+  color = 'blue',
+}: StatsCardProps) {
   return (
     <Card>
       <CardContent className="pt-4 pb-4">
@@ -30,7 +38,16 @@ export function StatsCard({ title, value, description, icon: Icon, trend, trendV
             <p className="text-xl md:text-2xl font-bold text-gray-900">{value}</p>
             {description && <p className="text-xs text-gray-500 hidden sm:block">{description}</p>}
             {trendValue && (
-              <p className={cn('text-xs font-medium', trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-gray-500')}>
+              <p
+                className={cn(
+                  'text-xs font-medium',
+                  trend === 'up'
+                    ? 'text-green-600'
+                    : trend === 'down'
+                      ? 'text-red-600'
+                      : 'text-gray-500',
+                )}
+              >
                 {trend === 'up' ? '↑' : trend === 'down' ? '↓' : ''} {trendValue}
               </p>
             )}

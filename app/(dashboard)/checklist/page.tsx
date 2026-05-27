@@ -1,7 +1,7 @@
-import { ClipboardList } from 'lucide-react'
-import { getUserCompany } from '@/lib/supabase/queries'
-import { CHECKLIST } from '@/lib/checklist-items'
 import { ChecklistBoard } from '@/components/checklist/checklist-board'
+import { CHECKLIST } from '@/lib/checklist-items'
+import { getUserCompany } from '@/lib/supabase/queries'
+import { ClipboardList } from 'lucide-react'
 
 export default async function ChecklistPage() {
   const { companyId, supabase } = await getUserCompany()
@@ -31,7 +31,9 @@ export default async function ChecklistPage() {
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Checklist de Adequação LGPD</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            Checklist de Adequação LGPD
+          </h1>
           <p className="text-sm text-gray-500 mt-0.5">
             {pending > 0
               ? `${pending} ite${pending > 1 ? 'ns' : 'm'} pendente${pending > 1 ? 's' : ''} · ${totalItems} no total`
@@ -40,7 +42,9 @@ export default async function ChecklistPage() {
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <ClipboardList className="h-4 w-4" />
-          <span>{totalItems} requisitos · {CHECKLIST.length} categorias</span>
+          <span>
+            {totalItems} requisitos · {CHECKLIST.length} categorias
+          </span>
         </div>
       </div>
 

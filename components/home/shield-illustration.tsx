@@ -10,23 +10,51 @@ export function ShieldIllustration() {
     >
       <defs>
         {/* Shield gradient — cyan top to deep blue bottom */}
-        <linearGradient id="shieldGrad" x1="110" y1="0" x2="110" y2="260" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id="shieldGrad"
+          x1="110"
+          y1="0"
+          x2="110"
+          y2="260"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0%" stopColor="#4dd9f0" />
           <stop offset="50%" stopColor="#0097c4" />
           <stop offset="100%" stopColor="#005f8a" />
         </linearGradient>
         {/* Shield highlight */}
-        <linearGradient id="shieldHighlight" x1="60" y1="10" x2="110" y2="140" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id="shieldHighlight"
+          x1="60"
+          y1="10"
+          x2="110"
+          y2="140"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0%" stopColor="white" stopOpacity="0.25" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
         {/* Lock body gradient — gold */}
-        <linearGradient id="lockGold" x1="85" y1="130" x2="135" y2="210" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id="lockGold"
+          x1="85"
+          y1="130"
+          x2="135"
+          y2="210"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0%" stopColor="#f5c842" />
           <stop offset="100%" stopColor="#c98b00" />
         </linearGradient>
         {/* Lock shackle */}
-        <linearGradient id="shackleGrad" x1="85" y1="80" x2="135" y2="140" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id="shackleGrad"
+          x1="85"
+          y1="80"
+          x2="135"
+          y2="140"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0%" stopColor="#d0eaf5" />
           <stop offset="100%" stopColor="#8bbdd6" />
         </linearGradient>
@@ -79,7 +107,15 @@ export function ShieldIllustration() {
       />
 
       {/* Lock body */}
-      <rect x="68" y="133" width="84" height="72" rx="10" fill="url(#lockGold)" filter="url(#lockShadow)" />
+      <rect
+        x="68"
+        y="133"
+        width="84"
+        height="72"
+        rx="10"
+        fill="url(#lockGold)"
+        filter="url(#lockShadow)"
+      />
       {/* Lock body top highlight */}
       <rect x="68" y="133" width="84" height="20" rx="10" fill="white" fillOpacity="0.18" />
       {/* Keyhole circle */}

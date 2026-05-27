@@ -1,7 +1,7 @@
 'use client'
 
-import { Bell, ChevronDown, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Bell, Building2, ChevronDown } from 'lucide-react'
 
 interface HeaderProps {
   companyName?: string
@@ -33,28 +33,38 @@ export function Header({
             <select
               name="companyId"
               defaultValue={currentCompanyId ?? ''}
-              onChange={e => e.currentTarget.form?.requestSubmit()}
+              onChange={(e) => e.currentTarget.form?.requestSubmit()}
               className="font-semibold text-sm border-none outline-none bg-transparent cursor-pointer pr-1 max-w-[180px] md:max-w-xs truncate"
               style={{ color: '#0f2d5e' }}
             >
-              {companies.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
               ))}
             </select>
             <ChevronDown className="h-3 w-3 flex-shrink-0" style={{ color: '#0f2d5e' }} />
           </form>
         ) : (
-          <span className="font-semibold truncate" style={{ color: '#0f2d5e' }}>{companyName}</span>
+          <span className="font-semibold truncate" style={{ color: '#0f2d5e' }}>
+            {companyName}
+          </span>
         )}
       </div>
 
       <div className="ml-auto flex items-center gap-2">
         <Button variant="ghost" size="icon" className="relative flex-shrink-0">
           <Bell className="h-5 w-5 text-gray-500" />
-          <span className="absolute top-1 right-1 h-2 w-2 rounded-full" style={{ background: '#00bcd4' }} />
+          <span
+            className="absolute top-1 right-1 h-2 w-2 rounded-full"
+            style={{ background: '#00bcd4' }}
+          />
         </Button>
         <button className="flex items-center gap-2 rounded-lg px-2 md:px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-          <div className="h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #0f2d5e, #00bcd4)' }}>
+          <div
+            className="h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, #0f2d5e, #00bcd4)' }}
+          >
             {userName.charAt(0).toUpperCase()}
           </div>
           <span className="hidden sm:inline">{userName}</span>
