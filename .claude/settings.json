@@ -68,13 +68,16 @@
       "Bash(sed -i 's/#denuncia/#complaint/g' '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/complaints/page.tsx')",
       "Bash(sed -i s/EmpresaFormPage/CompanyFormPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/companies/[id]/page.tsx')",
       "Bash(sed -i s/TitularDetailPage/DataSubjectDetailPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/data-subjects/[id]/page.tsx')",
-      "Bash(sed -i s/TitularesPage/DataSubjectsPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/data-subjects/page.tsx')"
+      "Bash(sed -i s/TitularesPage/DataSubjectsPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/data-subjects/page.tsx')",
+      "Bash(grep -vE '\"[^\"]*\"|\\\\x27[^\\\\x27]*\\\\x27|`[^`]*`')",
+      "Bash(sed -i 's/function Campo\\(/function Field\\(/g; s/<Campo /<Field /g; s/<\\\\/Campo>/<\\\\/Field>/g' app/\\\\\\(dashboard\\\\\\)/inventory/\\\\[id\\\\]/view/page.tsx)"
     ],
     "additionalDirectories": [
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]",
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]/ver",
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/consents/[id]",
-      "/home/omatsu/dev/omatsu/lgpd-platform/app/(public)/lgpd/[slug]"
+      "/home/omatsu/dev/omatsu/lgpd-platform/app/(public)/lgpd/[slug]",
+      "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]/view"
     ]
   }
 }

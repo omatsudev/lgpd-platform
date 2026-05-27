@@ -1,113 +1,113 @@
-export type UserRole = 'admin' | 'dpo' | 'empresa' | 'colaborador'
+export type UserRole = 'admin' | 'dpo' | 'company' | 'collaborator'
 
 export type User = {
   id: string
   email: string
   name: string
   role: UserRole
-  empresa_id?: string
+  company_id?: string
   created_at: string
 }
 
-export type Empresa = {
+export type Company = {
   id: string
-  nome: string
-  cnpj: string
+  name: string
+  tax_id: string
   slug: string
-  setor: string
+  sector: string
   dpo_id?: string
-  dpo_nome?: string
+  dpo_name?: string
   dpo_email?: string
-  dpo_telefone?: string
-  percentual_adequacao: number
+  dpo_phone?: string
+  compliance_percentage: number
   created_at: string
   updated_at: string
 }
 
-export type InventarioItem = {
+export type InventoryItem = {
   id: string
-  empresa_id: string
-  tipo_dado: string
-  finalidade: string
-  base_legal: string
-  local_armazenamento: string
-  prazo_retencao?: string
-  responsavel?: string
+  company_id: string
+  data_type: string
+  purpose: string
+  legal_basis: string
+  storage_location: string
+  retention_period?: string
+  responsible?: string
   created_at: string
   updated_at: string
 }
 
-export type Treinamento = {
+export type Training = {
   id: string
-  empresa_id: string
-  titulo: string
-  descricao?: string
+  company_id: string
+  title: string
+  description?: string
   video_url?: string
   pdf_url?: string
   created_at: string
 }
 
-export type TreinamentoFuncionario = {
+export type TrainingEmployee = {
   id: string
-  treinamento_id: string
-  colaborador_id: string
-  colaborador_nome: string
-  colaborador_whatsapp: string
-  status: 'nao_iniciado' | 'em_andamento' | 'concluido'
-  link_acesso: string
-  progresso: number
-  certificado_url?: string
-  concluido_em?: string
+  training_id: string
+  collaborator_id: string
+  collaborator_name: string
+  collaborator_whatsapp: string
+  status: 'not_started' | 'in_progress' | 'completed'
+  access_link: string
+  progress: number
+  certificate_url?: string
+  completed_at?: string
   created_at: string
 }
 
-export type Denuncia = {
+export type Complaint = {
   id: string
-  empresa_id: string
-  anonimo: boolean
-  nome?: string
+  company_id: string
+  anonymous: boolean
+  name?: string
   email?: string
-  tipo: string
-  descricao: string
-  status: 'recebido' | 'em_analise' | 'resolvido'
-  resposta?: string
+  type: string
+  description: string
+  status: 'received' | 'under_review' | 'resolved'
+  response?: string
   created_at: string
   updated_at: string
 }
 
-export type SolicitacaoTitular = {
+export type DataSubjectRequest = {
   id: string
-  empresa_id: string
-  tipo: 'acesso' | 'exclusao' | 'correcao' | 'portabilidade' | 'oposicao'
-  nome: string
+  company_id: string
+  type: 'access' | 'deletion' | 'correction' | 'portability' | 'objection'
+  name: string
   email: string
   cpf?: string
-  descricao: string
-  status: 'pendente' | 'em_analise' | 'concluido' | 'recusado'
-  resposta?: string
-  prazo_resposta: string
+  description: string
+  status: 'pending' | 'under_review' | 'completed' | 'rejected'
+  response?: string
+  response_deadline: string
   created_at: string
   updated_at: string
 }
 
-export type LogAuditoria = {
+export type AuditLog = {
   id: string
-  empresa_id: string
+  company_id: string
   user_id: string
   user_email: string
-  acao: string
-  recurso: string
-  detalhes?: string
+  action: string
+  resource: string
+  details?: string
   ip?: string
   created_at: string
 }
 
-export type Notificacao = {
+export type Notification = {
   id: string
   user_id: string
-  titulo: string
-  mensagem: string
-  tipo: 'info' | 'alerta' | 'erro' | 'sucesso'
-  lida: boolean
+  title: string
+  message: string
+  type: 'info' | 'warning' | 'error' | 'success'
+  read: boolean
   created_at: string
 }

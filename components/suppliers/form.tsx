@@ -19,7 +19,7 @@ import { useState, useTransition } from 'react'
 
 // ─── Constantes ────────────────────────────────────────────────────────────
 
-const CATEGORIAS = [
+const SUPPLIER_CATEGORIES = [
   { value: 'technology', label: 'Tecnologia (SaaS, cloud, TI)' },
   { value: 'healthcare', label: 'Saúde (plano, clínica, lab)' },
   { value: 'financial', label: 'Financeiro (banco, pagamentos)' },
@@ -31,7 +31,7 @@ const CATEGORIAS = [
   { value: 'other', label: 'Outro' },
 ]
 
-const TIPOS_ACESSO = [
+const ACCESS_TYPES = [
   { value: 'processor', label: 'Operador', desc: 'Trata dados em nome da sua empresa' },
   {
     value: 'joint_controller',
@@ -46,7 +46,7 @@ const TIPOS_ACESSO = [
   { value: 'no_data_access', label: 'Sem acesso a dados', desc: 'Não acessa dados pessoais' },
 ]
 
-const DADOS_CATEGORIAS = [
+const DATA_CATEGORIES = [
   'Dados de identificação (nome, e-mail, telefone)',
   'Dados governamentais (CPF, RG)',
   'Dados financeiros (conta, cartão)',
@@ -58,7 +58,7 @@ const DADOS_CATEGORIAS = [
   'Dados de menores',
 ]
 
-const MECANISMOS_TRANSFERENCIA = [
+const TRANSFER_MECHANISMS = [
   'Cláusulas Contratuais Padrão (SCC)',
   'Decisão de adequação da ANPD',
   'Consentimento do titular',
@@ -66,7 +66,7 @@ const MECANISMOS_TRANSFERENCIA = [
   'Certificação ou código de conduta aprovado',
 ]
 
-const BASES_LEGAIS = [
+const LEGAL_BASES = [
   'Execução de contrato',
   'Legítimo interesse',
   'Cumprimento de obrigação legal',
@@ -338,7 +338,7 @@ export function SupplierForm({ companyId, id, initialData }: SupplierFormProps) 
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIAS.map((c) => (
+                  {SUPPLIER_CATEGORIES.map((c) => (
                     <SelectItem key={c.value} value={c.value}>
                       {c.label}
                     </SelectItem>
@@ -414,7 +414,7 @@ export function SupplierForm({ companyId, id, initialData }: SupplierFormProps) 
           <div className="space-y-1.5">
             <Label>Tipo de acesso</Label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {TIPOS_ACESSO.map((t) => (
+              {ACCESS_TYPES.map((t) => (
                 <button
                   key={t.value}
                   type="button"
@@ -437,7 +437,7 @@ export function SupplierForm({ companyId, id, initialData }: SupplierFormProps) 
               <div className="space-y-1.5">
                 <Label>Categorias de dados acessados</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                  {DADOS_CATEGORIAS.map((d) => (
+                  {DATA_CATEGORIES.map((d) => (
                     <label
                       key={d}
                       className="flex items-center gap-2 cursor-pointer select-none p-2 rounded hover:bg-gray-50"
@@ -475,7 +475,7 @@ export function SupplierForm({ companyId, id, initialData }: SupplierFormProps) 
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {BASES_LEGAIS.map((b) => (
+                      {LEGAL_BASES.map((b) => (
                         <SelectItem key={b} value={b}>
                           {b}
                         </SelectItem>
@@ -663,7 +663,7 @@ export function SupplierForm({ companyId, id, initialData }: SupplierFormProps) 
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {MECANISMOS_TRANSFERENCIA.map((m) => (
+                    {TRANSFER_MECHANISMS.map((m) => (
                       <SelectItem key={m} value={m}>
                         {m}
                       </SelectItem>

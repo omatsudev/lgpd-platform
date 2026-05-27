@@ -19,7 +19,7 @@ import { useState, useTransition } from 'react'
 
 // ─── Constantes ────────────────────────────────────────────────────────────
 
-const TIPOS = [
+const DOCUMENT_TYPES = [
   { value: 'privacy_policy', label: 'Política de Privacidade' },
   { value: 'privacy_notice', label: 'Aviso de Privacidade' },
   { value: 'security_policy', label: 'Política de Segurança' },
@@ -204,7 +204,7 @@ export function DocumentForm({ companyId, id, initialData }: DocumentFormProps) 
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                  {TIPOS.map((t) => (
+                  {DOCUMENT_TYPES.map((t) => (
                     <SelectItem key={t.value} value={t.value}>
                       {t.label}
                     </SelectItem>

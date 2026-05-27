@@ -16,6 +16,14 @@ const statusMap: Record<string, { label: string; variant: 'warning' | 'default' 
   resolved: { label: 'Resolvido', variant: 'success' },
 }
 
+const typeMap: Record<string, string> = {
+  data_breach: 'Vazamento de dados',
+  data_misuse: 'Uso indevido de dados',
+  unauthorized_access: 'Acesso não autorizado',
+  collection_without_consent: 'Coleta sem consentimento',
+  other: 'Outro',
+}
+
 export default async function ComplaintDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { supabase } = await getUserCompany()
@@ -54,7 +62,7 @@ export default async function ComplaintDetailPage({ params }: { params: Promise<
           <div className="grid grid-cols-2 gap-4">
             <div>
               <span className="text-gray-500">Tipo:</span>{' '}
-              <span className="font-medium ml-1">{complaint.type}</span>
+              <span className="font-medium ml-1">{typeMap[complaint.type] ?? complaint.type}</span>
             </div>
             <div>
               <span className="text-gray-500">Denunciante:</span>{' '}

@@ -19,23 +19,17 @@ import { notFound } from 'next/navigation'
 
 const riskVariant: Record<string, 'destructive' | 'warning' | 'success'> = {
   high: 'destructive',
-  alto: 'destructive',
   medium: 'warning',
-  medio: 'warning',
   low: 'success',
-  baixo: 'success',
 }
 const riskLabel: Record<string, string> = {
   high: 'Alto',
-  alto: 'Alto',
   medium: 'Médio',
-  medio: 'Médio',
   low: 'Baixo',
-  baixo: 'Baixo',
 }
 const statusLabel: Record<string, string> = { complete: 'Completo', draft: 'Rascunho' }
 
-function Campo({ label, value }: { label: string; value?: string | null }) {
+function Field({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null
   return (
     <div>
@@ -134,16 +128,16 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
                   Controlador
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
-                  <Campo label="Nome" value={controller?.name} />
-                  <Campo label="E-mail" value={controller?.email} />
-                  <Campo label="Telefone" value={controller?.phone} />
-                  <Campo label="Endereço" value={controller?.address} />
+                  <Field label="Nome" value={controller?.name} />
+                  <Field label="E-mail" value={controller?.email} />
+                  <Field label="Telefone" value={controller?.phone} />
+                  <Field label="Endereço" value={controller?.address} />
                 </div>
               </div>
             )}
             <div className="grid sm:grid-cols-2 gap-3">
-              <Campo label="DPO (Encarregado)" value={identification.dpo} />
-              <Campo label="Representante Legal" value={identification.legalRepresentative} />
+              <Field label="DPO (Encarregado)" value={identification.dpo} />
+              <Field label="Representante Legal" value={identification.legalRepresentative} />
             </div>
           </div>
         </SectionCard>
@@ -161,14 +155,14 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
           </CardTitle>
         </CardHeader>
         <CardContent className="grid sm:grid-cols-2 gap-4">
-          <Campo label="Nome do processo" value={item.process_name} />
-          <Campo label="Setor responsável" value={item.responsible_department} />
-          <Campo label="Base legal" value={item.legal_basis} />
-          <Campo label="Finalidade" value={item.purpose} />
-          <Campo label="Tipo de dado" value={item.data_type} />
-          <Campo label="Categoria dos titulares" value={item.data_subject_category} />
-          <Campo label="Descrição do processo" value={item.process_description} />
-          <Campo label="Descrição dos dados" value={item.data_description} />
+          <Field label="Nome do processo" value={item.process_name} />
+          <Field label="Setor responsável" value={item.responsible_department} />
+          <Field label="Base legal" value={item.legal_basis} />
+          <Field label="Finalidade" value={item.purpose} />
+          <Field label="Tipo de dado" value={item.data_type} />
+          <Field label="Categoria dos titulares" value={item.data_subject_category} />
+          <Field label="Descrição do processo" value={item.process_description} />
+          <Field label="Descrição dos dados" value={item.data_description} />
         </CardContent>
       </Card>
 
@@ -176,10 +170,10 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
       {(item.retention_period || item.storage_location || item.storage_type) && (
         <SectionCard title="Ciclo de Vida dos Dados">
           <div className="grid sm:grid-cols-2 gap-4">
-            <Campo label="Prazo de retenção" value={item.retention_period} />
-            <Campo label="Local de armazenamento" value={item.storage_location} />
-            <Campo label="Tipo de armazenamento" value={item.storage_type} />
-            <Campo label="Fonte dos dados" value={item.data_source} />
+            <Field label="Prazo de retenção" value={item.retention_period} />
+            <Field label="Local de armazenamento" value={item.storage_location} />
+            <Field label="Tipo de armazenamento" value={item.storage_type} />
+            <Field label="Fonte dos dados" value={item.data_source} />
           </div>
         </SectionCard>
       )}
@@ -194,15 +188,15 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
                   {cat.categoryId.replace(/_/g, ' ')}
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
-                  <Campo label="Descrição" value={cat.description} />
-                  <Campo label="Tempo de retenção" value={cat.retentionPeriod} />
-                  <Campo label="Fonte" value={cat.source} />
-                  <Campo label="Base legal" value={cat.legalBasis} />
-                  <Campo label="Finalidade" value={cat.purpose} />
-                  <Campo label="Local armazenamento" value={cat.storageLocation} />
-                  <Campo label="Categoria do titular" value={cat.dataSubjectCategory} />
-                  <Campo label="Setor responsável" value={cat.responsibleDepartment} />
-                  <Campo label="Necessidade de DPIA" value={cat.dpiaRequired} />
+                  <Field label="Descrição" value={cat.description} />
+                  <Field label="Tempo de retenção" value={cat.retentionPeriod} />
+                  <Field label="Fonte" value={cat.source} />
+                  <Field label="Base legal" value={cat.legalBasis} />
+                  <Field label="Finalidade" value={cat.purpose} />
+                  <Field label="Local armazenamento" value={cat.storageLocation} />
+                  <Field label="Categoria do titular" value={cat.dataSubjectCategory} />
+                  <Field label="Setor responsável" value={cat.responsibleDepartment} />
+                  <Field label="Necessidade de DPIA" value={cat.dpiaRequired} />
                 </div>
               </div>
             ))}
@@ -217,13 +211,13 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
             <div className="space-y-3">
               {sharedDetails.map((s, i) => (
                 <div key={i} className="grid sm:grid-cols-2 gap-3">
-                  <Campo label="Com quem" value={s.recipient} />
-                  <Campo label="Finalidade" value={s.purpose} />
+                  <Field label="Com quem" value={s.recipient} />
+                  <Field label="Finalidade" value={s.purpose} />
                 </div>
               ))}
             </div>
           ) : (
-            <Campo label="Compartilhado com" value={item.shared_with} />
+            <Field label="Compartilhado com" value={item.shared_with} />
           )}
         </SectionCard>
       )}
@@ -234,9 +228,9 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
           <div className="space-y-3">
             {securityDetail.map((m, i) => (
               <div key={i} className="grid sm:grid-cols-3 gap-3">
-                <Campo label="Tipo" value={m.type} />
-                <Campo label="Descrição do controle" value={m.controlDescription} />
-                <Campo label="Finalidade" value={m.purpose} />
+                <Field label="Tipo" value={m.type} />
+                <Field label="Descrição do controle" value={m.controlDescription} />
+                <Field label="Finalidade" value={m.purpose} />
               </div>
             ))}
           </div>
@@ -250,10 +244,10 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
             {transferList.map((t, i) => (
               <div key={i} className="rounded-lg border border-gray-100 p-3">
                 <div className="grid sm:grid-cols-2 gap-3">
-                  <Campo label="País destino" value={t.country} />
-                  <Campo label="Tipo de garantia" value={t.safeguardType} />
-                  <Campo label="Dados transferidos" value={t.dataTransferred} />
-                  <Campo label="Finalidade" value={t.purpose} />
+                  <Field label="País destino" value={t.country} />
+                  <Field label="Tipo de garantia" value={t.safeguardType} />
+                  <Field label="Dados transferidos" value={t.dataTransferred} />
+                  <Field label="Finalidade" value={t.purpose} />
                 </div>
               </div>
             ))}
@@ -268,10 +262,10 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
             {contractsList.map((c, i) => (
               <div key={i} className="rounded-lg border border-gray-100 p-3">
                 <div className="grid sm:grid-cols-2 gap-3">
-                  <Campo label="Nº do processo" value={c.processNumber} />
-                  <Campo label="E-mail do gestor" value={c.managerEmail} />
-                  <Campo label="Objeto" value={c.subject} />
-                  <Campo label="Finalidade" value={c.purpose} />
+                  <Field label="Nº do processo" value={c.processNumber} />
+                  <Field label="E-mail do gestor" value={c.managerEmail} />
+                  <Field label="Objeto" value={c.subject} />
+                  <Field label="Finalidade" value={c.purpose} />
                 </div>
               </div>
             ))}
