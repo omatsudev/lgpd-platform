@@ -56,11 +56,13 @@ function ItemRow({
   state,
   companyId,
   category,
+  onStatusChange,
 }: {
   item: ChecklistItem
   state?: ItemState
   companyId: string
   category: string
+  onStatusChange: (key: string, status: ChecklistStatus) => void
 }) {
   const [open, setOpen] = useState(false)
   const [savingStatus, setSavingStatus] = useState<ChecklistStatus | null>(null)
@@ -94,9 +96,14 @@ function ItemRow({
   const handleStatusClick = async (newStatus: ChecklistStatus) => {
     if (savingStatus) return
     setForm(prev => ({ ...prev, status: newStatus }))
+    onStatusChange(item.key, newStatus)           // ← atualiza contadores do board
     setSavingStatus(newStatus)
     try {
       await persist({ ...form, status: newStatus })
+    } catch {
+      // Reverte se falhar
+      setForm(prev => ({ ...prev, status: form.status }))
+      onStatusChange(item.key, form.status)
     } finally {
       setSavingStatus(null)
     }
@@ -236,7 +243,12 @@ export function ChecklistBoard({ companyId, initialState }: ChecklistBoardProps)
     Object.fromEntries(CHECKLIST.map(c => [c.id, true]))
   )
 
-  const [state] = useState<ChecklistState>(initialState)
+  // Estado mutável — atualizado quando qualquer item muda de status
+  const [state, setState] = useState<ChecklistState>(initialState)
+
+  const handleStatusChange = (key: string, status: ChecklistStatus) => {
+    setState(prev => ({ ...prev, [key]: { ...prev[key], status } }))
+  }
 
   const toggleCategory = (id: string) =>
     setOpenCategories(prev => ({ ...prev, [id]: !prev[id] }))
@@ -318,6 +330,7 @@ export function ChecklistBoard({ companyId, initialState }: ChecklistBoardProps)
                     state={state[item.key]}
                     companyId={companyId}
                     category={cat.id}
+                    onStatusChange={handleStatusChange}
                   />
                 ))}
               </CardContent>
