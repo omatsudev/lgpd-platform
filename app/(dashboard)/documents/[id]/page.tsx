@@ -1,11 +1,11 @@
-import { DocumentoForm } from '@/components/documents/form'
+import { DocumentForm } from '@/components/documents/form'
 import { Button } from '@/components/ui/button'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export default async function DocumentoFormPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function DocumentFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
 
@@ -34,7 +34,7 @@ export default async function DocumentoFormPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      <DocumentoForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
+      <DocumentForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
     </div>
   )
 }

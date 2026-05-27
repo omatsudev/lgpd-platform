@@ -183,13 +183,13 @@ function CheckBox({
 
 // ─── Componente principal ──────────────────────────────────────────────────
 
-interface FornecedorFormProps {
+interface SupplierFormProps {
   companyId: string
   id?: string
   initialData?: any
 }
 
-export function FornecedorForm({ companyId, id, initialData }: FornecedorFormProps) {
+export function SupplierForm({ companyId, id, initialData }: SupplierFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()
@@ -229,12 +229,12 @@ export function FornecedorForm({ companyId, id, initialData }: FornecedorFormPro
   const update = (field: keyof FormState, value: any) =>
     setData((prev) => ({ ...prev, [field]: value }))
 
-  const toggleDado = (dado: string) => {
+  const toggleDataItem = (dataItem: string) => {
     setData((prev) => ({
       ...prev,
-      accessed_data: prev.accessed_data.includes(dado)
-        ? prev.accessed_data.filter((d) => d !== dado)
-        : [...prev.accessed_data, dado],
+      accessed_data: prev.accessed_data.includes(dataItem)
+        ? prev.accessed_data.filter((d) => d !== dataItem)
+        : [...prev.accessed_data, dataItem],
     }))
   }
 
@@ -445,7 +445,7 @@ export function FornecedorForm({ companyId, id, initialData }: FornecedorFormPro
                       <input
                         type="checkbox"
                         checked={data.accessed_data.includes(d)}
-                        onChange={() => toggleDado(d)}
+                        onChange={() => toggleDataItem(d)}
                         className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
                       <span className="text-sm text-gray-700">{d}</span>

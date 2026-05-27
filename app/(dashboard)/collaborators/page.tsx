@@ -5,7 +5,7 @@ import { SearchInput } from '@/components/ui/search-input'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { Send, UserCheck } from 'lucide-react'
 
-export default async function ColaboradoresPage({
+export default async function CollaboratorsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>
@@ -14,7 +14,7 @@ export default async function ColaboradoresPage({
   const { q } = await searchParams
 
   // Busca all os training_employees da empresa via join
-  const { data: treinamentosData } = companyId
+  const { data: trainingsData } = companyId
     ? await supabase
         .from('trainings')
         .select('id, training_employees(employee_name, employee_email, employee_whatsapp, status)')
@@ -33,7 +33,7 @@ export default async function ColaboradoresPage({
     }
   >()
 
-  for (const t of treinamentosData ?? []) {
+  for (const t of trainingsData ?? []) {
     for (const c of (t as any).training_employees ?? []) {
       const key = c.employee_email ?? c.employee_name
       if (!employeesMap.has(key)) {
@@ -110,15 +110,15 @@ export default async function ColaboradoresPage({
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {employees.map((c, i) => {
-                    const completo = c.completed === c.total && c.total > 0
-                    const parcial = c.completed > 0
+                    const isComplete = c.completed === c.total && c.total > 0
+                    const isPartial = c.completed > 0
                     return (
                       <tr key={i} className="hover:bg-gray-50 transition-colors">
                         <td className="py-3 px-4 font-medium text-gray-900">{c.name}</td>
                         <td className="py-3 px-4 text-gray-500 text-xs">{c.email ?? '—'}</td>
                         <td className="py-3 px-4 text-gray-500 text-xs">{c.whatsapp ?? '—'}</td>
                         <td className="py-3 px-4">
-                          <Badge variant={completo ? 'success' : parcial ? 'warning' : 'secondary'}>
+                          <Badge variant={isComplete ? 'success' : isPartial ? 'warning' : 'secondary'}>
                             {c.completed}/{c.total}
                           </Badge>
                         </td>
@@ -138,8 +138,8 @@ export default async function ColaboradoresPage({
           {/* Mobile cards */}
           <div className="md:hidden grid gap-3">
             {employees.map((c, i) => {
-              const completo = c.completed === c.total && c.total > 0
-              const parcial = c.completed > 0
+              const isComplete = c.completed === c.total && c.total > 0
+              const isPartial = c.completed > 0
               return (
                 <Card key={i}>
                   <CardContent className="pt-4 pb-4">
@@ -148,7 +148,7 @@ export default async function ColaboradoresPage({
                         <p className="font-medium text-gray-900">{c.name}</p>
                         {c.email && <p className="text-xs text-gray-500 truncate">{c.email}</p>}
                         {c.whatsapp && <p className="text-xs text-gray-500">{c.whatsapp}</p>}
-                        <Badge variant={completo ? 'success' : parcial ? 'warning' : 'secondary'}>
+                        <Badge variant={isComplete ? 'success' : isPartial ? 'warning' : 'secondary'}>
                           {c.completed}/{c.total} treinamentos
                         </Badge>
                       </div>

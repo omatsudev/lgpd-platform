@@ -149,7 +149,7 @@ interface IncidentFormProps {
   initialData?: any
 }
 
-export function IncidenteForm({ companyId, id, initialData }: IncidentFormProps) {
+export function IncidentForm({ companyId, id, initialData }: IncidentFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()

@@ -16,7 +16,7 @@ export function scoreChecklist(checklistItems: { item_key: string; status: strin
   for (const i of checklistItems) statusMap[i.item_key] = i.status
 
   const notApplicable = CHECKLIST.reduce(
-    (acc, c) => acc + c.items.filter((i) => statusMap[i.key] === 'na').length,
+    (acc, c) => acc + c.items.filter((i) => statusMap[i.key] === 'not_applicable').length,
     0,
   )
   const completed = CHECKLIST.reduce(

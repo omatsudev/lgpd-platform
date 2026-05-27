@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ExternalLink, QrCode, Shield } from 'lucide-react'
 
-export default async function ConfiguracoesPage() {
+export default async function SettingsPage() {
   const { company } = await getUserCompany()
 
   const slug = company?.slug ?? ''

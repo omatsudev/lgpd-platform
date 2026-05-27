@@ -70,7 +70,7 @@ const STEPS = [
 ]
 
 // 6 fases conforme relatorio_lgpd.pdf §5 Etapa 2
-const FASES = [
+const LIFECYCLE_PHASES = [
   { id: 'collection', label: 'Coleta' },
   { id: 'use', label: 'Uso' },
   { id: 'storage', label: 'Armazenamento' },
@@ -79,7 +79,7 @@ const FASES = [
   { id: 'disposal', label: 'Descarte' },
 ]
 
-const CATEGORIAS = [
+const DATA_CATEGORIES = [
   {
     id: 'personal_identification',
     label: 'Identificação pessoal',
@@ -139,7 +139,7 @@ const CATEGORIAS = [
   { id: 'other', label: 'Outros', desc: 'Outras categorias de dados não listadas acima' },
 ]
 
-const BASES_LEGAIS = [
+const LEGAL_BASES = [
   'Consentimento do titular',
   'Execução de contrato',
   'Cumprimento de obrigação legal',
@@ -153,7 +153,7 @@ const BASES_LEGAIS = [
 ]
 
 // Setores comuns — relatorio_lgpd.pdf §5 Etapa 1
-const SETORES = [
+const SECTORS = [
   'RH',
   'TI',
   'Financeiro',
@@ -167,7 +167,7 @@ const SETORES = [
 ]
 
 // Tipos de armazenamento — relatorio_lgpd.pdf §5 Etapa 6 (múltiplos)
-const TIPOS_ARMAZENAMENTO = [
+const STORAGE_TYPES = [
   { value: 'cloud', label: 'Nuvem (cloud)' },
   { value: 'local_server', label: 'Servidor local' },
   { value: 'paper', label: 'Físico / Papel' },
@@ -195,7 +195,7 @@ const END_DISPOSITIONS = [
   'Retenção estendida (com justificativa)',
 ]
 
-const TIPOS_SEGURANCA = [
+const SECURITY_TYPES = [
   'Criptografia',
   'Controle de acesso',
   'Backup automático',
@@ -209,7 +209,7 @@ const TIPOS_SEGURANCA = [
   'Outro',
 ]
 
-const TIPOS_GARANTIA = [
+const SAFEGUARD_TYPES = [
   'Cláusula contratual padrão (SCCs)',
   'Consentimento específico do titular',
   'Obrigação legal ou tratado internacional',
@@ -280,12 +280,12 @@ function createDefaultFormData(): FormData {
 
 // ─── Risco ───────────────────────────────────────────────────────────────────
 
-function calculateRisk(data: FormData): 'baixo' | 'medio' | 'alto' {
-  const temSensiveis = data.dataCategories.includes('sensitive_data')
-  const semBaseLegal = data.legalBases.length === 0
-  if (temSensiveis || semBaseLegal) return 'alto'
-  if (data.dataShared || !data.retentionPeriod) return 'medio'
-  return 'baixo'
+function calculateRisk(data: FormData): 'low' | 'medium' | 'high' {
+  const hasSensitiveData = data.dataCategories.includes('sensitive_data')
+  const hasNoLegalBasis = data.legalBases.length === 0
+  if (hasSensitiveData || hasNoLegalBasis) return 'high'
+  if (data.dataShared || !data.retentionPeriod) return 'medium'
+  return 'low'
 }
 
 function suggestDpia(data: FormData): boolean {
@@ -293,19 +293,19 @@ function suggestDpia(data: FormData): boolean {
 }
 
 const riskConfig = {
-  baixo: {
+  low: {
     label: 'Baixo',
     color: 'text-green-600',
     bg: 'bg-green-50 border-green-200',
     badge: 'success' as const,
   },
-  medio: {
+  medium: {
     label: 'Médio',
     color: 'text-yellow-600',
     bg: 'bg-yellow-50 border-yellow-200',
     badge: 'warning' as const,
   },
-  alto: {
+  high: {
     label: 'Alto',
     color: 'text-red-600',
     bg: 'bg-red-50 border-red-200',
@@ -510,7 +510,7 @@ function StepProcess({
           Selecione todos os setores que participam deste processo.
         </p>
         <div className="flex flex-wrap gap-2">
-          {SETORES.map((s) => (
+          {SECTORS.map((s) => (
             <Pill
               key={s}
               label={s}
@@ -534,7 +534,7 @@ function StepProcess({
         </div>
         {/* Setores customizados selecionados */}
         {data.responsibleDepartments
-          .filter((s) => !SETORES.includes(s))
+          .filter((s) => !SECTORS.includes(s))
           .map((s) => (
             <span
               key={s}
@@ -588,7 +588,7 @@ function StepLifecycle({
         Marque as fases do ciclo de vida e quem atua em cada uma (controlador e/ou operador).
       </p>
       <div className="space-y-3">
-        {FASES.map((fase) => {
+        {LIFECYCLE_PHASES.map((fase) => {
           const f = fases[fase.id] ?? DEFAULT_PHASE
           return (
             <div
@@ -686,7 +686,7 @@ function StepData({
       </p>
       <FieldError msg={errors.data_categories} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {CATEGORIAS.map((cat) => {
+        {DATA_CATEGORIES.map((cat) => {
           const selected = data.dataCategories.includes(cat.id)
           const isSensivel = cat.id === 'sensitive_data'
           return (
@@ -743,7 +743,7 @@ function StepData({
             etc.).
           </p>
           {data.dataCategories.map((catId) => {
-            const cat = CATEGORIAS.find((c) => c.id === catId)!
+            const cat = DATA_CATEGORIES.find((c) => c.id === catId)!
             const isExpanded = expandedCategory === catId
             const detail = getCategoryDetail(catId)
             return (
@@ -811,7 +811,7 @@ function StepData({
                             <SelectValue placeholder="Selecione..." />
                           </SelectTrigger>
                           <SelectContent>
-                            {BASES_LEGAIS.map((bl) => (
+                            {LEGAL_BASES.map((bl) => (
                               <SelectItem key={bl} value={bl}>
                                 {bl}
                               </SelectItem>
@@ -1061,7 +1061,7 @@ function StepLegalBasis({
         </p>
         <FieldError msg={errors.legal_bases} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {BASES_LEGAIS.map((bl) => {
+          {LEGAL_BASES.map((bl) => {
             const selected = data.legalBases.includes(bl)
             return (
               <button
@@ -1234,7 +1234,7 @@ function StepStorage({
         <p className="text-xs text-gray-500">Selecione todos os tipos utilizados.</p>
         <FieldError msg={errors.storage_types} />
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {TIPOS_ARMAZENAMENTO.map((opt) => {
+          {STORAGE_TYPES.map((opt) => {
             const selected = data.storageTypes.includes(opt.value)
             return (
               <button
@@ -1381,7 +1381,7 @@ function StepStorage({
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {TIPOS_SEGURANCA.map((t) => (
+                    {SECURITY_TYPES.map((t) => (
                       <SelectItem key={t} value={t}>
                         {t}
                       </SelectItem>
@@ -1486,7 +1486,7 @@ function StepInternationalTransfer({
                   <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {TIPOS_GARANTIA.map((t) => (
+                  {SAFEGUARD_TYPES.map((t) => (
                     <SelectItem key={t} value={t}>
                       {t}
                     </SelectItem>
@@ -1646,7 +1646,7 @@ function StepImpact({
           {data.legalBases.length === 0 && <p>• Sem base legal definida → alerta crítico</p>}
           {data.dataShared && <p>• Compartilhamento com terceiros → risk aumentado</p>}
           {!data.retentionPeriod && <p>• Sem prazo de retenção definido</p>}
-          {risk === 'baixo' && <p>• Nenhum fator de risk crítico identificado</p>}
+          {risk === 'low' && <p>• Nenhum fator de risk crítico identificado</p>}
         </div>
       </div>
       <div className="space-y-3">
@@ -1689,10 +1689,10 @@ function StepReview({ data, risk }: { data: FormData; risk: ReturnType<typeof ca
   const riskInfo = riskConfig[risk]
   const activePhases = Object.entries(data.lifecyclePhases as Record<string, Phase>)
     .filter(([, f]) => f.active)
-    .map(([id]) => FASES.find((f) => f.id === id)?.label)
+    .map(([id]) => LIFECYCLE_PHASES.find((f) => f.id === id)?.label)
     .filter(Boolean)
   const categoryLabels = data.dataCategories
-    .map((id) => CATEGORIAS.find((c) => c.id === id)?.label)
+    .map((id) => DATA_CATEGORIES.find((c) => c.id === id)?.label)
     .filter(Boolean)
 
   const Row = ({ label, value }: { label: string; value?: string | null }) =>

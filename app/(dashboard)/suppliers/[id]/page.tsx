@@ -1,11 +1,11 @@
-import { FornecedorForm } from '@/components/suppliers/form'
+import { SupplierForm } from '@/components/suppliers/form'
 import { Button } from '@/components/ui/button'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export default async function FornecedorFormPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function SupplierFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
 
@@ -36,7 +36,7 @@ export default async function FornecedorFormPage({ params }: { params: Promise<{
         </div>
       </div>
 
-      <FornecedorForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
+      <SupplierForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
     </div>
   )
 }
