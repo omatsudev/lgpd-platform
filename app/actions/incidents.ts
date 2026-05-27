@@ -26,8 +26,8 @@ export type IncidentData = {
   anpd_protocol: string
   notified_subjects: boolean
   subjects_notification_date: string
-  operadores_envolvidos: string
-  relatorio_impacto: string
+  operators_involved: string
+  impact_report: string
 }
 
 export async function saveIncident(data: IncidentData) {
@@ -35,7 +35,7 @@ export async function saveIncident(data: IncidentData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const payload = {
     company_id: data.company_id,
@@ -58,8 +58,8 @@ export async function saveIncident(data: IncidentData) {
     anpd_protocol: data.anpd_protocol || null,
     notified_subjects: data.notified_subjects,
     subjects_notification_date: data.subjects_notification_date || null,
-    operadores_envolvidos: data.operadores_envolvidos || null,
-    relatorio_impacto: data.relatorio_impacto || null,
+    operators_involved: data.operators_involved || null,
+    impact_report: data.impact_report || null,
   }
 
   if (data.id) {
@@ -77,7 +77,7 @@ export async function deleteIncident(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   await supabase.from('incidents').delete().eq('id', id)

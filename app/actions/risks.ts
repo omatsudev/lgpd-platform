@@ -29,7 +29,7 @@ export async function saveRisk(data: RiskData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const payload = {
     company_id: data.company_id,
@@ -65,7 +65,7 @@ export async function deleteRisk(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   await supabase.from('risks').delete().eq('id', id)

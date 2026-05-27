@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache'
 export async function saveCompanyData(formData: FormData) {
   const supabase = await createClient()
   const { user, companyId } = await getUserCompany()
-  if (!user || !companyId) throw new Error('Não autenticado')
+  if (!user || !companyId) throw new Error('Not authenticated')
 
   await supabase
     .from('companies')
@@ -25,7 +25,7 @@ export async function saveCompanyData(formData: FormData) {
 export async function saveDpo(formData: FormData) {
   const supabase = await createClient()
   const { user, companyId } = await getUserCompany()
-  if (!user || !companyId) throw new Error('Não autenticado')
+  if (!user || !companyId) throw new Error('Not authenticated')
 
   await supabase
     .from('companies')
@@ -42,7 +42,7 @@ export async function saveDpo(formData: FormData) {
 export async function savePrivacyPolicy(formData: FormData) {
   const supabase = await createClient()
   const { user, companyId } = await getUserCompany()
-  if (!user || !companyId) throw new Error('Não autenticado')
+  if (!user || !companyId) throw new Error('Not authenticated')
 
   await supabase
     .from('companies')

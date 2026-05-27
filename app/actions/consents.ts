@@ -19,7 +19,7 @@ export async function savePurpose(data: ConsentPurposeData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const payload = {
     company_id: data.company_id,
@@ -45,7 +45,7 @@ export async function deletePurpose(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   await supabase.from('consent_purposes').delete().eq('id', id)
@@ -59,7 +59,7 @@ export async function revokeConsent(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   const reason = formData.get('reason') as string

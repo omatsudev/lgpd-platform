@@ -10,7 +10,7 @@ export async function updateChecklistItem(formData: FormData): Promise<SaveResul
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) return { ok: false, error: 'Não autenticado' }
+  if (!user) return { ok: false, error: 'Not authenticated' }
 
   const company_id = formData.get('company_id') as string
   const item_key = formData.get('item_key') as string
@@ -23,7 +23,7 @@ export async function updateChecklistItem(formData: FormData): Promise<SaveResul
   if (!company_id || !item_key || !category || !status) {
     return {
       ok: false,
-      error: `Campos obrigatórios ausentes (company_id=${company_id} key=${item_key} cat=${category} status=${status})`,
+      error: `Required fields missing (company_id=${company_id} key=${item_key} cat=${category} status=${status})`,
     }
   }
 

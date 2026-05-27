@@ -62,7 +62,13 @@
       "Bash(sed -i 's/FornecedorFormProps/SupplierFormProps/g; s/FornecedorForm/SupplierForm/g' /home/omatsu/dev/omatsu/lgpd-platform/components/suppliers/form.tsx '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/suppliers/[id]/page.tsx')",
       "Bash(sed -i s/FornecedorFormPage/SupplierFormPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/suppliers/[id]/page.tsx')",
       "Bash(sed -i 's/IncidenteForm/IncidentForm/g; s/IncidenteFormPage/IncidentFormPage/g' /home/omatsu/dev/omatsu/lgpd-platform/components/incidents/form.tsx '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/incidents/[id]/page.tsx')",
-      "Bash(sed -i 's/DocumentoFormProps/DocumentFormProps/g; s/DocumentoForm/DocumentForm/g; s/DocumentoFormPage/DocumentFormPage/g' /home/omatsu/dev/omatsu/lgpd-platform/components/documents/form.tsx '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/documents/[id]/page.tsx')"
+      "Bash(sed -i 's/DocumentoFormProps/DocumentFormProps/g; s/DocumentoForm/DocumentForm/g; s/DocumentoFormPage/DocumentFormPage/g' /home/omatsu/dev/omatsu/lgpd-platform/components/documents/form.tsx '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/documents/[id]/page.tsx')",
+      "Bash(sed -i 's/id=\"titular\"/id=\"data-subject\"/g; *)",
+      "Bash(sed -i 's/#titular/#data-subject/g' '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/data-subjects/page.tsx')",
+      "Bash(sed -i 's/#denuncia/#complaint/g' '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/complaints/page.tsx')",
+      "Bash(sed -i s/EmpresaFormPage/CompanyFormPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/companies/[id]/page.tsx')",
+      "Bash(sed -i s/TitularDetailPage/DataSubjectDetailPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/data-subjects/[id]/page.tsx')",
+      "Bash(sed -i s/TitularesPage/DataSubjectsPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/data-subjects/page.tsx')"
     ],
     "additionalDirectories": [
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]",

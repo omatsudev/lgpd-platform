@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const { url } = await req.json()
 
     if (!url) {
-      return NextResponse.json({ error: 'URL obrigatória' }, { status: 400 })
+      return NextResponse.json({ error: 'URL is required' }, { status: 400 })
     }
 
     // Validate and normalize URL
@@ -16,14 +16,14 @@ export async function POST(req: NextRequest) {
       const parsed = new URL(url.startsWith('http') ? url : `https://${url}`)
       normalizedUrl = parsed.href
     } catch {
-      return NextResponse.json({ error: 'URL inválida' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid URL' }, { status: 400 })
     }
 
     const domain = new URL(normalizedUrl).hostname
     const { companyId, user, supabase } = await getUserCompany()
 
     if (!user || !companyId) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
     // Create record as processing
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     if (!scan) {
       console.error('site_scans insert error:', insertError)
       return NextResponse.json(
-        { error: insertError?.message ?? 'Erro ao criar scan — verifique as permissões do banco' },
+        { error: insertError?.message ?? 'Failed to create scan — check database permissions' },
         { status: 500 },
       )
     }
