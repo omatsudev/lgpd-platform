@@ -573,12 +573,12 @@ function StepLifecycle({
   data: FormData
   update: (f: keyof FormData, v: any) => void
 }) {
-  const fases = data.lifecyclePhases as Record<string, Phase>
+  const phases = data.lifecyclePhases as Record<string, Phase>
 
-  const togglePhase = (faseId: string, field: keyof Phase, value: boolean) => {
-    const updated = { ...fases, [faseId]: { ...fases[faseId], [field]: value } }
+  const togglePhase = (phaseId: string, field: keyof Phase, value: boolean) => {
+    const updated = { ...phases, [phaseId]: { ...phases[phaseId], [field]: value } }
     if (field === 'active' && !value)
-      updated[faseId] = { active: false, controller: false, processor: false }
+      updated[phaseId] = { active: false, controller: false, processor: false }
     update('lifecyclePhases', updated)
   }
 
@@ -588,28 +588,28 @@ function StepLifecycle({
         Marque as fases do ciclo de vida e quem atua em cada uma (controlador e/ou operador).
       </p>
       <div className="space-y-3">
-        {LIFECYCLE_PHASES.map((fase) => {
-          const f = fases[fase.id] ?? DEFAULT_PHASE
+        {LIFECYCLE_PHASES.map((phase) => {
+          const f = phases[phase.id] ?? DEFAULT_PHASE
           return (
             <div
-              key={fase.id}
+              key={phase.id}
               className={`rounded-lg border p-4 transition-colors ${f.active ? 'border-blue-200 bg-blue-50' : 'border-gray-200'}`}
             >
               <CheckBox
                 checked={f.active}
-                onChange={(v) => togglePhase(fase.id, 'active', v)}
-                label={fase.label}
+                onChange={(v) => togglePhase(phase.id, 'active', v)}
+                label={phase.label}
               />
               {f.active && (
                 <div className="mt-3 ml-6 flex gap-6">
                   <CheckBox
                     checked={f.controller}
-                    onChange={(v) => togglePhase(fase.id, 'controller', v)}
+                    onChange={(v) => togglePhase(phase.id, 'controller', v)}
                     label="Controlador atua"
                   />
                   <CheckBox
                     checked={f.processor}
-                    onChange={(v) => togglePhase(fase.id, 'processor', v)}
+                    onChange={(v) => togglePhase(phase.id, 'processor', v)}
                     label="Operador atua"
                   />
                 </div>
@@ -688,7 +688,7 @@ function StepData({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {DATA_CATEGORIES.map((cat) => {
           const selected = data.dataCategories.includes(cat.id)
-          const isSensivel = cat.id === 'sensitive_data'
+          const isSensitiveCategory = cat.id === 'sensitive_data'
           return (
             <button
               key={cat.id}
@@ -698,7 +698,7 @@ function StepData({
               onMouseLeave={() => setTooltip(null)}
               className={`relative text-left rounded-lg border px-3 py-2.5 text-sm transition-all ${
                 selected
-                  ? isSensivel
+                  ? isSensitiveCategory
                     ? 'border-red-400 bg-red-50 text-red-800'
                     : 'border-blue-400 bg-blue-50 text-blue-800'
                   : 'border-gray-200 hover:border-gray-300 text-gray-700'
@@ -707,7 +707,7 @@ function StepData({
               <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">{cat.label}</span>
                 <div className="flex items-center gap-1 flex-shrink-0">
-                  {isSensivel && <AlertTriangle className="h-3.5 w-3.5 text-red-500" />}
+                  {isSensitiveCategory && <AlertTriangle className="h-3.5 w-3.5 text-red-500" />}
                   {selected ? (
                     <CheckCircle2 className="h-4 w-4 text-current" />
                   ) : (
@@ -1128,13 +1128,13 @@ function StepDataSubject({
     update('dataSubjectCategories', cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v])
   }
 
-  const FONTES = [
+  const DATA_SOURCES = [
     { value: 'direto', label: 'Direto do titular' },
     { value: 'terceiros', label: 'Terceiros' },
     { value: 'publico', label: 'Fonte pública' },
   ]
 
-  const CATEGORIAS_TITULAR = [
+  const SUBJECT_CATEGORIES = [
     { value: 'cliente', label: 'Cliente' },
     { value: 'funcionario', label: 'Funcionário' },
     { value: 'fornecedor', label: 'Fornecedor' },
@@ -1152,7 +1152,7 @@ function StepDataSubject({
         </Label>
         <FieldError msg={errors.data_sources} />
         <div className="grid grid-cols-3 gap-3">
-          {FONTES.map((opt) => {
+          {DATA_SOURCES.map((opt) => {
             const active = data.dataSources.includes(opt.value)
             return (
               <button
@@ -1174,7 +1174,7 @@ function StepDataSubject({
         </Label>
         <FieldError msg={errors.data_subject_categories} />
         <div className="grid grid-cols-2 gap-3">
-          {CATEGORIAS_TITULAR.map((opt) => {
+          {SUBJECT_CATEGORIES.map((opt) => {
             const active = data.dataSubjectCategories.includes(opt.value)
             return (
               <button
