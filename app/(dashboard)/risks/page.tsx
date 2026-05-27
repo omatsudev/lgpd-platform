@@ -37,11 +37,11 @@ export default async function RiscosPage({
       `title.ilike.%${q}%,description.ilike.%${q}%,responsible.ilike.%${q}%,category.ilike.%${q}%`,
     )
 
-  const { data: riscos } = companyId
+  const { data: risksData } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const items = riscos ?? []
+  const items = risksData ?? []
   const criticalItems = items.filter((r: any) => r.inherent_probability * r.inherent_impact >= 15).length
   const highItems = items.filter((r: any) => {
     const s = r.inherent_probability * r.inherent_impact

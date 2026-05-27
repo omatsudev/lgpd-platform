@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export default async function ScanDetalhePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ScanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { companyId, supabase } = await getUserCompany()
 
@@ -32,7 +32,7 @@ export default async function ScanDetalhePage({ params }: { params: Promise<{ id
 
       <ScanForm
         scanId={scan.id}
-        resultado={
+        result={
           scan.status === 'completed'
             ? {
                 cookies: scan.cookies ?? [],

@@ -15,9 +15,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (user && !companyId && companies.length === 0) {
     const supabase = await createClient()
     const userName = (user.user_metadata?.name as string) || user.email || 'Usuário'
-    const nomeFinal = `Empresa de ${userName.split('@')[0]}`
+    const companyFinalName = `Empresa de ${userName.split('@')[0]}`
     const slug =
-      nomeFinal
+      companyFinalName
         .toLowerCase()
         .normalize('NFD')
         .replace(/[̀-ͯ]/g, '')
@@ -29,7 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
     const { data: newCompany } = await supabase
       .from('companies')
-      .insert({ name: nomeFinal, owner_id: user.id, slug })
+      .insert({ name: companyFinalName, owner_id: user.id, slug })
       .select('id')
       .single()
 

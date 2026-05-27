@@ -58,7 +58,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function VerInventarioPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ViewInventoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { companyId, company, supabase } = await getUserCompany()
 
@@ -86,11 +86,11 @@ export default async function VerInventarioPage({ params }: { params: Promise<{ 
     legalRepresentative:
       rawIdentification.legalRepresentative ?? rawIdentification.representante_legal,
   }
-  const categoriaDetalhes = (item.data_categories_detail ?? []) as DataCategoryDetail[]
+  const categoryDetails = (item.data_categories_detail ?? []) as DataCategoryDetail[]
   const sharedDetails = (item.shared_details ?? []) as SharingRecipient[]
   const securityDetail = (item.security_measures_detail ?? []) as SecurityMeasure[]
-  const transferenciaList = (item.international_transfers ?? []) as InternationalTransfer[]
-  const contratosList = (item.contracts ?? (item as any).contratos ?? []) as Contract[]
+  const transferList = (item.international_transfers ?? []) as InternationalTransfer[]
+  const contractsList = (item.contracts ?? (item as any).contratos ?? []) as Contract[]
 
   const controller = identification.controller as Record<string, string> | undefined
 
@@ -185,10 +185,10 @@ export default async function VerInventarioPage({ params }: { params: Promise<{ 
       )}
 
       {/* Detalhe por Categoria */}
-      {categoriaDetalhes.length > 0 && (
+      {categoryDetails.length > 0 && (
         <SectionCard title="Detalhe por Categoria de Dados">
           <div className="space-y-4">
-            {categoriaDetalhes.map((cat, i) => (
+            {categoryDetails.map((cat, i) => (
               <div key={i} className="rounded-lg border border-gray-100 p-3">
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
                   {cat.categoryId.replace(/_/g, ' ')}
@@ -244,10 +244,10 @@ export default async function VerInventarioPage({ params }: { params: Promise<{ 
       )}
 
       {/* Transferência Internacional */}
-      {transferenciaList.length > 0 && (
+      {transferList.length > 0 && (
         <SectionCard title="Transferência Internacional de Dados">
           <div className="space-y-3">
-            {transferenciaList.map((t, i) => (
+            {transferList.map((t, i) => (
               <div key={i} className="rounded-lg border border-gray-100 p-3">
                 <div className="grid sm:grid-cols-2 gap-3">
                   <Campo label="País destino" value={t.country} />
@@ -262,10 +262,10 @@ export default async function VerInventarioPage({ params }: { params: Promise<{ 
       )}
 
       {/* Contratos */}
-      {contratosList.length > 0 && (
+      {contractsList.length > 0 && (
         <SectionCard title="Contratos">
           <div className="space-y-3">
-            {contratosList.map((c, i) => (
+            {contractsList.map((c, i) => (
               <div key={i} className="rounded-lg border border-gray-100 p-3">
                 <div className="grid sm:grid-cols-2 gap-3">
                   <Campo label="Nº do processo" value={c.processNumber} />

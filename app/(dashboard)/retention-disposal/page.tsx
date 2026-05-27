@@ -2,35 +2,26 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { SearchInput } from '@/components/ui/search-input'
+import { RETENTION_STATUS_LABELS, RETENTION_STATUS_VARIANTS } from '@/lib/status-labels'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { AlertTriangle, CheckCircle2, Clock, Lock, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 
-// ─── Mapeamentos ──────────────────────────────────────────────────────────
-
-const statusVariant: Record<string, 'success' | 'warning' | 'destructive' | 'secondary'> = {
-  regular: 'success',
-  proximo_vencimento: 'warning',
-  vencido: 'destructive',
-  bloqueado: 'secondary',
-}
-
-const statusLabel: Record<string, string> = {
-  regular: 'Regular',
-  proximo_vencimento: 'Próximo do Vencimento',
-  vencido: 'Vencido',
-  bloqueado: 'Bloqueado',
-}
-
 const statusIcon: Record<string, any> = {
   regular: CheckCircle2,
-  proximo_vencimento: AlertTriangle,
-  vencido: Trash2,
-  bloqueado: Lock,
+  expiring_soon: AlertTriangle,
+  overdue: Trash2,
+  hold: Lock,
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────
+const STATUS_FILTERS = [
+  { value: '', label: 'Todos' },
+  { value: 'regular', label: 'Regular' },
+  { value: 'expiring_soon', label: 'Próx. vencimento' },
+  { value: 'overdue', label: 'Vencido' },
+  { value: 'hold', label: 'Bloqueado' },
+]
 
 export default async function RetentionDisposalPage({
   searchParams,
@@ -46,28 +37,20 @@ export default async function RetentionDisposalPage({
     .eq('company_id', companyId ?? '')
 
   if (q) {
-    query = query.or(`data_type.ilike.%${q}%,categoria.ilike.%${q}%`)
+    query = query.or(`data_type.ilike.%${q}%,category.ilike.%${q}%`)
   }
   if (status) {
     query = query.eq('calculated_status', status)
   }
 
-  const { data: registros } = companyId
+  const { data: retentionData } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const items = registros ?? []
+  const items = retentionData ?? []
   const overdueItems = items.filter((i: any) => i.calculated_status === 'overdue').length
   const expiringSoon = items.filter((i: any) => i.calculated_status === 'expiring_soon').length
   const holdItems = items.filter((i: any) => i.calculated_status === 'hold').length
-
-  const FILTROS = [
-    { value: '', label: 'Todos' },
-    { value: 'regular', label: 'Regular' },
-    { value: 'expiring_soon', label: 'Próx. vencimento' },
-    { value: 'overdue', label: 'Vencido' },
-    { value: 'hold', label: 'Bloqueado' },
-  ]
 
   return (
     <div className="space-y-5">
@@ -146,7 +129,7 @@ export default async function RetentionDisposalPage({
           <SearchInput placeholder="Buscar por tipo ou categoria..." defaultValue={q} />
         </div>
         <div className="flex gap-2 flex-wrap">
-          {FILTROS.map((f) => (
+          {STATUS_FILTERS.map((f) => (
             <Link key={f.value} href={f.value ? `?status=${f.value}` : '/retention-disposal'}>
               <Button
                 size="sm"
@@ -194,7 +177,7 @@ export default async function RetentionDisposalPage({
                             {item.data_type}
                           </p>
                           <Badge variant="secondary" className="text-xs shrink-0">
-                            {item.categoria}
+                            {item.category}
                           </Badge>
                         </div>
                         <div className="flex items-center gap-3 mt-1 flex-wrap">
@@ -202,7 +185,7 @@ export default async function RetentionDisposalPage({
                             <Clock className="h-3 w-3" /> {item.retention_period}
                           </span>
                           <span className="text-xs text-gray-500">
-                            Início: {item.retention_start_event}
+                            Início: {item.start_event}
                           </span>
                           {item.expiration_date && (
                             <span className="text-xs text-gray-500">
@@ -212,11 +195,11 @@ export default async function RetentionDisposalPage({
                         </div>
                       </div>
                       <Badge
-                        variant={statusVariant[item.calculated_status] ?? 'secondary'}
+                        variant={RETENTION_STATUS_VARIANTS[item.calculated_status] ?? 'secondary'}
                         className="shrink-0 flex items-center gap-1"
                       >
                         <StatusIcon className="h-3 w-3" />
-                        {statusLabel[item.calculated_status] ?? item.calculated_status}
+                        {RETENTION_STATUS_LABELS[item.calculated_status] ?? item.calculated_status}
                       </Badge>
                     </div>
                   </CardContent>

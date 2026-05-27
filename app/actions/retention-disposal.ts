@@ -14,7 +14,7 @@ export type RetentionDisposalData = {
   category: string
   // Política de retenção
   retention_period: string
-  retention_start_event: string
+  start_event: string
   event_date?: string
   expiration_date?: string
   legal_basis: string
@@ -44,7 +44,7 @@ export async function saveRetentionDisposal(data: RetentionDisposalData) {
     data_type: data.data_type,
     category: data.category,
     retention_period: data.retention_period,
-    retention_start_event: data.retention_start_event,
+    start_event: data.start_event,
     event_date: data.event_date || null,
     expiration_date: data.expiration_date || null,
     legal_basis: data.legal_basis,
@@ -87,9 +87,9 @@ export async function registerDisposalHold(formData: globalThis.FormData) {
 
   const history = (item?.action_history ?? []) as object[]
   history.push({
-    acao: 'bloqueio',
-    data: new Date().toISOString(),
-    usuario: user.id,
+    action: 'hold',
+    date: new Date().toISOString(),
+    user: user.id,
     reason,
   })
 
@@ -120,9 +120,9 @@ export async function registerDisposal(formData: globalThis.FormData) {
 
   const history = (item?.action_history ?? []) as object[]
   history.push({
-    acao: 'descarte',
-    data: new Date().toISOString(),
-    usuario: user.id,
+    action: 'disposal',
+    date: new Date().toISOString(),
+    user: user.id,
     method,
   })
 
@@ -130,7 +130,7 @@ export async function registerDisposal(formData: globalThis.FormData) {
     .from('retention_disposals')
     .update({
       action_history: history,
-      notes: `Descarte realizado em ${new Date().toLocaleDateString('pt-BR')} — método: ${method}`,
+      notes: `Disposal performed on ${new Date().toISOString().slice(0, 10)} — method: ${method}`,
     })
     .eq('id', id)
 

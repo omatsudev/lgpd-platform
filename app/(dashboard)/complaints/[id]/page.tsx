@@ -16,16 +16,16 @@ const statusMap: Record<string, { label: string; variant: 'warning' | 'default' 
   resolved: { label: 'Resolvido', variant: 'success' },
 }
 
-export default async function DenunciaDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ComplaintDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { supabase } = await getUserCompany()
 
-  const { data: denuncia } = await supabase.from('complaints').select('*').eq('id', id).single()
+  const { data: complaint } = await supabase.from('complaints').select('*').eq('id', id).single()
 
-  if (!denuncia) notFound()
+  if (!complaint) notFound()
 
-  const status = statusMap[denuncia.status] ?? {
-    label: denuncia.status,
+  const status = statusMap[complaint.status] ?? {
+    label: complaint.status,
     variant: 'secondary' as const,
   }
 
@@ -54,38 +54,38 @@ export default async function DenunciaDetailPage({ params }: { params: Promise<{
           <div className="grid grid-cols-2 gap-4">
             <div>
               <span className="text-gray-500">Tipo:</span>{' '}
-              <span className="font-medium ml-1">{denuncia.type}</span>
+              <span className="font-medium ml-1">{complaint.type}</span>
             </div>
             <div>
               <span className="text-gray-500">Denunciante:</span>{' '}
-              {denuncia.anonymous ? (
+              {complaint.anonymous ? (
                 <Badge variant="secondary" className="ml-1">
                   Anônimo
                 </Badge>
               ) : (
-                <span className="font-medium ml-1">{denuncia.name ?? 'Identificado'}</span>
+                <span className="font-medium ml-1">{complaint.name ?? 'Identificado'}</span>
               )}
             </div>
             <div>
               <span className="text-gray-500">Recebido em:</span>{' '}
-              <span className="font-medium ml-1">{formatDateTime(denuncia.created_at)}</span>
+              <span className="font-medium ml-1">{formatDateTime(complaint.created_at)}</span>
             </div>
-            {denuncia.source_ip && (
+            {complaint.source_ip && (
               <div>
                 <span className="text-gray-500">IP de origem:</span>{' '}
-                <span className="font-mono ml-1 text-xs">{denuncia.source_ip}</span>
+                <span className="font-mono ml-1 text-xs">{complaint.source_ip}</span>
               </div>
             )}
           </div>
           <div className="pt-2">
             <p className="text-gray-500 mb-1">Descrição:</p>
-            <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{denuncia.description}</p>
+            <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{complaint.description}</p>
           </div>
-          {denuncia.response && (
+          {complaint.response && (
             <div className="pt-2">
               <p className="text-gray-500 mb-1">Resposta registrada:</p>
               <p className="text-gray-800 bg-green-50 p-3 rounded-lg border border-green-100">
-                {denuncia.response}
+                {complaint.response}
               </p>
             </div>
           )}
@@ -103,7 +103,7 @@ export default async function DenunciaDetailPage({ params }: { params: Promise<{
               <Label>Status</Label>
               <select
                 name="status"
-                defaultValue={denuncia.status}
+                defaultValue={complaint.status}
                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="received">Recebido</option>
@@ -115,7 +115,7 @@ export default async function DenunciaDetailPage({ params }: { params: Promise<{
               <Label>Observações internas</Label>
               <Textarea
                 name="response"
-                defaultValue={denuncia.response ?? ''}
+                defaultValue={complaint.response ?? ''}
                 rows={4}
                 placeholder="Registre as ações tomadas, investigações realizadas..."
               />

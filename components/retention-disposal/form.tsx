@@ -37,7 +37,7 @@ function defaultState(): FormState {
     data_type: '',
     category: '',
     retention_period: '',
-    retention_start_event: '',
+    start_event: '',
     event_date: '',
     expiration_date: '',
     legal_basis: '',
@@ -133,7 +133,7 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
       data_type: initialData.data_type ?? '',
       category: initialData.category ?? '',
       retention_period: initialData.retention_period ?? '',
-      retention_start_event: initialData.retention_start_event ?? '',
+      start_event: initialData.start_event ?? '',
       event_date: initialData.event_date ?? '',
       expiration_date: initialData.expiration_date ?? '',
       legal_basis: initialData.legal_basis ?? '',
@@ -156,7 +156,7 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
       data_type: item.dataType,
       category: item.category,
       retention_period: item.retentionPeriod,
-      retention_start_event: item.startEvent,
+      start_event: item.startEvent,
       legal_basis: item.legalBasis,
       prescription_period: item.prescriptionPeriod ?? '',
       decadence_period: item.decadencePeriod ?? '',
@@ -171,8 +171,8 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
     if (!data.data_type.trim()) errs.data_type = 'Tipo de dado é obrigatório'
     if (!data.category.trim()) errs.category = 'Categoria é obrigatória'
     if (!data.retention_period.trim()) errs.retention_period = 'Prazo de retenção é obrigatório'
-    if (!data.retention_start_event.trim())
-      errs.retention_start_event = 'Evento inicial é obrigatório'
+    if (!data.start_event.trim())
+      errs.start_event = 'Evento inicial é obrigatório'
     if (!data.legal_basis.trim())
       errs.legal_basis = 'Fundamento jurídico é obrigatório'
     return errs
@@ -307,8 +307,8 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
           <div className="space-y-1.5">
             <Label>Evento inicial *</Label>
             <Select
-              value={data.retention_start_event}
-              onValueChange={(v) => update('retention_start_event', v)}
+              value={data.start_event}
+              onValueChange={(v) => update('start_event', v)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o evento que inicia a contagem" />
@@ -321,8 +321,8 @@ export function RetentionDisposalForm({ companyId, id, initialData }: RetentionD
                 ))}
               </SelectContent>
             </Select>
-            {errors.retention_start_event && (
-              <p className="text-xs text-red-500">{errors.retention_start_event}</p>
+            {errors.start_event && (
+              <p className="text-xs text-red-500">{errors.start_event}</p>
             )}
           </div>
 

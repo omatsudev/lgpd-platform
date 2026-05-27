@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { CHECKLIST } from '@/lib/checklist-items'
+import { scoreChecklist } from '@/lib/checklist-scoring'
 import { getUserCompany } from '@/lib/supabase/queries'
 import {
   AlertTriangle,
@@ -19,21 +20,6 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-function scoreChecklist(checklistItems: any[]) {
-  const total = CHECKLIST.reduce((acc, c) => acc + c.items.length, 0)
-  const map: Record<string, string> = {}
-  for (const i of checklistItems) map[i.item_key] = i.status
-  const na = CHECKLIST.reduce(
-    (acc, c) => acc + c.items.filter((i: any) => map[i.key] === 'not_applicable').length,
-    0,
-  )
-  const done = CHECKLIST.reduce(
-    (acc, c) => acc + c.items.filter((i: any) => map[i.key] === 'completed').length,
-    0,
-  )
-  const efetivos = total - na
-  return { total, done, efetivos, pct: efetivos > 0 ? Math.round((done / efetivos) * 100) : 0 }
-}
 
 export default async function DashboardPage() {
   const { company, companyId, supabase } = await getUserCompany()
@@ -53,14 +39,14 @@ export default async function DashboardPage() {
   }
 
   const [
-    { count: inventarioCount },
+    { count: inventoryCount },
     { data: complaints },
     { data: dataSubjects },
     { data: trainings },
     { data: risks },
     { data: suppliers },
     { data: incidents },
-    { data: checklistItens },
+    { data: checklistItems },
     { data: documents },
   ] = await Promise.all([
     supabase
@@ -106,11 +92,11 @@ export default async function DashboardPage() {
   const expiredDocuments = (documents ?? []).filter(
     (d) => d.expiration_date && new Date(d.expiration_date) < new Date(),
   )
-  const checklist = scoreChecklist(checklistItens ?? [])
+  const checklist = scoreChecklist(checklistItems ?? [])
 
   // Overall compliance score
   const overallScore = Math.round(
-    checklist.pct * 0.4 +
+    checklist.percentage * 0.4 +
       (suppliersWithoutDPA.length === 0 ? 100 : Math.max(0, 100 - suppliersWithoutDPA.length * 20)) * 0.2 +
       (criticalRisks.length === 0 ? 100 : Math.max(0, 100 - criticalRisks.length * 25)) * 0.2 +
       (openIncidents.length === 0 ? 100 : Math.max(0, 100 - openIncidents.length * 15)) * 0.2,
@@ -196,7 +182,7 @@ export default async function DashboardPage() {
           },
         ]
       : []),
-    ...(inventarioCount === 0
+    ...(inventoryCount === 0
       ? [
           {
             title: 'Inventário de dados vazio — mapeie os processos',
@@ -224,11 +210,11 @@ export default async function DashboardPage() {
 
   // Module status
   const modules = [
-    { name: 'Checklist LGPD', href: '/checklist', progress: checklist.pct },
+    { name: 'Checklist LGPD', href: '/checklist', progress: checklist.percentage },
     {
       name: 'Inventário de Dados',
       href: '/inventory',
-      progress: (inventarioCount ?? 0) > 0 ? 100 : 0,
+      progress: (inventoryCount ?? 0) > 0 ? 100 : 0,
     },
     {
       name: 'Fornecedores c/ DPA',
@@ -305,8 +291,8 @@ export default async function DashboardPage() {
         />
         <StatsCard
           title="Checklist"
-          value={`${checklist.pct}%`}
-          description={`${checklist.done}/${checklist.efetivos} concluídos`}
+          value={`${checklist.percentage}%`}
+          description={`${checklist.completed}/${checklist.total - checklist.notApplicable} concluídos`}
           icon={ClipboardList}
           color="blue"
         />
@@ -330,7 +316,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatsCard
           title="Inventário"
-          value={inventarioCount ?? 0}
+          value={inventoryCount ?? 0}
           description="processos mapeados"
           icon={Database}
           color="blue"
