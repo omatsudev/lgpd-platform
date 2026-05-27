@@ -86,7 +86,7 @@ const allNavItems = [
   },
   { href: '/companies', label: 'Empresas (DPO)', icon: Building2, roles: ['dpo'] },
   {
-    href: '/logs',
+    href: '/audit-logs',
     label: 'Logs de Auditoria',
     icon: ScrollText,
     roles: ['empresa', 'admin', 'dpo'],
