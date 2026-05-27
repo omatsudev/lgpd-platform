@@ -84,11 +84,11 @@ export default function HomePage() {
         .mod-card     { background: white; border: 1px solid #EEF1F6; border-radius: 28px; padding: 36px 32px; display: flex; flex-direction: column; }
         .mod-card h3  { font-family: var(--font-jakarta,"Plus Jakarta Sans",system-ui,sans-serif); font-size: 22px; font-weight: 700; color: #0F172A; line-height: 1.25; margin-bottom: 14px; min-height: 56px; }
 
-        .risco-card        { display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 22px; background: white; border: 1px solid #EEF1F6; border-radius: 20px; padding: 22px 24px; }
-        .risco-icon        { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; }
-        .risco-impact      { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 92px; }
-        .risco-impact-lbl  { font-size: 12px; color: #94A3B8; font-weight: 500; }
-        .risco-impact-badge{ font-size: 12px; font-weight: 700; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 999px; }
+        .risk-card        { display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 22px; background: white; border: 1px solid #EEF1F6; border-radius: 20px; padding: 22px 24px; }
+        .risk-icon        { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; }
+        .risk-impact      { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 92px; }
+        .risk-impact-lbl  { font-size: 12px; color: #94A3B8; font-weight: 500; }
+        .risk-impact-badge{ font-size: 12px; font-weight: 700; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 999px; }
 
         .cta-wrap { background: linear-gradient(120deg,#0B1B3D 0%,#1E3263 60%,#2563EB 130%); border-radius: 32px; padding: 64px 56px; position: relative; overflow: hidden; color: white; display: grid; grid-template-columns: 1.4fr auto; gap: 40px; align-items: center; }
         .cta-btns { display: flex; gap: 12px; flex-wrap: wrap; position: relative; }
@@ -131,12 +131,12 @@ export default function HomePage() {
           .modulos-grid { grid-template-columns: 1fr; }
           .mod-card     { padding: 28px 24px; }
           .mod-card h3  { font-size: 19px; min-height: unset; }
-          .risco-card   { grid-template-columns: 44px 1fr; gap: 14px; padding: 18px; }
-          .risco-icon   { width: 44px !important; height: 44px !important; border-radius: 10px; }
-          .risco-card h3{ font-size: 15px; }
-          .risco-card p { font-size: 13.5px; }
-          .risco-impact { grid-column: 1/-1; flex-direction: row; align-items: center; min-width: unset; }
-          .risco-impact-badge { padding: 4px 10px; font-size: 11px; }
+          .risk-card   { grid-template-columns: 44px 1fr; gap: 14px; padding: 18px; }
+          .risk-icon   { width: 44px !important; height: 44px !important; border-radius: 10px; }
+          .risk-card h3{ font-size: 15px; }
+          .risk-card p { font-size: 13.5px; }
+          .risk-impact { grid-column: 1/-1; flex-direction: row; align-items: center; min-width: unset; }
+          .risk-impact-badge { padding: 4px 10px; font-size: 11px; }
           .cta-wrap     { grid-template-columns: 1fr; padding: 36px 24px; border-radius: 24px; }
           .cta-btns     { flex-direction: column; }
           .cta-btns a   { width: 100%; justify-content: center; }
@@ -703,8 +703,8 @@ export default function HomePage() {
                 impactHigh: false,
               },
             ].map((r) => (
-              <div key={r.title} className="risco-card">
-                <div className="risco-icon" style={{ background: r.bg, color: r.fg }}>
+              <div key={r.title} className="risk-card">
+                <div className="risk-icon" style={{ background: r.bg, color: r.fg }}>
                   {r.icon}
                 </div>
                 <div>
@@ -721,10 +721,10 @@ export default function HomePage() {
                   </h3>
                   <p style={{ color: '#475569', lineHeight: 1.55 }}>{r.text}</p>
                 </div>
-                <div className="risco-impact">
-                  <span className="risco-impact-lbl">Impacto</span>
+                <div className="risk-impact">
+                  <span className="risk-impact-lbl">Impacto</span>
                   <span
-                    className="risco-impact-badge"
+                    className="risk-impact-badge"
                     style={{
                       background: r.impactHigh ? '#FFE4E6' : '#FEF3C7',
                       color: r.impactHigh ? '#DC2626' : '#D97706',

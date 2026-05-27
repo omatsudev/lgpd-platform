@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 
-const BASES_LEGAIS = [
+const LEGAL_BASES = [
   'Consentimento do titular',
   'Execução de contrato',
   'Cumprimento de obrigação legal',
@@ -118,7 +118,7 @@ export function PurposeForm({ companyId, id, initialData }: PurposeFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {BASES_LEGAIS.map((b) => (
+                {LEGAL_BASES.map((b) => (
                   <SelectItem key={b} value={b}>
                     {b}
                   </SelectItem>

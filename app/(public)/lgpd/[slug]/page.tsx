@@ -199,11 +199,11 @@ export default async function LGPDPublicPage({ params }: { params: Promise<{ slu
                     required
                   >
                     <option value="">Selecione...</option>
-                    <option value="Vazamento de dados">Vazamento de dados</option>
-                    <option value="Uso indevido de dados">Uso indevido de dados</option>
-                    <option value="Acesso não autorizado">Acesso não autorizado</option>
-                    <option value="Coleta sem consentimento">Coleta sem consentimento</option>
-                    <option value="Outro">Outro</option>
+                    <option value="data_breach">Vazamento de dados</option>
+                    <option value="data_misuse">Uso indevido de dados</option>
+                    <option value="unauthorized_access">Acesso não autorizado</option>
+                    <option value="collection_without_consent">Coleta sem consentimento</option>
+                    <option value="other">Outro</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">

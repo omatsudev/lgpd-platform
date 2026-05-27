@@ -13,6 +13,14 @@ const statusMap: Record<string, { label: string; variant: 'warning' | 'default' 
   resolved: { label: 'Resolvido', variant: 'success' },
 }
 
+const typeMap: Record<string, string> = {
+  data_breach: 'Vazamento de dados',
+  data_misuse: 'Uso indevido de dados',
+  unauthorized_access: 'Acesso não autorizado',
+  collection_without_consent: 'Coleta sem consentimento',
+  other: 'Outro',
+}
+
 export default async function ComplaintsPage({
   searchParams,
 }: {
@@ -72,7 +80,7 @@ export default async function ComplaintsPage({
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                     <div className="space-y-1.5 flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium text-gray-900">{d.type}</span>
+                        <span className="font-medium text-gray-900">{typeMap[d.type] ?? d.type}</span>
                         <Badge variant="secondary">
                           {d.anonymous ? 'Anônimo' : (d.name ?? 'Identificado')}
                         </Badge>
