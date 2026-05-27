@@ -1,12 +1,12 @@
-import Image from 'next/image'
-import { notFound } from 'next/navigation'
-import { Mail, Phone, QrCode, FileText, AlertTriangle, Users } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/lib/supabase/server'
+import { AlertTriangle, FileText, Mail, Phone, QrCode, Users } from 'lucide-react'
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
 
 export default async function LGPDPublicaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -26,7 +26,13 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Image src="/logo.jpg" alt="Serra Privacy" width={100} height={36} className="object-contain rounded-lg" />
+            <Image
+              src="/logo.jpg"
+              alt="Serra Privacy"
+              width={100}
+              height={36}
+              className="object-contain rounded-lg"
+            />
             <div className="border-l border-gray-200 pl-3">
               <p className="font-bold text-gray-900 text-sm">{empresa.name}</p>
               <p className="text-xs text-gray-400">Portal de Privacidade</p>
@@ -40,7 +46,8 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
         <div className="text-center space-y-2">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Portal de Privacidade</h1>
           <p className="text-gray-500 max-w-2xl mx-auto text-sm md:text-base">
-            A {empresa.name} respeita sua privacidade e está comprometida com a proteção dos seus dados, em conformidade com a LGPD.
+            A {empresa.name} respeita sua privacidade e está comprometida com a proteção dos seus
+            dados, em conformidade com a LGPD.
           </p>
         </div>
 
@@ -57,13 +64,18 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                 <>
                   <p className="font-medium text-gray-900">{empresa.dpo_name}</p>
                   {empresa.dpo_email && (
-                    <a href={`mailto:${empresa.dpo_email}`} className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 break-all">
-                      <Mail className="h-3.5 w-3.5 flex-shrink-0" />{empresa.dpo_email}
+                    <a
+                      href={`mailto:${empresa.dpo_email}`}
+                      className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 break-all"
+                    >
+                      <Mail className="h-3.5 w-3.5 flex-shrink-0" />
+                      {empresa.dpo_email}
                     </a>
                   )}
                   {empresa.dpo_phone && (
                     <div className="flex items-center gap-1.5 text-gray-500">
-                      <Phone className="h-3.5 w-3.5 flex-shrink-0" />{empresa.dpo_phone}
+                      <Phone className="h-3.5 w-3.5 flex-shrink-0" />
+                      {empresa.dpo_phone}
                     </div>
                   )}
                 </>
@@ -83,7 +95,9 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
               <p className="text-sm text-gray-500">Consulte como tratamos seus dados pessoais.</p>
               {empresa.privacy_policy_url ? (
                 <Button variant="outline" size="sm" className="w-full" asChild>
-                  <a href={empresa.privacy_policy_url} target="_blank" rel="noopener noreferrer">Acessar Política</a>
+                  <a href={empresa.privacy_policy_url} target="_blank" rel="noopener noreferrer">
+                    Acessar Política
+                  </a>
                 </Button>
               ) : (
                 <p className="text-xs text-gray-400">Em elaboração</p>
@@ -119,7 +133,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
               <p className="text-sm text-gray-500">Prazo de resposta: 15 dias úteis.</p>
             </CardHeader>
             <CardContent>
-              <form className="space-y-3" action="/api/titulares/public" method="POST">
+              <form className="space-y-3" action="/api/data-subjects/public" method="POST">
                 <input type="hidden" name="empresa_slug" value={slug} />
                 <div className="space-y-1.5">
                   <Label>Nome completo</Label>
@@ -131,7 +145,11 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                 </div>
                 <div className="space-y-1.5">
                   <Label>Tipo de solicitação</Label>
-                  <select name="type" className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                  <select
+                    name="type"
+                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
                     <option value="">Selecione...</option>
                     <option value="acesso">Acesso aos dados</option>
                     <option value="correcao">Correção de dados</option>
@@ -144,7 +162,9 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                   <Label>Descrição</Label>
                   <Textarea name="description" placeholder="Descreva sua solicitação..." required />
                 </div>
-                <Button type="submit" className="w-full">Enviar Solicitação</Button>
+                <Button type="submit" className="w-full">
+                  Enviar Solicitação
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -158,7 +178,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
               <p className="text-sm text-gray-500">Pode ser feito de forma anônima.</p>
             </CardHeader>
             <CardContent>
-              <form className="space-y-3" action="/api/denuncias/public" method="POST">
+              <form className="space-y-3" action="/api/complaints/public" method="POST">
                 <input type="hidden" name="empresa_slug" value={slug} />
                 <div className="space-y-1.5">
                   <Label>Identificação</Label>
@@ -173,7 +193,11 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                 </div>
                 <div className="space-y-1.5">
                   <Label>Tipo de denúncia</Label>
-                  <select name="type" className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                  <select
+                    name="type"
+                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
                     <option value="">Selecione...</option>
                     <option value="Vazamento de dados">Vazamento de dados</option>
                     <option value="Uso indevido de dados">Uso indevido de dados</option>
@@ -184,9 +208,18 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
                 </div>
                 <div className="space-y-1.5">
                   <Label>Descrição</Label>
-                  <Textarea name="description" placeholder="Descreva o ocorrido..." rows={4} required />
+                  <Textarea
+                    name="description"
+                    placeholder="Descreva o ocorrido..."
+                    rows={4}
+                    required
+                  />
                 </div>
-                <Button type="submit" variant="outline" className="w-full border-orange-300 text-orange-700 hover:bg-orange-50">
+                <Button
+                  type="submit"
+                  variant="outline"
+                  className="w-full border-orange-300 text-orange-700 hover:bg-orange-50"
+                >
                   Enviar Denúncia
                 </Button>
               </form>
@@ -196,8 +229,16 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
       </main>
 
       <footer className="border-t border-gray-200 mt-10 py-5 text-center text-xs text-gray-400 px-4">
-        <p>{empresa.name}{empresa.tax_id ? ` — CNPJ: ${empresa.tax_id}` : ''}</p>
-        <p className="mt-1">Desenvolvido com <a href="/" className="text-blue-500 hover:underline">Serra Privacy</a></p>
+        <p>
+          {empresa.name}
+          {empresa.tax_id ? ` — CNPJ: ${empresa.tax_id}` : ''}
+        </p>
+        <p className="mt-1">
+          Desenvolvido com{' '}
+          <a href="/" className="text-blue-500 hover:underline">
+            Serra Privacy
+          </a>
+        </p>
       </footer>
     </div>
   )

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-// POST /api/consentimentos/public
+// POST /api/consents/public
 // Registers a consent from an external site
 // Body: { slug, purpose_id, email, name?, cpf?, accepted, policy_version?, channel? }
 export async function POST(req: NextRequest) {
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/consentimentos/public?slug=X&email=Y&finalidade_id=Z
+// GET /api/consents/public?slug=X&email=Y&finalidade_id=Z
 // Checks if a data subject has an active consent for a purpose
 export async function GET(req: NextRequest) {
   try {

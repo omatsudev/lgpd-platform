@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getUserCompany } from '@/lib/supabase/queries'
 import { scanSite } from '@/lib/site-scanner'
+import { getUserCompany } from '@/lib/supabase/queries'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       console.error('site_scans insert error:', insertError)
       return NextResponse.json(
         { error: insertError?.message ?? 'Erro ao criar scan — verifique as permissões do banco' },
-        { status: 500 }
+        { status: 500 },
       )
     }
 
@@ -73,7 +73,10 @@ export async function POST(req: NextRequest) {
         .update({ status: 'error', error_message: err.message ?? 'Falha ao escanear o site' })
         .eq('id', scan.id)
 
-      return NextResponse.json({ id: scan.id, error: err.message ?? 'Falha ao escanear' }, { status: 422 })
+      return NextResponse.json(
+        { id: scan.id, error: err.message ?? 'Falha ao escanear' },
+        { status: 422 },
+      )
     }
   } catch (err: any) {
     return NextResponse.json({ error: err.message ?? 'Erro interno' }, { status: 500 })

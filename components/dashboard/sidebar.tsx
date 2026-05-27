@@ -1,46 +1,114 @@
 'use client'
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
-import {
-  LayoutDashboard, Database, GraduationCap, AlertTriangle,
-  Users, Building2, Settings, ScrollText, Bell, LogOut, Menu, X,
-  ShieldAlert, FileText, ClipboardCheck, Truck, ClipboardList, Cookie, TriangleAlert, BarChart2, Clock,
-} from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  AlertTriangle,
+  BarChart2,
+  Bell,
+  Building2,
+  ClipboardCheck,
+  ClipboardList,
+  Clock,
+  Cookie,
+  Database,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  ScrollText,
+  Settings,
+  ShieldAlert,
+  TriangleAlert,
+  Truck,
+  Users,
+  X,
+} from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const allNavItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/checklist', label: 'Checklist LGPD', icon: ClipboardList, roles: ['empresa', 'admin', 'dpo'] },
+  {
+    href: '/dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
+  {
+    href: '/checklist',
+    label: 'Checklist LGPD',
+    icon: ClipboardList,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
   { href: '/cookies', label: 'Verificador de Site', icon: Cookie, roles: ['empresa', 'admin'] },
-  { href: '/inventario', label: 'Inventário de Dados', icon: Database, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/retencao-descarte', label: 'Retenção e Descarte', icon: Clock, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/riscos', label: 'Gestão de Riscos', icon: TriangleAlert, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/relatorio', label: 'Relatório LGPD', icon: BarChart2, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/incidentes', label: 'Gestão de Incidentes', icon: ShieldAlert, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/documentos', label: 'Documentos', icon: FileText, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/consentimentos', label: 'Consentimentos', icon: ClipboardCheck, roles: ['empresa', 'admin'] },
-  { href: '/fornecedores', label: 'Fornecedores', icon: Truck, roles: ['empresa', 'admin'] },
-  { href: '/treinamentos', label: 'Treinamentos', icon: GraduationCap, roles: ['empresa', 'admin'] },
-  { href: '/denuncias', label: 'Canal de Denúncias', icon: AlertTriangle, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/titulares', label: 'Direitos dos Titulares', icon: Users, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/empresas', label: 'Empresas (DPO)', icon: Building2, roles: ['dpo'] },
-  { href: '/logs', label: 'Logs de Auditoria', icon: ScrollText, roles: ['empresa', 'admin', 'dpo'] },
-  { href: '/configuracoes', label: 'Configurações', icon: Settings, roles: ['empresa', 'admin', 'dpo'] },
+  {
+    href: '/inventory',
+    label: 'Inventário de Dados',
+    icon: Database,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
+  {
+    href: '/retention-disposal',
+    label: 'Retenção e Descarte',
+    icon: Clock,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
+  {
+    href: '/risks',
+    label: 'Gestão de Riscos',
+    icon: TriangleAlert,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
+  { href: '/report', label: 'Relatório LGPD', icon: BarChart2, roles: ['empresa', 'admin', 'dpo'] },
+  {
+    href: '/incidents',
+    label: 'Gestão de Incidentes',
+    icon: ShieldAlert,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
+  { href: '/documents', label: 'Documentos', icon: FileText, roles: ['empresa', 'admin', 'dpo'] },
+  { href: '/consents', label: 'Consentimentos', icon: ClipboardCheck, roles: ['empresa', 'admin'] },
+  { href: '/suppliers', label: 'Fornecedores', icon: Truck, roles: ['empresa', 'admin'] },
+  { href: '/trainings', label: 'Treinamentos', icon: GraduationCap, roles: ['empresa', 'admin'] },
+  {
+    href: '/complaints',
+    label: 'Canal de Denúncias',
+    icon: AlertTriangle,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
+  {
+    href: '/data-subjects',
+    label: 'Direitos dos Titulares',
+    icon: Users,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
+  { href: '/companies', label: 'Empresas (DPO)', icon: Building2, roles: ['dpo'] },
+  {
+    href: '/logs',
+    label: 'Logs de Auditoria',
+    icon: ScrollText,
+    roles: ['empresa', 'admin', 'dpo'],
+  },
+  { href: '/settings', label: 'Configurações', icon: Settings, roles: ['empresa', 'admin', 'dpo'] },
 ]
 
 function NavContent({ onClose, role }: { onClose?: () => void; role?: string | null }) {
   const pathname = usePathname()
-  const navItems = allNavItems.filter(item =>
-    !role || item.roles.includes(role)
-  )
+  const navItems = allNavItems.filter((item) => !role || item.roles.includes(role))
   return (
     <>
       <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
         <Link href="/" onClick={onClose}>
-          <Image src="/logo.jpg" alt="Serra Privacy" width={130} height={46} className="object-contain rounded-lg" priority />
+          <Image
+            src="/logo.jpg"
+            alt="Serra Privacy"
+            width={130}
+            height={46}
+            className="object-contain rounded-lg"
+            priority
+          />
         </Link>
         {onClose && (
           <button onClick={onClose} className="text-blue-200 hover:text-white lg:hidden">
@@ -59,7 +127,7 @@ function NavContent({ onClose, role }: { onClose?: () => void; role?: string | n
               onClick={onClose}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
-                isActive ? 'text-white' : 'text-blue-200 hover:text-white hover:bg-white/10'
+                isActive ? 'text-white' : 'text-blue-200 hover:text-white hover:bg-white/10',
               )}
               style={isActive ? { background: 'linear-gradient(90deg, #00bcd4, #0097a7)' } : {}}
             >
@@ -136,7 +204,7 @@ export function Sidebar({ role }: { role?: string | null }) {
       <aside
         className={cn(
           'fixed inset-y-0 left-0 z-50 w-72 flex flex-col lg:hidden transition-transform duration-300',
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+          mobileOpen ? 'translate-x-0' : '-translate-x-full',
         )}
         style={{ background: 'linear-gradient(180deg, #0f2d5e 0%, #0a1f42 100%)' }}
       >

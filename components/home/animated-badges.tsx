@@ -9,7 +9,7 @@ export function AnimatedBadges() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActive(i => (i + 1) % BADGES.length)
+      setActive((i) => (i + 1) % BADGES.length)
     }, 2000)
     return () => clearInterval(interval)
   }, [])

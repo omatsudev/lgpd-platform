@@ -1,17 +1,27 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { Building2, UserCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Building2, UserCheck } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 
 export default function CadastroPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #0f2d5e 0%, #0a1f42 60%, #001133 100%)' }}>
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ background: 'linear-gradient(135deg, #0f2d5e 0%, #0a1f42 60%, #001133 100%)' }}
+    >
       <div className="w-full max-w-lg space-y-6">
         <div className="flex justify-center">
-          <Image src="/logo-transparent.png" alt="Serra Privacy" width={180} height={80} className="object-contain" priority />
+          <Image
+            src="/logo-transparent.png"
+            alt="Serra Privacy"
+            width={180}
+            height={80}
+            className="object-contain"
+            priority
+          />
         </div>
 
         <Card className="shadow-2xl border-0">
@@ -23,7 +33,13 @@ export default function CadastroPage() {
             <form className="space-y-4" action="/api/auth/register" method="POST">
               <div className="grid grid-cols-2 gap-3">
                 <label className="cursor-pointer">
-                  <input type="radio" name="type" value="empresa" className="sr-only peer" defaultChecked />
+                  <input
+                    type="radio"
+                    name="type"
+                    value="empresa"
+                    className="sr-only peer"
+                    defaultChecked
+                  />
                   <div className="border-2 border-gray-200 peer-checked:border-blue-800 peer-checked:bg-blue-50 rounded-xl p-4 text-center space-y-2 transition-colors hover:border-blue-300">
                     <Building2 className="h-7 w-7 mx-auto" style={{ color: '#0f2d5e' }} />
                     <p className="font-semibold text-sm text-gray-900">Empresa</p>
@@ -46,7 +62,12 @@ export default function CadastroPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="empresa_nome">Nome da empresa</Label>
-                  <Input id="empresa_nome" name="empresa_nome" placeholder="Razão social" required />
+                  <Input
+                    id="empresa_nome"
+                    name="empresa_nome"
+                    placeholder="Razão social"
+                    required
+                  />
                 </div>
               </div>
               <div className="space-y-2">
@@ -55,7 +76,13 @@ export default function CadastroPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Senha</Label>
-                <Input id="password" name="password" type="password" placeholder="Mínimo 8 caracteres" required />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Mínimo 8 caracteres"
+                  required
+                />
               </div>
               <Button
                 type="submit"
@@ -68,13 +95,23 @@ export default function CadastroPage() {
 
             <p className="text-xs text-center text-gray-400">
               Ao criar sua conta, você concorda com nossos{' '}
-              <Link href="/termos" className="hover:underline" style={{ color: '#0097a7' }}>Termos de Uso</Link>
-              {' '}e{' '}
-              <Link href="/privacidade" className="hover:underline" style={{ color: '#0097a7' }}>Política de Privacidade</Link>
+              <Link href="/termos" className="hover:underline" style={{ color: '#0097a7' }}>
+                Termos de Uso
+              </Link>{' '}
+              e{' '}
+              <Link href="/privacidade" className="hover:underline" style={{ color: '#0097a7' }}>
+                Política de Privacidade
+              </Link>
             </p>
             <div className="text-center text-sm text-gray-500">
               Já tem conta?{' '}
-              <Link href="/login" className="font-semibold hover:underline" style={{ color: '#0097a7' }}>Entrar</Link>
+              <Link
+                href="/login"
+                className="font-semibold hover:underline"
+                style={{ color: '#0097a7' }}
+              >
+                Entrar
+              </Link>
             </div>
           </CardContent>
         </Card>

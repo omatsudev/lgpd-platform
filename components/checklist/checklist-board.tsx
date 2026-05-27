@@ -1,20 +1,32 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { updateChecklistItem } from '@/app/actions/checklist'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { atualizarItemChecklist } from '@/app/actions/checklist'
+import { Progress } from '@/components/ui/progress'
+import { Textarea } from '@/components/ui/textarea'
 import { CHECKLIST, type ChecklistItem } from '@/lib/checklist-items'
 import {
-  CheckCircle2, Circle, Clock, MinusCircle, ChevronDown, ChevronUp,
-  Shield, Database, ClipboardCheck, Users, Lock, Truck, GraduationCap, FileSearch,
   Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Circle,
+  ClipboardCheck,
+  Clock,
+  Database,
+  FileSearch,
+  GraduationCap,
+  Lock,
+  MinusCircle,
+  Shield,
+  Truck,
+  Users,
 } from 'lucide-react'
+import { useRef, useState } from 'react'
 
 // ─── Tipos ────────────────────────────────────────────────────────────────
 
@@ -32,21 +44,51 @@ type ChecklistState = Record<string, ItemState>
 // ─── Constantes ───────────────────────────────────────────────────────────
 
 const ICON_MAP: Record<string, any> = {
-  Shield, Database, ClipboardCheck, Users, Lock, Truck, GraduationCap, FileSearch,
+  Shield,
+  Database,
+  ClipboardCheck,
+  Users,
+  Lock,
+  Truck,
+  GraduationCap,
+  FileSearch,
 }
 
-const STATUS_CONFIG: Record<ChecklistStatus, { label: string; icon: any; color: string; bg: string }> = {
-  pending:        { label: 'Pendente',      icon: Circle,       color: 'text-gray-400',   bg: 'bg-gray-100 text-gray-700'    },
-  in_progress:    { label: 'Em andamento',  icon: Clock,        color: 'text-yellow-500', bg: 'bg-yellow-100 text-yellow-800' },
-  completed:      { label: 'Concluído',     icon: CheckCircle2, color: 'text-green-500',  bg: 'bg-green-100 text-green-800'  },
-  not_applicable: { label: 'N/A',           icon: MinusCircle,  color: 'text-gray-300',   bg: 'bg-gray-50 text-gray-400'     },
+const STATUS_CONFIG: Record<
+  ChecklistStatus,
+  { label: string; icon: any; color: string; bg: string }
+> = {
+  pending: {
+    label: 'Pendente',
+    icon: Circle,
+    color: 'text-gray-400',
+    bg: 'bg-gray-100 text-gray-700',
+  },
+  in_progress: {
+    label: 'Em andamento',
+    icon: Clock,
+    color: 'text-yellow-500',
+    bg: 'bg-yellow-100 text-yellow-800',
+  },
+  completed: {
+    label: 'Concluído',
+    icon: CheckCircle2,
+    color: 'text-green-500',
+    bg: 'bg-green-100 text-green-800',
+  },
+  not_applicable: {
+    label: 'N/A',
+    icon: MinusCircle,
+    color: 'text-gray-300',
+    bg: 'bg-gray-50 text-gray-400',
+  },
 }
 
 const PRIORITY_CONFIG = {
   critical: { label: 'Crítica', variant: 'destructive' as const },
-  high:     { label: 'Alta',    variant: 'warning' as const },
-  medium:   { label: 'Média',   variant: 'secondary' as const },
-  low:      { label: 'Baixa',   variant: 'secondary' as const },
+  high: { label: 'Alta', variant: 'warning' as const },
+  medium: { label: 'Média', variant: 'secondary' as const },
+  low: { label: 'Baixa', variant: 'secondary' as const },
 }
 
 // ─── Sub-componentes ──────────────────────────────────────────────────────
@@ -90,23 +132,23 @@ function ItemRow({
     fd.set('notes', payload.notes ?? '')
     fd.set('responsible', payload.responsible ?? '')
     fd.set('completion_date', payload.completion_date ?? '')
-    return atualizarItemChecklist(fd)
+    return updateChecklistItem(fd)
   }
 
   // Clique num botão de status: atualiza imediatamente (otimista) e salva em background
   const handleStatusClick = async (newStatus: ChecklistStatus) => {
     if (savingStatus) return
     const previousStatus = form.status
-    setForm(prev => ({ ...prev, status: newStatus }))
+    setForm((prev) => ({ ...prev, status: newStatus }))
     onStatusChange(item.key, newStatus)
     setSavingStatus(newStatus)
     setSaveError(null)
     const result = await persist({ ...form, status: newStatus })
     if (!result.ok) {
-      // Reverte estado otimista e mostra o erro real
-      setForm(prev => ({ ...prev, status: previousStatus }))
+      // Reverte estado otimista e mostra o error real
+      setForm((prev) => ({ ...prev, status: previousStatus }))
       onStatusChange(item.key, previousStatus)
-      setSaveError(result.error ?? 'Erro ao salvar')
+      setSaveError(result.error ?? 'Erro ao save')
       console.error('[checklist] save status failed:', result.error)
     }
     setSavingStatus(null)
@@ -124,22 +166,26 @@ function ItemRow({
       if (savedTimer.current) clearTimeout(savedTimer.current)
       savedTimer.current = setTimeout(() => setSavedDetails(false), 2500)
     } else {
-      setSaveError(result.error ?? 'Erro ao salvar')
+      setSaveError(result.error ?? 'Erro ao save')
       console.error('[checklist] save details failed:', result.error)
     }
     setSavingDetails(false)
   }
 
   return (
-    <div className={`border rounded-lg transition-all ${form.status === 'not_applicable' ? 'opacity-50' : ''}`}>
+    <div
+      className={`border rounded-lg transition-all ${form.status === 'not_applicable' ? 'opacity-50' : ''}`}
+    >
       <div
         className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50 rounded-lg"
-        onClick={() => setOpen(prev => !prev)}
+        onClick={() => setOpen((prev) => !prev)}
       >
         <Icon className={`h-5 w-5 mt-0.5 shrink-0 ${statusConf.color}`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 flex-wrap">
-            <p className={`text-sm font-medium ${form.status === 'completed' ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+            <p
+              className={`text-sm font-medium ${form.status === 'completed' ? 'line-through text-gray-400' : 'text-gray-900'}`}
+            >
               {item.title}
             </p>
             <div className="flex items-center gap-2 shrink-0">
@@ -149,7 +195,11 @@ function ItemRow({
               {item.referencia && (
                 <span className="text-xs text-blue-500 font-mono">{item.referencia}</span>
               )}
-              {open ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+              {open ? (
+                <ChevronUp className="h-4 w-4 text-gray-400" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              )}
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
@@ -163,7 +213,7 @@ function ItemRow({
         <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
           {/* Botões de status — cada um salva sozinho ao clicar */}
           <div className="flex flex-wrap gap-2">
-            {(Object.keys(STATUS_CONFIG) as ChecklistStatus[]).map(s => {
+            {(Object.keys(STATUS_CONFIG) as ChecklistStatus[]).map((s) => {
               const conf = STATUS_CONFIG[s]
               const StatusIcon = conf.icon
               const isSavingThis = savingStatus === s
@@ -179,10 +229,11 @@ function ItemRow({
                       : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
                   } disabled:opacity-60`}
                 >
-                  {isSavingThis
-                    ? <Clock className="h-3.5 w-3.5 animate-spin" />
-                    : <StatusIcon className="h-3.5 w-3.5" />
-                  }
+                  {isSavingThis ? (
+                    <Clock className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <StatusIcon className="h-3.5 w-3.5" />
+                  )}
                   {conf.label}
                 </button>
               )
@@ -194,7 +245,7 @@ function ItemRow({
               <Label className="text-xs">Responsável</Label>
               <Input
                 value={form.responsible}
-                onChange={e => setForm(prev => ({ ...prev, responsible: e.target.value }))}
+                onChange={(e) => setForm((prev) => ({ ...prev, responsible: e.target.value }))}
                 placeholder="Nome ou setor"
                 className="h-8 text-sm"
               />
@@ -204,7 +255,7 @@ function ItemRow({
               <Input
                 type="date"
                 value={form.completion_date}
-                onChange={e => setForm(prev => ({ ...prev, completion_date: e.target.value }))}
+                onChange={(e) => setForm((prev) => ({ ...prev, completion_date: e.target.value }))}
                 className="h-8 text-sm"
               />
             </div>
@@ -214,7 +265,7 @@ function ItemRow({
             <Label className="text-xs">Observações</Label>
             <Textarea
               value={form.notes}
-              onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
               placeholder="Evidências, links, notas..."
               rows={2}
               className="text-sm"
@@ -252,25 +303,26 @@ interface ChecklistBoardProps {
 
 export function ChecklistBoard({ companyId, initialState }: ChecklistBoardProps) {
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(CHECKLIST.map(c => [c.id, true]))
+    Object.fromEntries(CHECKLIST.map((c) => [c.id, true])),
   )
 
   // Estado mutável — atualizado quando qualquer item muda de status
   const [state, setState] = useState<ChecklistState>(initialState)
 
   const handleStatusChange = (key: string, status: ChecklistStatus) => {
-    setState(prev => ({ ...prev, [key]: { ...prev[key], status } }))
+    setState((prev) => ({ ...prev, [key]: { ...prev[key], status } }))
   }
 
-  const toggleCategory = (id: string) =>
-    setOpenCategories(prev => ({ ...prev, [id]: !prev[id] }))
+  const toggleCategory = (id: string) => setOpenCategories((prev) => ({ ...prev, [id]: !prev[id] }))
 
   const totalItems = CHECKLIST.reduce((acc, c) => acc + c.items.length, 0)
-  const completed = CHECKLIST.reduce((acc, c) =>
-    acc + c.items.filter(i => state[i.key]?.status === 'completed').length, 0
+  const completed = CHECKLIST.reduce(
+    (acc, c) => acc + c.items.filter((i) => state[i.key]?.status === 'completed').length,
+    0,
   )
-  const notApplicable = CHECKLIST.reduce((acc, c) =>
-    acc + c.items.filter(i => state[i.key]?.status === 'not_applicable').length, 0
+  const notApplicable = CHECKLIST.reduce(
+    (acc, c) => acc + c.items.filter((i) => state[i.key]?.status === 'not_applicable').length,
+    0,
   )
   const effective = totalItems - notApplicable
   const percentage = effective > 0 ? Math.round((completed / effective) * 100) : 0
@@ -286,26 +338,38 @@ export function ChecklistBoard({ companyId, initialState }: ChecklistBoardProps)
               <p className="text-3xl font-bold text-gray-900">{percentage}%</p>
             </div>
             <div className="text-right text-sm text-gray-500">
-              <p><span className="font-medium text-green-600">{completed}</span> concluídos</p>
-              <p><span className="font-medium text-gray-900">{effective}</span> aplicáveis</p>
+              <p>
+                <span className="font-medium text-green-600">{completed}</span> concluídos
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">{effective}</span> aplicáveis
+              </p>
             </div>
           </div>
           <Progress value={percentage} className="h-3" />
           <div className="flex gap-4 mt-3 text-xs text-gray-400">
-            <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-green-500" /> Concluído</span>
-            <span className="flex items-center gap-1"><Clock className="h-3 w-3 text-yellow-500" /> Em andamento</span>
-            <span className="flex items-center gap-1"><Circle className="h-3 w-3" /> Pendente</span>
-            <span className="flex items-center gap-1"><MinusCircle className="h-3 w-3" /> N/A</span>
+            <span className="flex items-center gap-1">
+              <CheckCircle2 className="h-3 w-3 text-green-500" /> Concluído
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3 text-yellow-500" /> Em andamento
+            </span>
+            <span className="flex items-center gap-1">
+              <Circle className="h-3 w-3" /> Pendente
+            </span>
+            <span className="flex items-center gap-1">
+              <MinusCircle className="h-3 w-3" /> N/A
+            </span>
           </div>
         </CardContent>
       </Card>
 
       {/* Categorias */}
-      {CHECKLIST.map(cat => {
+      {CHECKLIST.map((cat) => {
         const CatIcon = ICON_MAP[cat.icon] ?? Shield
         const total = cat.items.length
-        const done = cat.items.filter(i => state[i.key]?.status === 'completed').length
-        const na = cat.items.filter(i => state[i.key]?.status === 'not_applicable').length
+        const done = cat.items.filter((i) => state[i.key]?.status === 'completed').length
+        const na = cat.items.filter((i) => state[i.key]?.status === 'not_applicable').length
         const effectiveCat = total - na
         const pct = effectiveCat > 0 ? Math.round((done / effectiveCat) * 100) : 100
         const isOpen = openCategories[cat.id]
@@ -320,22 +384,30 @@ export function ChecklistBoard({ companyId, initialState }: ChecklistBoardProps)
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">{cat.label}</p>
-                    <p className="text-xs text-gray-500">{done} de {effectiveCat} concluídos {na > 0 ? `· ${na} N/A` : ''}</p>
+                    <p className="text-xs text-gray-500">
+                      {done} de {effectiveCat} concluídos {na > 0 ? `· ${na} N/A` : ''}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="hidden sm:block w-24">
                     <Progress value={pct} className="h-2" />
                   </div>
-                  <span className="text-sm font-semibold text-gray-700 w-10 text-right">{pct}%</span>
-                  {isOpen ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                  <span className="text-sm font-semibold text-gray-700 w-10 text-right">
+                    {pct}%
+                  </span>
+                  {isOpen ? (
+                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                  )}
                 </div>
               </div>
             </CardHeader>
 
             {isOpen && (
               <CardContent className="pt-3 space-y-2">
-                {cat.items.map(item => (
+                {cat.items.map((item) => (
                   <ItemRow
                     key={item.key}
                     item={item}

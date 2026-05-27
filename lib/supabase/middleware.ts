@@ -16,22 +16,37 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, options),
           )
         },
       },
-    }
+    },
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   const protectedPaths = [
-    '/dashboard', '/inventario', '/treinamentos', '/denuncias', '/titulares',
-    '/empresas', '/colaboradores', '/configuracoes', '/logs',
-    '/checklist', '/cookies', '/riscos', '/incidentes', '/documentos',
-    '/consentimentos', '/relatorio', '/fornecedores',
+    '/dashboard',
+    '/inventory',
+    '/trainings',
+    '/complaints',
+    '/data-subjects',
+    '/companies',
+    '/collaborators',
+    '/settings',
+    '/logs',
+    '/checklist',
+    '/cookies',
+    '/risks',
+    '/incidents',
+    '/documents',
+    '/consents',
+    '/report',
+    '/suppliers',
   ]
-  const isProtected = protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))
+  const isProtected = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone()

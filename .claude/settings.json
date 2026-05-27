@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -i \\\\ *)",
+      "Bash(sed -i \"s/riskLabel\\\\[risk\\\\] ?? risco/riskLabel[risk] ?? risk/g\" app/\\\\\\(dashboard\\\\\\)/inventory/\\\\[id\\\\]/ver/page.tsx)",
+      "Bash(sed -i -e 's/\\\\.categoria_id\\\\b/.categoryId/g' -e 's/\\\\.descricao\\\\b/.description/g' -e 's/\\\\.tempo_retencao\\\\b/.retentionPeriod/g' -e 's/\\\\.fonte\\\\b/.source/g' -e 's/cat\\\\.base_legal\\\\b/cat.legalBasis/g' -e 's/cat\\\\.finalidade\\\\b/cat.purpose/g' -e 's/\\\\.local_armazenamento\\\\b/.storageLocation/g' -e 's/\\\\.categoria_titular\\\\b/.dataSubjectCategory/g' -e 's/\\\\.setor_responsavel\\\\b/.responsibleDepartment/g' -e 's/\\\\.necessidade_dpia\\\\b/.dpiaRequired/g' -e 's/s\\\\.finalidade\\\\b/s.purpose/g' -e 's/m\\\\.finalidade\\\\b/m.purpose/g' -e 's/t\\\\.finalidade\\\\b/t.purpose/g' -e 's/c\\\\.finalidade\\\\b/c.purpose/g' -e 's/\\\\.com_quem\\\\b/.recipient/g' -e 's/\\\\.descricao_controle\\\\b/.controlDescription/g' -e 's/\\\\.pais\\\\b/.country/g' -e 's/\\\\.dados_transferidos\\\\b/.dataTransferred/g' -e 's/\\\\.tipo_garantia\\\\b/.safeguardType/g' -e 's/\\\\.numero_processo\\\\b/.processNumber/g' -e 's/\\\\.objeto\\\\b/.subject/g' -e 's/\\\\.email_gestor\\\\b/.managerEmail/g' -e 's/\\\\.tipo\\\\b/.type/g' 'app/\\(dashboard\\)/inventory/[id]/ver/page.tsx')",
+      "Bash(sed -i \"s/salvarEmpresa/saveCompany/g\" app/actions/companies.ts)",
+      "Bash(sed -i -e s/salvarFinalidade/savePurpose/g -e s/deletarFinalidade/deletePurpose/g -e s/revogarConsentimento/revokeConsent/g app/actions/consents.ts)",
+      "Bash(sed -i -e s/salvarDocumento/saveDocument/g -e s/deletarDocumento/deleteDocument/g app/actions/documents.ts)",
+      "Bash(sed -i -e s/salvarIncidente/saveIncident/g -e s/deletarIncidente/deleteIncident/g app/actions/incidents.ts)",
+      "Bash(sed -i -e s/salvarRetencaoDescarte/saveRetentionDisposal/g -e s/registrarBloqueio/registerDisposalHold/g -e s/registrarDescarte/registerDisposal/g -e s/deletarRetencaoDescarte/deleteRetentionDisposal/g app/actions/retention-disposal.ts)",
+      "Bash(sed -i -e s/IncidenteData/IncidentData/g -e s/tipo_incidente/incidentType/g app/actions/incidents.ts)",
+      "Bash(sed -i -e s/DocumentoData/DocumentData/g app/actions/documents.ts)",
+      "Bash(sed -i -e s/RiscoData/RiskData/g app/actions/risks.ts)",
+      "Bash(sed -i -e s/FornecedorData/SupplierData/g app/actions/suppliers.ts)",
+      "Bash(sed -i -e s/RetencaoDescarteData/RetentionDisposalData/g app/actions/retention-disposal.ts)",
+      "Bash(sed -i -e 's/riscoVariant\\\\b/riskVariant/g' -e 's/riscoLabel\\\\b/riskLabel/g' -e 's/\\\\brisco\\\\b/risk/g' 'app/\\(dashboard\\)/inventory/page.tsx')",
+      "Bash(sed -i -e 's/const { data: treinamentosColabs }/const { data: trainingCollaborators }/g' -e s/treinamentosColabs/trainingCollaborators/g -e 's/{ key: '\\\\''treinamentos'\\\\'', label/{ key: '\\\\''trainings'\\\\'', label/g' -e 's/aba === '\\\\''treinamentos'\\\\''/aba === '\\\\''trainings'\\\\''/g' -e 's/aba = '\\\\''treinamentos'\\\\''/aba = '\\\\''trainings'\\\\''/g' -e 's/treinamentos\\\\.length/trainings.length/g' -e 's/treinamentos\\\\.map/trainings.map/g' -e 's/treinamentos\\\\[/trainings[/g' 'app/\\(dashboard\\)/trainings/page.tsx')",
+      "Bash(npx prettier *)"
+    ],
+    "additionalDirectories": [
+      "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]",
+      "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]/ver"
+    ]
+  }
+}

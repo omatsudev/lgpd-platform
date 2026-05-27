@@ -1,9 +1,9 @@
-import { redirect } from 'next/navigation'
-import { Sidebar } from '@/components/dashboard/sidebar'
+import { switchCompany } from '@/app/actions/switch-company'
 import { Header } from '@/components/dashboard/header'
+import { Sidebar } from '@/components/dashboard/sidebar'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { createClient } from '@/lib/supabase/server'
-import { switchCompany } from '@/app/actions/switch-company'
+import { redirect } from 'next/navigation'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, company: empresa, companyId, role, companies } = await getUserCompany()
@@ -16,14 +16,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
     const supabase = await createClient()
     const userName = (user.user_metadata?.name as string) || user.email || 'Usuário'
     const nomeFinal = `Empresa de ${userName.split('@')[0]}`
-    const slug = nomeFinal
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '')
-      .trim()
-      .replace(/\s+/g, '-')
-      + '-' + Date.now()
+    const slug =
+      nomeFinal
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-') +
+      '-' +
+      Date.now()
 
     const { data: newCompany } = await supabase
       .from('companies')
@@ -53,9 +55,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           currentCompanyId={companyId}
           switchCompanyAction={switchCompany}
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
       </div>
     </div>
   )

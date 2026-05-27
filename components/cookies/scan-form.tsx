@@ -1,16 +1,24 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import {
-  CheckCircle2, XCircle, AlertTriangle, Shield, Cookie,
-  Globe, Zap, Search, ExternalLink, ChevronDown, ChevronUp,
+  AlertTriangle,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  Globe,
+  Search,
+  Shield,
+  XCircle,
+  Zap,
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 // ─── Tipos (espelham lib/site-scanner.ts) ────────────────────────────────
 
@@ -20,7 +28,14 @@ type Level = 'critical' | 'high' | 'medium' | 'low'
 type TechRisk = 'high' | 'medium' | 'low'
 
 type ScanResultado = {
-  cookies: Array<{ name: string; category: CookieCat; secure?: boolean; httpOnly?: boolean; sameSite?: string; expiration?: string }>
+  cookies: Array<{
+    name: string
+    category: CookieCat
+    secure?: boolean
+    httpOnly?: boolean
+    sameSite?: string
+    expiration?: string
+  }>
   technologies: Array<{ name: string; category: TechCat; risk: TechRisk; description: string }>
   has_cookie_banner: boolean
   has_privacy_policy: boolean
@@ -33,28 +48,50 @@ type ScanResultado = {
 // ─── Helpers visuais ─────────────────────────────────────────────────────
 
 const catCookieLabel: Record<CookieCat, string> = {
-  necessary: 'Necessário', functional: 'Funcional',
-  analytical: 'Analítico', marketing: 'Marketing', unknown: 'Desconhecido',
+  necessary: 'Necessário',
+  functional: 'Funcional',
+  analytical: 'Analítico',
+  marketing: 'Marketing',
+  unknown: 'Desconhecido',
 }
-const catCookieVariant: Record<CookieCat, 'success' | 'default' | 'warning' | 'destructive' | 'secondary'> = {
-  necessary: 'success', functional: 'default',
-  analytical: 'warning', marketing: 'destructive', unknown: 'secondary',
+const catCookieVariant: Record<
+  CookieCat,
+  'success' | 'default' | 'warning' | 'destructive' | 'secondary'
+> = {
+  necessary: 'success',
+  functional: 'default',
+  analytical: 'warning',
+  marketing: 'destructive',
+  unknown: 'secondary',
 }
 
 const catTechLabel: Record<TechCat, string> = {
-  analytics: 'Analytics', advertising: 'Publicidade', social: 'Social',
-  cms: 'CMS', framework: 'Framework', chat: 'Chat', other: 'Outro',
+  analytics: 'Analytics',
+  advertising: 'Publicidade',
+  social: 'Social',
+  cms: 'CMS',
+  framework: 'Framework',
+  chat: 'Chat',
+  other: 'Outro',
 }
 
 const levelVariant: Record<Level, 'destructive' | 'warning' | 'default' | 'secondary'> = {
-  critical: 'destructive', high: 'destructive', medium: 'warning', low: 'secondary',
+  critical: 'destructive',
+  high: 'destructive',
+  medium: 'warning',
+  low: 'secondary',
 }
 const levelLabel: Record<Level, string> = {
-  critical: 'Crítico', high: 'Alto', medium: 'Médio', low: 'Baixo',
+  critical: 'Crítico',
+  high: 'Alto',
+  medium: 'Médio',
+  low: 'Baixo',
 }
 
 const riskVariant: Record<TechRisk, 'destructive' | 'warning' | 'success'> = {
-  high: 'destructive', medium: 'warning', low: 'success',
+  high: 'destructive',
+  medium: 'warning',
+  low: 'success',
 }
 
 function ScoreCircle({ score }: { score: number }) {
@@ -70,22 +107,44 @@ function ScoreCircle({ score }: { score: number }) {
 }
 
 function BoolCheck({ ok, labelOk, labelNao }: { ok: boolean; labelOk: string; labelNao: string }) {
-  return ok
-    ? <span className="flex items-center gap-1 text-green-700 text-sm"><CheckCircle2 className="h-4 w-4" />{labelOk}</span>
-    : <span className="flex items-center gap-1 text-red-600 text-sm"><XCircle className="h-4 w-4" />{labelNao}</span>
+  return ok ? (
+    <span className="flex items-center gap-1 text-green-700 text-sm">
+      <CheckCircle2 className="h-4 w-4" />
+      {labelOk}
+    </span>
+  ) : (
+    <span className="flex items-center gap-1 text-red-600 text-sm">
+      <XCircle className="h-4 w-4" />
+      {labelNao}
+    </span>
+  )
 }
 
-function CollapsibleSection({ title, count, children }: { title: string; count: number; children: React.ReactNode }) {
+function CollapsibleSection({
+  title,
+  count,
+  children,
+}: {
+  title: string
+  count: number
+  children: React.ReactNode
+}) {
   const [open, setOpen] = useState(true)
   return (
     <div>
       <button
         type="button"
         className="w-full flex items-center justify-between py-2 text-left"
-        onClick={() => setOpen(p => !p)}
+        onClick={() => setOpen((p) => !p)}
       >
-        <span className="font-semibold text-gray-900 text-sm">{title} <span className="text-gray-400 font-normal">({count})</span></span>
-        {open ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+        <span className="font-semibold text-gray-900 text-sm">
+          {title} <span className="text-gray-400 font-normal">({count})</span>
+        </span>
+        {open ? (
+          <ChevronUp className="h-4 w-4 text-gray-400" />
+        ) : (
+          <ChevronDown className="h-4 w-4 text-gray-400" />
+        )}
       </button>
       {open && <div className="mt-2">{children}</div>}
     </div>
@@ -94,7 +153,13 @@ function CollapsibleSection({ title, count, children }: { title: string; count: 
 
 // ─── Componente principal ─────────────────────────────────────────────────
 
-export function ScanForm({ scanId, resultado: resultadoInicial }: { scanId?: string; resultado?: ScanResultado }) {
+export function ScanForm({
+  scanId,
+  resultado: resultadoInicial,
+}: {
+  scanId?: string
+  resultado?: ScanResultado
+}) {
   const router = useRouter()
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
@@ -139,22 +204,27 @@ export function ScanForm({ scanId, resultado: resultadoInicial }: { scanId?: str
             <div className="flex-1">
               <Input
                 value={url}
-                onChange={e => setUrl(e.target.value)}
+                onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://seusite.com.br"
-                onKeyDown={e => e.key === 'Enter' && handleScan()}
+                onKeyDown={(e) => e.key === 'Enter' && handleScan()}
                 disabled={loading}
               />
             </div>
             <Button onClick={handleScan} disabled={loading || !url.trim()}>
               {loading ? (
-                <><Zap className="h-4 w-4 mr-1 animate-pulse" /> Analisando...</>
+                <>
+                  <Zap className="h-4 w-4 mr-1 animate-pulse" /> Analisando...
+                </>
               ) : (
-                <><Search className="h-4 w-4 mr-1" /> Escanear</>
+                <>
+                  <Search className="h-4 w-4 mr-1" /> Escanear
+                </>
               )}
             </Button>
           </div>
           <p className="text-xs text-gray-400 mt-2">
-            Analisa cookies, scripts de terceiros, banner de consentimento e política de privacidade.
+            Analisa cookies, scripts de terceiros, banner de consentimento e política de
+            privacidade.
           </p>
           {error && (
             <div className="mt-3 flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded p-3">
@@ -189,17 +259,37 @@ export function ScanForm({ scanId, resultado: resultadoInicial }: { scanId?: str
                     <Progress value={resultado.compliance_score} className="h-2.5" />
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <BoolCheck ok={resultado.has_privacy_policy} labelOk="Política de Privacidade" labelNao="Sem Política de Privacidade" />
-                    <BoolCheck ok={resultado.has_cookie_banner} labelOk="Banner de cookies" labelNao="Sem banner de cookies" />
+                    <BoolCheck
+                      ok={resultado.has_privacy_policy}
+                      labelOk="Política de Privacidade"
+                      labelNao="Sem Política de Privacidade"
+                    />
+                    <BoolCheck
+                      ok={resultado.has_cookie_banner}
+                      labelOk="Banner de cookies"
+                      labelNao="Sem banner de cookies"
+                    />
                   </div>
                   {scannedUrl && (
-                    <a href={scannedUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-blue-500 hover:underline">
-                      <ExternalLink className="h-3 w-3" />{scannedUrl}
+                    <a
+                      href={scannedUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-blue-500 hover:underline"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      {scannedUrl}
                     </a>
                   )}
                   {resultado.privacy_policy_url && (
-                    <a href={resultado.privacy_policy_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-blue-500 hover:underline ml-3">
-                      <ExternalLink className="h-3 w-3" />Ver Política
+                    <a
+                      href={resultado.privacy_policy_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-blue-500 hover:underline ml-3"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      Ver Política
                     </a>
                   )}
                 </div>
@@ -215,11 +305,15 @@ export function ScanForm({ scanId, resultado: resultadoInicial }: { scanId?: str
                   <div className="space-y-2">
                     {resultado.issues.map((p, i) => (
                       <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
-                        <AlertTriangle className={`h-4 w-4 mt-0.5 shrink-0 ${p.level === 'critical' || p.level === 'high' ? 'text-red-500' : p.level === 'medium' ? 'text-yellow-500' : 'text-gray-400'}`} />
+                        <AlertTriangle
+                          className={`h-4 w-4 mt-0.5 shrink-0 ${p.level === 'critical' || p.level === 'high' ? 'text-red-500' : p.level === 'medium' ? 'text-yellow-500' : 'text-gray-400'}`}
+                        />
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="text-sm font-medium text-gray-900">{p.title}</p>
-                            <Badge variant={levelVariant[p.level]} className="text-xs">{levelLabel[p.level]}</Badge>
+                            <Badge variant={levelVariant[p.level]} className="text-xs">
+                              {levelLabel[p.level]}
+                            </Badge>
                           </div>
                           <p className="text-xs text-gray-500 mt-0.5">{p.description}</p>
                         </div>
@@ -256,10 +350,16 @@ export function ScanForm({ scanId, resultado: resultadoInicial }: { scanId?: str
           {resultado.technologies.length > 0 && (
             <Card>
               <CardContent className="pt-5">
-                <CollapsibleSection title="Tecnologias e scripts detectados" count={resultado.technologies.length}>
+                <CollapsibleSection
+                  title="Tecnologias e scripts detectados"
+                  count={resultado.technologies.length}
+                >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {resultado.technologies.map((t, i) => (
-                      <div key={i} className="flex items-start justify-between gap-2 p-3 border rounded-lg">
+                      <div
+                        key={i}
+                        className="flex items-start justify-between gap-2 p-3 border rounded-lg"
+                      >
                         <div>
                           <p className="text-sm font-medium text-gray-900">{t.name}</p>
                           <p className="text-xs text-gray-500 mt-0.5">{t.description}</p>
@@ -280,16 +380,25 @@ export function ScanForm({ scanId, resultado: resultadoInicial }: { scanId?: str
           {resultado.cookies.length > 0 && (
             <Card>
               <CardContent className="pt-5">
-                <CollapsibleSection title="Cookies detectados nos headers" count={resultado.cookies.length}>
+                <CollapsibleSection
+                  title="Cookies detectados nos headers"
+                  count={resultado.cookies.length}
+                >
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead>
                         <tr className="border-b border-gray-100">
                           <th className="text-left py-2 px-2 text-gray-500 font-medium">Nome</th>
-                          <th className="text-left py-2 px-2 text-gray-500 font-medium">Categoria</th>
+                          <th className="text-left py-2 px-2 text-gray-500 font-medium">
+                            Categoria
+                          </th>
                           <th className="text-left py-2 px-2 text-gray-500 font-medium">Secure</th>
-                          <th className="text-left py-2 px-2 text-gray-500 font-medium">HttpOnly</th>
-                          <th className="text-left py-2 px-2 text-gray-500 font-medium">SameSite</th>
+                          <th className="text-left py-2 px-2 text-gray-500 font-medium">
+                            HttpOnly
+                          </th>
+                          <th className="text-left py-2 px-2 text-gray-500 font-medium">
+                            SameSite
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -297,15 +406,26 @@ export function ScanForm({ scanId, resultado: resultadoInicial }: { scanId?: str
                           <tr key={i} className="hover:bg-gray-50">
                             <td className="py-2 px-2 font-mono text-gray-700">{c.name}</td>
                             <td className="py-2 px-2">
-                              <Badge variant={catCookieVariant[c.category as CookieCat]} className="text-xs">
+                              <Badge
+                                variant={catCookieVariant[c.category as CookieCat]}
+                                className="text-xs"
+                              >
                                 {catCookieLabel[c.category as CookieCat]}
                               </Badge>
                             </td>
                             <td className="py-2 px-2">
-                              {c.secure ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <XCircle className="h-3.5 w-3.5 text-red-400" />}
+                              {c.secure ? (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                              ) : (
+                                <XCircle className="h-3.5 w-3.5 text-red-400" />
+                              )}
                             </td>
                             <td className="py-2 px-2">
-                              {c.httpOnly ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <XCircle className="h-3.5 w-3.5 text-gray-300" />}
+                              {c.httpOnly ? (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                              ) : (
+                                <XCircle className="h-3.5 w-3.5 text-gray-300" />
+                              )}
                             </td>
                             <td className="py-2 px-2 text-gray-500">{c.sameSite ?? '—'}</td>
                           </tr>
@@ -324,8 +444,12 @@ export function ScanForm({ scanId, resultado: resultadoInicial }: { scanId?: str
                 <div className="flex items-center gap-3 text-green-700">
                   <CheckCircle2 className="h-5 w-5 shrink-0" />
                   <div>
-                    <p className="font-medium text-sm">Nenhum cookie de terceiros detectado nos headers</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Cookies client-side (JavaScript) não são visíveis sem um browser headless.</p>
+                    <p className="font-medium text-sm">
+                      Nenhum cookie de terceiros detectado nos headers
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Cookies client-side (JavaScript) não são visíveis sem um browser headless.
+                    </p>
                   </div>
                 </div>
               </CardContent>
