@@ -70,14 +70,14 @@ export default async function FornecedoresPage({
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const itens = fornecedores ?? []
+  const items = fornecedores ?? []
   const hoje = new Date()
 
-  const semDPA = itens.filter((f: any) => f.access_type !== 'no_data_access' && !f.has_dpa).length
-  const avaliacaoVencida = itens.filter(
+  const semDPA = items.filter((f: any) => f.access_type !== 'no_data_access' && !f.has_dpa).length
+  const avaliacaoVencida = items.filter(
     (f: any) => f.next_assessment_date && new Date(f.next_assessment_date) < hoje,
   ).length
-  const internacionais = itens.filter((f: any) => f.international_transfer).length
+  const internacionais = items.filter((f: any) => f.international_transfer).length
 
   return (
     <div className="space-y-5">
@@ -120,7 +120,7 @@ export default async function FornecedoresPage({
       <div className="grid grid-cols-3 gap-3">
         <Card>
           <CardContent className="pt-4 pb-3 text-center">
-            <p className="text-2xl font-bold text-gray-900">{itens.length}</p>
+            <p className="text-2xl font-bold text-gray-900">{items.length}</p>
             <p className="text-xs text-gray-500 mt-0.5">Total</p>
           </CardContent>
         </Card>
@@ -146,7 +146,7 @@ export default async function FornecedoresPage({
           <SearchInput defaultValue={q ?? ''} placeholder="Buscar por nome, CNPJ, categoria..." />
         </CardHeader>
         <CardContent className="p-0">
-          {itens.length === 0 ? (
+          {items.length === 0 ? (
             <div className="py-12 text-center">
               <Truck className="h-10 w-10 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500 font-medium">Nenhum fornecedor cadastrado</p>
@@ -183,7 +183,7 @@ export default async function FornecedoresPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {itens.map((item: any) => {
+                    {items.map((item: any) => {
                       const vencida =
                         item.next_assessment_date && new Date(item.next_assessment_date) < hoje
                       return (
@@ -277,7 +277,7 @@ export default async function FornecedoresPage({
 
               {/* Mobile */}
               <div className="md:hidden divide-y divide-gray-100">
-                {itens.map((item: any) => (
+                {items.map((item: any) => (
                   <div key={item.id} className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <div>

@@ -260,7 +260,7 @@ export default function HomePage() {
             ))}
           </div>
 
-          <Link href="/cadastro" className="nav-btn">
+          <Link href="/register" className="nav-btn">
             Solicitar demonstração <IconArrow />
           </Link>
         </div>
@@ -342,7 +342,7 @@ export default function HomePage() {
 
               <div className="hero-ctas">
                 <Link
-                  href="/cadastro"
+                  href="/register"
                   className="hero-cta-btn"
                   style={{
                     background: 'linear-gradient(135deg, #1D4ED8, #2563EB 60%, #3B82F6)',
@@ -1136,7 +1136,7 @@ export default function HomePage() {
                 </ul>
                 <div style={{ marginTop: 'auto' }}>
                   <Link
-                    href="/cadastro"
+                    href="/register"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1195,7 +1195,7 @@ export default function HomePage() {
             </div>
             <div className="cta-btns">
               <Link
-                href="/cadastro"
+                href="/register"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',

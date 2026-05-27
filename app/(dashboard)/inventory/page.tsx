@@ -56,7 +56,7 @@ export default async function InventarioPage({
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const itens = inventario ?? []
+  const items = inventario ?? []
 
   return (
     <div className="space-y-5">
@@ -68,7 +68,7 @@ export default async function InventarioPage({
           </p>
         </div>
         <div className="flex gap-2">
-          <ExportButton itens={itens} />
+          <ExportButton items={items} />
           <Link href="/inventory/novo">
             <Button size="sm">
               <Plus className="h-4 w-4 mr-1" /> Novo
@@ -85,7 +85,7 @@ export default async function InventarioPage({
           />
         </CardHeader>
         <CardContent className="p-0">
-          {itens.length === 0 ? (
+          {items.length === 0 ? (
             <div className="py-12 text-center">
               <p className="text-gray-500 font-medium">Nenhum registro cadastrado</p>
               <p className="text-sm text-gray-400 mt-1">
@@ -118,7 +118,7 @@ export default async function InventarioPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {itens.map((item: any) => {
+                    {items.map((item: any) => {
                       const nome = item.process_name || item.data_type || '—'
                       const risk = item.risk_level ?? 'low'
                       const status = item.record_status ?? 'draft'
@@ -145,7 +145,7 @@ export default async function InventarioPage({
                           </td>
                           <td className="py-3 px-4 text-right">
                             <div className="flex items-center justify-end gap-1">
-                              <Link href={`/inventory/${item.id}/ver`}>
+                              <Link href={`/inventory/${item.id}/view`}>
                                 <Button variant="ghost" size="sm">
                                   Ver
                                 </Button>
@@ -166,7 +166,7 @@ export default async function InventarioPage({
 
               {/* Mobile cards */}
               <div className="md:hidden divide-y divide-gray-100">
-                {itens.map((item: any) => {
+                {items.map((item: any) => {
                   const nome = item.process_name || item.data_type || '—'
                   const risk = item.risk_level ?? 'low'
                   const status = item.record_status ?? 'draft'
@@ -175,7 +175,7 @@ export default async function InventarioPage({
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-medium text-gray-900 text-sm">{nome}</p>
                         <div className="flex gap-1">
-                          <Link href={`/inventory/${item.id}/ver`}>
+                          <Link href={`/inventory/${item.id}/view`}>
                             <Button variant="ghost" size="sm" className="h-7 text-xs">
                               Ver
                             </Button>

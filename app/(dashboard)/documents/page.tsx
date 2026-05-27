@@ -59,12 +59,12 @@ export default async function DocumentosPage({
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const itens = documentos ?? []
+  const items = documentos ?? []
   const hoje = new Date()
-  const expirados = itens.filter(
+  const expirados = items.filter(
     (d: any) => d.expiration_date && new Date(d.expiration_date) < hoje,
   ).length
-  const vencendoEm30 = itens.filter((d: any) => {
+  const vencendoEm30 = items.filter((d: any) => {
     if (!d.expiration_date) return false
     const diff = (new Date(d.expiration_date).getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)
     return diff >= 0 && diff <= 30
@@ -115,7 +115,7 @@ export default async function DocumentosPage({
           />
         </CardHeader>
         <CardContent className="p-0">
-          {itens.length === 0 ? (
+          {items.length === 0 ? (
             <div className="py-12 text-center">
               <FileText className="h-10 w-10 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500 font-medium">Nenhum documento cadastrado</p>
@@ -152,7 +152,7 @@ export default async function DocumentosPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {itens.map((item: any) => {
+                    {items.map((item: any) => {
                       const expirado = item.expiration_date && new Date(item.expiration_date) < hoje
                       return (
                         <tr key={item.id} className="hover:bg-gray-50 transition-colors">
@@ -200,7 +200,7 @@ export default async function DocumentosPage({
 
               {/* Mobile */}
               <div className="md:hidden divide-y divide-gray-100">
-                {itens.map((item: any) => {
+                {items.map((item: any) => {
                   const expirado = item.expiration_date && new Date(item.expiration_date) < hoje
                   return (
                     <div key={item.id} className="p-4 space-y-2">

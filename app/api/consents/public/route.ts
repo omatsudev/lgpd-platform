@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       ?? null
     const userAgent = req.headers.get('user-agent') ?? null
 
-    const { data: registro, error } = await supabase
+    const { data: record, error } = await supabase
       .from('consents')
       .insert({
         company_id: company.id,
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
 
     if (error) throw error
 
-    return NextResponse.json({ id: registro.id, registrado: true }, { status: 201 })
+    return NextResponse.json({ id: record.id, registered: true }, { status: 201 })
   } catch (err: any) {
     return NextResponse.json({ error: err.message ?? 'Erro interno' }, { status: 500 })
   }
@@ -104,11 +104,11 @@ export async function GET(req: NextRequest) {
 
     if (purpose_id) query = query.eq('purpose_id', purpose_id)
 
-    const { data: registros } = await query.order('created_at', { ascending: false })
+    const { data: records } = await query.order('created_at', { ascending: false })
 
     return NextResponse.json({
-      tem_consentimento: (registros?.length ?? 0) > 0,
-      registros: registros ?? [],
+      has_consent: (records?.length ?? 0) > 0,
+      records: records ?? [],
     })
   } catch (err: any) {
     return NextResponse.json({ error: err.message ?? 'Erro interno' }, { status: 500 })

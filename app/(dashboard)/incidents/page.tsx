@@ -69,9 +69,9 @@ export default async function IncidentesPage({
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const itens = incidentes ?? []
-  const abertos = itens.filter((i: any) => !['resolved', 'closed'].includes(i.status)).length
-  const criticos = itens.filter((i: any) => i.severity === 'critical').length
+  const items = incidentes ?? []
+  const abertos = items.filter((i: any) => !['resolved', 'closed'].includes(i.status)).length
+  const criticos = items.filter((i: any) => i.severity === 'critical').length
 
   return (
     <div className="space-y-5">
@@ -116,7 +116,7 @@ export default async function IncidentesPage({
           />
         </CardHeader>
         <CardContent className="p-0">
-          {itens.length === 0 ? (
+          {items.length === 0 ? (
             <div className="py-12 text-center">
               <ShieldAlert className="h-10 w-10 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500 font-medium">Nenhum incidente registrado</p>
@@ -153,7 +153,7 @@ export default async function IncidentesPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {itens.map((item: any) => (
+                    {items.map((item: any) => (
                       <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                         <td className="py-3 px-4 font-medium text-gray-900 max-w-[200px] truncate">
                           {item.title}
@@ -200,7 +200,7 @@ export default async function IncidentesPage({
 
               {/* Mobile */}
               <div className="md:hidden divide-y divide-gray-100">
-                {itens.map((item: any) => (
+                {items.map((item: any) => (
                   <div key={item.id} className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <p className="font-medium text-gray-900 text-sm">{item.title}</p>

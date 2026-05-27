@@ -32,7 +32,7 @@ const statusIcon: Record<string, any> = {
 
 // ─── Page ─────────────────────────────────────────────────────────────────
 
-export default async function RetencaoDescartePage({
+export default async function RetentionDisposalPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string; status?: string }>
@@ -41,32 +41,32 @@ export default async function RetencaoDescartePage({
   const { q, status } = await searchParams
 
   let query = supabase
-    .from('retencao_descarte')
+    .from('retention_disposals')
     .select('*')
     .eq('company_id', companyId ?? '')
 
   if (q) {
-    query = query.or(`tipo_dado.ilike.%${q}%,categoria.ilike.%${q}%`)
+    query = query.or(`data_type.ilike.%${q}%,categoria.ilike.%${q}%`)
   }
   if (status) {
-    query = query.eq('status_calculado', status)
+    query = query.eq('calculated_status', status)
   }
 
   const { data: registros } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const itens = registros ?? []
-  const vencidos = itens.filter((i: any) => i.status_calculado === 'vencido').length
-  const proximosVenc = itens.filter((i: any) => i.status_calculado === 'proximo_vencimento').length
-  const bloqueados = itens.filter((i: any) => i.status_calculado === 'bloqueado').length
+  const items = registros ?? []
+  const overdueItems = items.filter((i: any) => i.calculated_status === 'overdue').length
+  const expiringSoon = items.filter((i: any) => i.calculated_status === 'expiring_soon').length
+  const holdItems = items.filter((i: any) => i.calculated_status === 'hold').length
 
   const FILTROS = [
     { value: '', label: 'Todos' },
     { value: 'regular', label: 'Regular' },
-    { value: 'proximo_vencimento', label: 'Próx. vencimento' },
-    { value: 'vencido', label: 'Vencido' },
-    { value: 'bloqueado', label: 'Bloqueado' },
+    { value: 'expiring_soon', label: 'Próx. vencimento' },
+    { value: 'overdue', label: 'Vencido' },
+    { value: 'hold', label: 'Bloqueado' },
   ]
 
   return (
@@ -87,29 +87,29 @@ export default async function RetencaoDescartePage({
       </div>
 
       {/* Alertas */}
-      {(vencidos > 0 || proximosVenc > 0) && (
+      {(overdueItems > 0 || expiringSoon > 0) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {vencidos > 0 && (
+          {overdueItems > 0 && (
             <Card className="border-red-200 bg-red-50">
               <CardContent className="pt-3 pb-3">
                 <div className="flex items-center gap-2 text-sm text-red-700">
                   <Trash2 className="h-4 w-4 flex-shrink-0" />
                   <span>
-                    <span className="font-semibold">{vencidos}</span> registro
-                    {vencidos > 1 ? 's' : ''} com prazo vencido — descarte necessário.
+                    <span className="font-semibold">{overdueItems}</span> registro
+                    {overdueItems > 1 ? 's' : ''} com prazo vencido — descarte necessário.
                   </span>
                 </div>
               </CardContent>
             </Card>
           )}
-          {proximosVenc > 0 && (
+          {expiringSoon > 0 && (
             <Card className="border-yellow-200 bg-yellow-50">
               <CardContent className="pt-3 pb-3">
                 <div className="flex items-center gap-2 text-sm text-yellow-700">
                   <AlertTriangle className="h-4 w-4 flex-shrink-0" />
                   <span>
-                    <span className="font-semibold">{proximosVenc}</span> registro
-                    {proximosVenc > 1 ? 's' : ''} vence{proximosVenc === 1 ? '' : 'm'} em até 60
+                    <span className="font-semibold">{expiringSoon}</span> registro
+                    {expiringSoon > 1 ? 's' : ''} vence{expiringSoon === 1 ? '' : 'm'} em até 60
                     dias.
                   </span>
                 </div>
@@ -122,14 +122,14 @@ export default async function RetencaoDescartePage({
       {/* Resumo */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Total', value: itens.length, color: 'text-gray-900' },
+          { label: 'Total', value: items.length, color: 'text-gray-900' },
           {
             label: 'Regulares',
-            value: itens.filter((i: any) => i.status_calculado === 'regular').length,
+            value: items.filter((i: any) => i.calculated_status === 'regular').length,
             color: 'text-green-700',
           },
-          { label: 'Vencidos', value: vencidos, color: 'text-red-700' },
-          { label: 'Bloqueados', value: bloqueados, color: 'text-gray-700' },
+          { label: 'Vencidos', value: overdueItems, color: 'text-red-700' },
+          { label: 'Bloqueados', value: holdItems, color: 'text-gray-700' },
         ].map(({ label, value, color }) => (
           <Card key={label}>
             <CardContent className="pt-4 pb-3">
@@ -161,7 +161,7 @@ export default async function RetencaoDescartePage({
       </div>
 
       {/* Lista */}
-      {itens.length === 0 ? (
+      {items.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <Clock className="h-10 w-10 text-gray-300 mx-auto mb-3" />
@@ -181,8 +181,8 @@ export default async function RetencaoDescartePage({
         </Card>
       ) : (
         <div className="space-y-2">
-          {itens.map((item: any) => {
-            const StatusIcon = statusIcon[item.status_calculado] ?? CheckCircle2
+          {items.map((item: any) => {
+            const StatusIcon = statusIcon[item.calculated_status] ?? CheckCircle2
             return (
               <Link key={item.id} href={`/retention-disposal/${item.id}`}>
                 <Card className="hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer">
@@ -191,7 +191,7 @@ export default async function RetencaoDescartePage({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-medium text-sm text-gray-900 truncate">
-                            {item.tipo_dado}
+                            {item.data_type}
                           </p>
                           <Badge variant="secondary" className="text-xs shrink-0">
                             {item.categoria}
@@ -199,24 +199,24 @@ export default async function RetencaoDescartePage({
                         </div>
                         <div className="flex items-center gap-3 mt-1 flex-wrap">
                           <span className="text-xs text-gray-500 flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {item.prazo_retencao}
+                            <Clock className="h-3 w-3" /> {item.retention_period}
                           </span>
                           <span className="text-xs text-gray-500">
                             Início: {item.retention_start_event}
                           </span>
-                          {item.data_vencimento && (
+                          {item.expiration_date && (
                             <span className="text-xs text-gray-500">
-                              Venc.: {formatDate(item.data_vencimento)}
+                              Venc.: {formatDate(item.expiration_date)}
                             </span>
                           )}
                         </div>
                       </div>
                       <Badge
-                        variant={statusVariant[item.status_calculado] ?? 'secondary'}
+                        variant={statusVariant[item.calculated_status] ?? 'secondary'}
                         className="shrink-0 flex items-center gap-1"
                       >
                         <StatusIcon className="h-3 w-3" />
-                        {statusLabel[item.status_calculado] ?? item.status_calculado}
+                        {statusLabel[item.calculated_status] ?? item.calculated_status}
                       </Badge>
                     </div>
                   </CardContent>

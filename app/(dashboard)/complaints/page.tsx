@@ -31,7 +31,7 @@ export default async function DenunciasPage({
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const itens = denuncias ?? []
+  const items = denuncias ?? []
 
   return (
     <div className="space-y-5">
@@ -53,7 +53,7 @@ export default async function DenunciasPage({
 
       <SearchInput defaultValue={q ?? ''} placeholder="Buscar por tipo, descrição..." />
 
-      {itens.length === 0 ? (
+      {items.length === 0 ? (
         <Card>
           <CardContent className="pt-8 pb-8 text-center">
             <p className="text-gray-500 font-medium">Nenhuma denúncia recebida</p>
@@ -64,7 +64,7 @@ export default async function DenunciasPage({
         </Card>
       ) : (
         <div className="grid gap-3">
-          {itens.map((d: any) => {
+          {items.map((d: any) => {
             const status = statusMap[d.status] ?? { label: d.status, variant: 'secondary' as const }
             return (
               <Card key={d.id} className="hover:shadow-md transition-shadow">

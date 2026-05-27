@@ -18,7 +18,7 @@ type Item = {
 const riscoLabel: Record<string, string> = { high: 'Alto', medium: 'Médio', low: 'Baixo' }
 const statusLabel: Record<string, string> = { complete: 'Completo', draft: 'Rascunho' }
 
-function toCSV(itens: Item[]): string {
+function toCSV(items: Item[]): string {
   const header = [
     'Processo',
     'Setor',
@@ -29,7 +29,7 @@ function toCSV(itens: Item[]): string {
     'Status',
     'Criado em',
   ]
-  const rows = itens.map((i) =>
+  const rows = items.map((i) =>
     [
       i.process_name ?? i.data_type ?? '',
       i.responsible_department ?? '',
@@ -46,11 +46,11 @@ function toCSV(itens: Item[]): string {
   return [header.join(','), ...rows].join('\n')
 }
 
-export function ExportButton({ itens }: { itens: Item[] }) {
+export function ExportButton({ items }: { items: Item[] }) {
   const [open, setOpen] = useState(false)
 
   const exportCSV = () => {
-    const csv = toCSV(itens)
+    const csv = toCSV(items)
     const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')

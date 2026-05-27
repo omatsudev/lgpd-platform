@@ -1,4 +1,4 @@
-import { RetencaoDescarteForm } from '@/components/retention-disposal/form'
+import { RetentionDisposalForm } from '@/components/retention-disposal/form'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { getUserCompany } from '@/lib/supabase/queries'
@@ -20,7 +20,7 @@ const statusLabel: Record<string, string> = {
   bloqueado: 'Bloqueado',
 }
 
-export default async function RetencaoDescarteFormPage({
+export default async function RetentionDisposalFormPage({
   params,
 }: {
   params: Promise<{ id: string }>
@@ -32,7 +32,7 @@ export default async function RetencaoDescarteFormPage({
 
   let item: any = null
   if (!isNew && companyId) {
-    const { data } = await supabase.from('retencao_descarte').select('*').eq('id', id).single()
+    const { data } = await supabase.from('retention_disposals').select('*').eq('id', id).single()
     if (!data) notFound()
     item = data
   }
@@ -50,9 +50,9 @@ export default async function RetencaoDescarteFormPage({
             <h1 className="text-2xl font-bold text-gray-900">
               {isNew ? 'Novo Registro de Retenção' : 'Editar Registro'}
             </h1>
-            {item?.status_calculado && (
-              <Badge variant={statusVariant[item.status_calculado] ?? 'secondary'}>
-                {statusLabel[item.status_calculado] ?? item.status_calculado}
+            {item?.calculated_status && (
+              <Badge variant={statusVariant[item.calculated_status] ?? 'secondary'}>
+                {statusLabel[item.calculated_status] ?? item.calculated_status}
               </Badge>
             )}
           </div>
@@ -63,7 +63,7 @@ export default async function RetencaoDescarteFormPage({
         </div>
       </div>
 
-      <RetencaoDescarteForm
+      <RetentionDisposalForm
         companyId={companyId ?? ''}
         id={isNew ? undefined : id}
         initialData={item}

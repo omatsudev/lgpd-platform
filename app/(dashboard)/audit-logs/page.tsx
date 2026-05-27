@@ -34,7 +34,7 @@ export default async function LogsPage({
     ? await query.order('created_at', { ascending: false }).limit(200)
     : { data: [] }
 
-  const itens = logs ?? []
+  const items = logs ?? []
 
   return (
     <div className="space-y-5">
@@ -65,7 +65,7 @@ export default async function LogsPage({
           <SearchInput defaultValue={q ?? ''} placeholder="Filtrar por usuário, ação, recurso..." />
         </CardHeader>
         <CardContent className="p-0">
-          {itens.length === 0 ? (
+          {items.length === 0 ? (
             <div className="py-12 text-center">
               <p className="text-gray-500 font-medium">Nenhum log registrado</p>
               <p className="text-sm text-gray-400 mt-1">
@@ -100,7 +100,7 @@ export default async function LogsPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {itens.map((log: any) => (
+                    {items.map((log: any) => (
                       <tr
                         key={log.id}
                         className="hover:bg-gray-50 transition-colors font-mono text-xs"
@@ -123,7 +123,7 @@ export default async function LogsPage({
 
               {/* Mobile */}
               <div className="md:hidden divide-y divide-gray-100">
-                {itens.map((log: any) => (
+                {items.map((log: any) => (
                   <div key={log.id} className="p-4 space-y-2">
                     <div className="flex items-center justify-between gap-2">
                       <Badge variant={acaoMap[log.action] ?? 'secondary'} className="text-xs">

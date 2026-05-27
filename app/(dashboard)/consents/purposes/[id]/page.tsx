@@ -1,11 +1,11 @@
-import { FinalidadeForm } from '@/components/consents/finalidade-form'
+import { PurposeForm } from '@/components/consents/purpose-form'
 import { Button } from '@/components/ui/button'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export default async function FinalidadeFormPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PurposeFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'nova'
 
@@ -21,7 +21,7 @@ export default async function FinalidadeFormPage({ params }: { params: Promise<{
   return (
     <div className="space-y-6 max-w-2xl">
       <div className="flex items-center gap-4">
-        <Link href="/consents?aba=finalidades">
+        <Link href="/consents?tab=purposes">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -36,7 +36,7 @@ export default async function FinalidadeFormPage({ params }: { params: Promise<{
         </div>
       </div>
 
-      <FinalidadeForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
+      <PurposeForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
     </div>
   )
 }

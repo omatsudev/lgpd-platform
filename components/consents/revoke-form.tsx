@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { useState, useTransition } from 'react'
 
-export function RevogarForm({ id }: { id: string }) {
-  const [aberto, setAberto] = useState(false)
+export function RevokeForm({ id }: { id: string }) {
+  const [isOpen, setIsOpen] = useState(false)
   const [pending, startTransition] = useTransition()
 
   const handleSubmit = (formData: FormData) => {
@@ -16,9 +16,9 @@ export function RevogarForm({ id }: { id: string }) {
     })
   }
 
-  if (!aberto) {
+  if (!isOpen) {
     return (
-      <Button variant="destructive" size="sm" onClick={() => setAberto(true)}>
+      <Button variant="destructive" size="sm" onClick={() => setIsOpen(true)}>
         Revogar Consentimento
       </Button>
     )
@@ -40,7 +40,7 @@ export function RevogarForm({ id }: { id: string }) {
             <Button type="submit" variant="destructive" size="sm" disabled={pending}>
               {pending ? 'Revogando...' : 'Confirmar Revogação'}
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => setAberto(false)}>
+            <Button type="button" variant="outline" size="sm" onClick={() => setIsOpen(false)}>
               Cancelar
             </Button>
           </div>

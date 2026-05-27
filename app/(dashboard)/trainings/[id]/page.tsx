@@ -28,7 +28,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
   const { companyId, supabase } = await getUserCompany()
 
   let treinamento: any = null
-  let colaboradores: any[] = []
+  let employees: any[] = []
 
   if (!isNew) {
     const { data: t } = await supabase.from('trainings').select('*').eq('id', id).single()
@@ -40,7 +40,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
       .select('*')
       .eq('training_id', id)
       .order('created_at', { ascending: false })
-    colaboradores = colabs ?? []
+    employees = colabs ?? []
   }
 
   return (
@@ -55,7 +55,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
           <h1 className="text-2xl font-bold text-gray-900">
             {isNew ? 'Novo Treinamento' : treinamento?.title}
           </h1>
-          <p className="text-sm text-gray-500">Gerencie conteúdo e acompanhe colaboradores</p>
+          <p className="text-sm text-gray-500">Gerencie conteúdo e acompanhe employees</p>
         </div>
       </div>
 
@@ -118,7 +118,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
           <CardContent>
             {isNew ? (
               <p className="text-sm text-gray-500">
-                Salve o treinamento primeiro para adicionar colaboradores.
+                Salve o treinamento primeiro para adicionar employees.
               </p>
             ) : (
               <form action={addCollaborator} className="space-y-4">
@@ -144,12 +144,12 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
         </Card>
       </div>
 
-      {/* Progresso dos colaboradores */}
-      {!isNew && colaboradores.length > 0 && (
+      {/* Progresso dos employees */}
+      {!isNew && employees.length > 0 && (
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Progresso dos Colaboradores ({colaboradores.length})</CardTitle>
+              <CardTitle>Progresso dos Colaboradores ({employees.length})</CardTitle>
               <Button variant="outline" size="sm" disabled>
                 <Download className="h-4 w-4 mr-1" /> Exportar
               </Button>
@@ -157,7 +157,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {colaboradores.map((c: any) => (
+              {employees.map((c: any) => (
                 <div
                   key={c.id}
                   className="flex items-center gap-4 p-3 rounded-lg border border-gray-100"
@@ -188,7 +188,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
         </Card>
       )}
 
-      {!isNew && colaboradores.length === 0 && (
+      {!isNew && employees.length === 0 && (
         <Card>
           <CardContent className="pt-6 pb-6 text-center">
             <p className="text-gray-500 text-sm">Nenhum colaborador adicionado ainda</p>

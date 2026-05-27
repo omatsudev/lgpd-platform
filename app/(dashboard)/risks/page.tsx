@@ -1,4 +1,4 @@
-import { RiscoMatriz } from '@/components/risks/matriz'
+import { RiskMatrix } from '@/components/risks/matrix'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -48,10 +48,10 @@ function nivelRisco(prob: number, imp: number) {
 export default async function RiscosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; aba?: string }>
+  searchParams: Promise<{ q?: string; tab?: string }>
 }) {
   const { companyId, supabase } = await getUserCompany()
-  const { q, aba = 'lista' } = await searchParams
+  const { q, tab = 'list' } = await searchParams
 
   let query = supabase
     .from('risks')
@@ -66,13 +66,13 @@ export default async function RiscosPage({
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const itens = riscos ?? []
-  const criticos = itens.filter((r: any) => r.inherent_probability * r.inherent_impact >= 15).length
-  const altos = itens.filter((r: any) => {
+  const items = riscos ?? []
+  const criticos = items.filter((r: any) => r.inherent_probability * r.inherent_impact >= 15).length
+  const altos = items.filter((r: any) => {
     const s = r.inherent_probability * r.inherent_impact
     return s >= 9 && s < 15
   }).length
-  const abertos = itens.filter((r: any) => r.status !== 'closed').length
+  const abertos = items.filter((r: any) => r.status !== 'closed').length
 
   return (
     <div className="space-y-5">
@@ -93,7 +93,7 @@ export default async function RiscosPage({
       {/* Métricas */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Total', value: itens.length, color: 'text-gray-900' },
+          { label: 'Total', value: items.length, color: 'text-gray-900' },
           { label: 'Críticos', value: criticos, color: 'text-red-600' },
           { label: 'Altos', value: altos, color: 'text-orange-500' },
           { label: 'Abertos', value: abertos, color: 'text-blue-600' },
@@ -110,25 +110,25 @@ export default async function RiscosPage({
       {/* Abas */}
       <div className="flex gap-1 border-b border-gray-200">
         {[
-          { key: 'lista', label: 'Lista' },
-          { key: 'matriz', label: 'Matriz de Riscos' },
-        ].map((tab) => (
+          { key: 'list', label: 'Lista' },
+          { key: 'matrix', label: 'Matriz de Riscos' },
+        ].map((navTab) => (
           <Link
-            key={tab.key}
-            href={`/risks?aba=${tab.key}${q ? `&q=${q}` : ''}`}
+            key={navTab.key}
+            href={`/risks?tab=${navTab.key}${q ? `&q=${q}` : ''}`}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              aba === tab.key
+              tab === navTab.key
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            {tab.label}
+            {navTab.label}
           </Link>
         ))}
       </div>
 
-      {aba === 'matriz' ? (
-        <RiscoMatriz itens={itens} />
+      {tab === 'matrix' ? (
+        <RiskMatrix items={items} />
       ) : (
         <Card>
           <CardHeader className="pb-3">
@@ -138,7 +138,7 @@ export default async function RiscosPage({
             />
           </CardHeader>
           <CardContent className="p-0">
-            {itens.length === 0 ? (
+            {items.length === 0 ? (
               <div className="py-12 text-center">
                 <AlertTriangle className="h-10 w-10 text-gray-300 mx-auto mb-3" />
                 <p className="text-gray-500 font-medium">Nenhum risco cadastrado</p>
@@ -175,7 +175,7 @@ export default async function RiscosPage({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {itens.map((item: any) => {
+                      {items.map((item: any) => {
                         const inerente = nivelRisco(item.inherent_probability, item.inherent_impact)
                         const residual =
                           item.residual_probability && item.residual_impact
@@ -253,7 +253,7 @@ export default async function RiscosPage({
 
                 {/* Mobile */}
                 <div className="md:hidden divide-y divide-gray-100">
-                  {itens.map((item: any) => {
+                  {items.map((item: any) => {
                     const inerente = nivelRisco(item.inherent_probability, item.inherent_impact)
                     return (
                       <div key={item.id} className="p-4 space-y-2">
