@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useRef } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import { CHECKLIST, type ChecklistItem } from '@/lib/checklist-items'
 import {
   CheckCircle2, Circle, Clock, MinusCircle, ChevronDown, ChevronUp,
   Shield, Database, ClipboardCheck, Users, Lock, Truck, GraduationCap, FileSearch,
+  Check,
 } from 'lucide-react'
 
 // ─── Tipos ────────────────────────────────────────────────────────────────
@@ -62,7 +63,10 @@ function ItemRow({
   category: string
 }) {
   const [open, setOpen] = useState(false)
-  const [pending, startTransition] = useTransition()
+  const [savingStatus, setSavingStatus] = useState<ChecklistStatus | null>(null)
+  const [savingDetails, setSavingDetails] = useState(false)
+  const [savedDetails, setSavedDetails] = useState(false)
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [form, setForm] = useState<ItemState>({
     status: state?.status ?? 'pending',
     notes: state?.notes ?? '',
@@ -73,10 +77,8 @@ function ItemRow({
   const statusConf = STATUS_CONFIG[form.status]
   const Icon = statusConf.icon
 
-  const handleSave = (newStatus?: ChecklistStatus) => {
-    const payload = newStatus ? { ...form, status: newStatus } : form
-    if (newStatus) setForm(prev => ({ ...prev, status: newStatus }))
-
+  // Monta e envia o FormData diretamente — sem useTransition para não vazar pending para outros itens
+  const persist = async (payload: ItemState) => {
     const fd = new FormData()
     fd.set('company_id', companyId)
     fd.set('item_key', item.key)
@@ -85,8 +87,34 @@ function ItemRow({
     fd.set('notes', payload.notes ?? '')
     fd.set('responsible', payload.responsible ?? '')
     fd.set('completion_date', payload.completion_date ?? '')
+    await atualizarItemChecklist(fd)
+  }
 
-    startTransition(() => atualizarItemChecklist(fd))
+  // Clique num botão de status: atualiza imediatamente (otimista) e salva em background
+  const handleStatusClick = async (newStatus: ChecklistStatus) => {
+    if (savingStatus) return
+    setForm(prev => ({ ...prev, status: newStatus }))
+    setSavingStatus(newStatus)
+    try {
+      await persist({ ...form, status: newStatus })
+    } finally {
+      setSavingStatus(null)
+    }
+  }
+
+  // Botão Salvar: grava responsável, data e observações
+  const handleSaveDetails = async () => {
+    if (savingDetails) return
+    setSavingDetails(true)
+    setSavedDetails(false)
+    try {
+      await persist(form)
+      setSavedDetails(true)
+      if (savedTimer.current) clearTimeout(savedTimer.current)
+      savedTimer.current = setTimeout(() => setSavedDetails(false), 2500)
+    } finally {
+      setSavingDetails(false)
+    }
   }
 
   return (
@@ -120,23 +148,28 @@ function ItemRow({
 
       {open && (
         <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+          {/* Botões de status — cada um salva sozinho ao clicar */}
           <div className="flex flex-wrap gap-2">
             {(Object.keys(STATUS_CONFIG) as ChecklistStatus[]).map(s => {
               const conf = STATUS_CONFIG[s]
               const StatusIcon = conf.icon
+              const isSavingThis = savingStatus === s
               return (
                 <button
                   key={s}
                   type="button"
-                  onClick={() => handleSave(s)}
-                  disabled={pending}
+                  onClick={() => handleStatusClick(s)}
+                  disabled={savingStatus !== null}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                     form.status === s
                       ? `${conf.bg} border-transparent`
                       : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
-                  }`}
+                  } disabled:opacity-60`}
                 >
-                  <StatusIcon className="h-3.5 w-3.5" />
+                  {isSavingThis
+                    ? <Clock className="h-3.5 w-3.5 animate-spin" />
+                    : <StatusIcon className="h-3.5 w-3.5" />
+                  }
                   {conf.label}
                 </button>
               )
@@ -175,9 +208,16 @@ function ItemRow({
             />
           </div>
 
-          <Button size="sm" onClick={() => handleSave()} disabled={pending}>
-            {pending ? 'Salvando...' : 'Salvar'}
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button size="sm" onClick={handleSaveDetails} disabled={savingDetails}>
+              {savingDetails ? 'Salvando...' : 'Salvar'}
+            </Button>
+            {savedDetails && (
+              <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
+                <Check className="h-3.5 w-3.5" /> Salvo
+              </span>
+            )}
+          </div>
         </div>
       )}
     </div>
