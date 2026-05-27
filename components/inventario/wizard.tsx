@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -1041,6 +1042,7 @@ export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
   const [step, setStep] = useState(0)
   const [data, setData] = useState<FormData>({ ...defaultData(), ...initialData })
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const update = (field: keyof FormData, value: any) =>
     setData(prev => ({ ...prev, [field]: value }))
@@ -1049,10 +1051,14 @@ export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
 
   const handleSave = async (status: 'draft' | 'complete') => {
     setSaving(true)
+    setSaveError(null)
     try {
       await salvarInventarioProfissional({ ...data, company_id: companyId, id, risk_level: risco, record_status: status })
-    } catch {
+    } catch (err) {
+      // Re-throw erros de redirect (NEXT_REDIRECT) — são navegação, não falhas
+      if (isRedirectError(err)) throw err
       setSaving(false)
+      setSaveError('Erro ao salvar. Verifique os campos obrigatórios e tente novamente.')
     }
   }
 
@@ -1116,6 +1122,13 @@ export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
         </CardHeader>
         <CardContent>{stepContent[step]}</CardContent>
       </Card>
+
+      {saveError && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+          <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          {saveError}
+        </div>
+      )}
 
       <div className="flex items-center justify-between">
         <Button variant="outline" onClick={() => setStep(s => s - 1)} disabled={step === 0}>

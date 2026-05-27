@@ -32,4 +32,5 @@ export async function atualizarItemChecklist(formData: FormData) {
   )
 
   revalidatePath('/checklist')
+  revalidatePath('/relatorio')
 }

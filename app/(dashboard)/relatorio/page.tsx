@@ -170,30 +170,105 @@ export default async function RelatorioPage() {
 
         {/* 2 — Checklist */}
         <Secao titulo="2. Checklist de Adequação">
-          <div className="space-y-3">
-            {CHECKLIST.map(cat => {
-              const map: Record<string, string> = {}
-              for (const i of checklistItens ?? []) map[i.item_key] = i.status
-              const done = cat.items.filter(i => map[i.key] === 'completed').length
-              const na = cat.items.filter(i => map[i.key] === 'not_applicable').length
-              const ef = cat.items.length - na
-              const pct = ef > 0 ? Math.round((done / ef) * 100) : 100
-              return (
-                <div key={cat.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                  <span className="text-sm text-gray-700">{cat.label}</span>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${pct >= 80 ? 'bg-green-500' : pct >= 50 ? 'bg-yellow-400' : 'bg-red-500'}`}
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-semibold text-gray-700 w-10 text-right">{pct}%</span>
-                  </div>
+          {(() => {
+            const checklistMap: Record<string, string> = {}
+            for (const i of checklistItens ?? []) checklistMap[i.item_key] = i.status
+
+            // Itens pendentes / em andamento (críticos e altos primeiro)
+            const itensPendentes = CHECKLIST.flatMap(cat =>
+              cat.items
+                .filter(i => !['completed', 'not_applicable'].includes(checklistMap[i.key] ?? 'pending'))
+                .map(i => ({ ...i, categoria: cat.label, statusAtual: checklistMap[i.key] ?? 'pending' }))
+            ).sort((a, b) => {
+              const ordem: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 }
+              return (ordem[a.priority] ?? 3) - (ordem[b.priority] ?? 3)
+            })
+
+            const prioridadeLabel: Record<string, { label: string; color: string }> = {
+              critical: { label: 'Crítica', color: 'bg-red-100 text-red-700' },
+              high:     { label: 'Alta',    color: 'bg-orange-100 text-orange-700' },
+              medium:   { label: 'Média',   color: 'bg-yellow-100 text-yellow-700' },
+              low:      { label: 'Baixa',   color: 'bg-gray-100 text-gray-600' },
+            }
+
+            const statusLabel: Record<string, string> = {
+              pending:     'Pendente',
+              in_progress: 'Em andamento',
+            }
+
+            return (
+              <>
+                {/* Progresso por categoria */}
+                <div className="space-y-2 mb-6">
+                  {CHECKLIST.map(cat => {
+                    const done = cat.items.filter(i => checklistMap[i.key] === 'completed').length
+                    const na = cat.items.filter(i => checklistMap[i.key] === 'not_applicable').length
+                    const ef = cat.items.length - na
+                    const pct = ef > 0 ? Math.round((done / ef) * 100) : 100
+                    return (
+                      <div key={cat.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                        <span className="text-sm text-gray-700">{cat.label}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full ${pct >= 80 ? 'bg-green-500' : pct >= 50 ? 'bg-yellow-400' : 'bg-red-500'}`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-semibold text-gray-700 w-10 text-right">{pct}%</span>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
-              )
-            })}
-          </div>
+
+                {/* Pendências */}
+                {itensPendentes.length > 0 && (
+                  <>
+                    <p className="text-sm font-semibold text-gray-800 mb-3">
+                      Pendências ({itensPendentes.length} ite{itensPendentes.length > 1 ? 'ns' : 'm'})
+                    </p>
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="text-left py-2 px-3 text-xs font-semibold text-gray-600 uppercase border border-gray-200">Item</th>
+                          <th className="text-left py-2 px-3 text-xs font-semibold text-gray-600 uppercase border border-gray-200">Categoria</th>
+                          <th className="text-left py-2 px-3 text-xs font-semibold text-gray-600 uppercase border border-gray-200">Prioridade</th>
+                          <th className="text-left py-2 px-3 text-xs font-semibold text-gray-600 uppercase border border-gray-200">Status</th>
+                          <th className="text-left py-2 px-3 text-xs font-semibold text-gray-600 uppercase border border-gray-200">Ref.</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {itensPendentes.map((item, idx) => {
+                          const prio = prioridadeLabel[item.priority] ?? prioridadeLabel.low
+                          return (
+                            <tr key={item.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                              <td className="py-2 px-3 border border-gray-200">
+                                <p className="font-medium text-gray-800">{item.title}</p>
+                                <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
+                              </td>
+                              <td className="py-2 px-3 text-gray-600 border border-gray-200 text-xs">{item.categoria}</td>
+                              <td className="py-2 px-3 border border-gray-200">
+                                <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${prio.color}`}>{prio.label}</span>
+                              </td>
+                              <td className="py-2 px-3 text-gray-600 border border-gray-200 text-xs">{statusLabel[item.statusAtual] ?? item.statusAtual}</td>
+                              <td className="py-2 px-3 text-blue-500 border border-gray-200 text-xs font-mono">{item.referencia ?? '—'}</td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </>
+                )}
+
+                {itensPendentes.length === 0 && (
+                  <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+                    <span>✓</span> Todos os itens aplicáveis foram concluídos.
+                  </div>
+                )}
+              </>
+            )
+          })()}
         </Secao>
 
         {/* 3 — Inventário */}
