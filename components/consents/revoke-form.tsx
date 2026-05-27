@@ -34,7 +34,7 @@ export function RevokeForm({ id }: { id: string }) {
           <input type="hidden" name="id" value={id} />
           <div className="space-y-1.5">
             <label className="text-sm text-gray-700">Motivo da revogação (opcional)</label>
-            <Textarea name="motivo" placeholder="Ex: Solicitação do titular via e-mail" rows={2} />
+            <Textarea name="reason" placeholder="Ex: Solicitação do titular via e-mail" rows={2} />
           </div>
           <div className="flex gap-2">
             <Button type="submit" variant="destructive" size="sm" disabled={pending}>

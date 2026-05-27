@@ -24,13 +24,13 @@ export default async function TreinamentosPage({
   const { data } = companyId ? await query.order('created_at', { ascending: false }) : { data: [] }
 
   const trainings = (data ?? []).map((t: any) => {
-    const colabs = t.training_employees ?? []
+    const employees = t.training_employees ?? []
     return {
       ...t,
-      total_employees: colabs.length,
-      concluidos: colabs.filter((c: any) => c.status === 'completed').length,
-      em_andamento: colabs.filter((c: any) => c.status === 'in_progress').length,
-      nao_iniciados: colabs.filter((c: any) => c.status === 'not_started').length,
+      total_employees: employees.length,
+      completed: employees.filter((c: any) => c.status === 'completed').length,
+      inProgress: employees.filter((c: any) => c.status === 'in_progress').length,
+      notStarted: employees.filter((c: any) => c.status === 'not_started').length,
     }
   })
 
@@ -137,9 +137,9 @@ export default async function TreinamentosPage({
         ) : (
           <div className="grid gap-4">
             {trainings.map((t: any) => {
-              const progresso =
+              const progress =
                 t.total_employees > 0
-                  ? Math.round((t.concluidos / t.total_employees) * 100)
+                  ? Math.round((t.completed / t.total_employees) * 100)
                   : 0
               return (
                 <Card key={t.id}>
@@ -149,17 +149,17 @@ export default async function TreinamentosPage({
                         <h3 className="font-semibold text-gray-900">{t.title}</h3>
                         {t.description && <p className="text-sm text-gray-500">{t.description}</p>}
                         <div className="flex flex-wrap gap-2">
-                          <Badge variant="success">{t.concluidos} concluídos</Badge>
-                          <Badge variant="warning">{t.em_andamento} em andamento</Badge>
-                          <Badge variant="secondary">{t.nao_iniciados} não iniciados</Badge>
+                          <Badge variant="success">{t.completed} concluídos</Badge>
+                          <Badge variant="warning">{t.inProgress} em andamento</Badge>
+                          <Badge variant="secondary">{t.notStarted} não iniciados</Badge>
                         </div>
                         {t.total_employees > 0 && (
                           <div className="space-y-1">
                             <div className="flex justify-between text-xs text-gray-500">
                               <span>Progresso geral</span>
-                              <span>{progresso}%</span>
+                              <span>{progress}%</span>
                             </div>
-                            <Progress value={progresso} />
+                            <Progress value={progress} />
                           </div>
                         )}
                       </div>

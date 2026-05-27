@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/utils'
 import { AlertCircle, Globe, Plus, Scale, Truck } from 'lucide-react'
 import Link from 'next/link'
 
-const categoriaLabel: Record<string, string> = {
+const categoryLabel: Record<string, string> = {
   technology: 'Tecnologia',
   healthcare: 'Saúde',
   financial: 'Financeiro',
@@ -19,21 +19,21 @@ const categoriaLabel: Record<string, string> = {
   other: 'Outro',
 }
 
-const tipoAcessoLabel: Record<string, string> = {
+const accessTypeLabel: Record<string, string> = {
   processor: 'Operador',
   joint_controller: 'Controlador Conjunto',
   sub_processor: 'Suboperador',
   no_data_access: 'Sem acesso a dados',
 }
 
-const riscoVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
+const riskVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
   low: 'success',
   medium: 'warning',
   high: 'destructive',
   critical: 'destructive',
 }
 
-const diligenciaVariant: Record<string, 'secondary' | 'warning' | 'success' | 'destructive'> = {
+const dueDiligenceVariant: Record<string, 'secondary' | 'warning' | 'success' | 'destructive'> = {
   pending: 'secondary',
   under_review: 'warning',
   approved: 'success',
@@ -41,7 +41,7 @@ const diligenciaVariant: Record<string, 'secondary' | 'warning' | 'success' | 'd
   expired: 'destructive',
 }
 
-const diligenciaLabel: Record<string, string> = {
+const dueDiligenceLabel: Record<string, string> = {
   pending: 'Pendente',
   under_review: 'Em Análise',
   approved: 'Aprovado',
@@ -66,18 +66,18 @@ export default async function FornecedoresPage({
       `name.ilike.%${q}%,tax_id.ilike.%${q}%,category.ilike.%${q}%,contact_email.ilike.%${q}%`,
     )
 
-  const { data: fornecedores } = companyId
+  const { data: suppliersData } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const items = fornecedores ?? []
-  const hoje = new Date()
+  const items = suppliersData ?? []
+  const today = new Date()
 
-  const semDPA = items.filter((f: any) => f.access_type !== 'no_data_access' && !f.has_dpa).length
-  const avaliacaoVencida = items.filter(
-    (f: any) => f.next_assessment_date && new Date(f.next_assessment_date) < hoje,
+  const withoutDPA = items.filter((f: any) => f.access_type !== 'no_data_access' && !f.has_dpa).length
+  const expiredAssessment = items.filter(
+    (f: any) => f.next_assessment_date && new Date(f.next_assessment_date) < today,
   ).length
-  const internacionais = items.filter((f: any) => f.international_transfer).length
+  const international = items.filter((f: any) => f.international_transfer).length
 
   return (
     <div className="space-y-5">
@@ -96,20 +96,20 @@ export default async function FornecedoresPage({
       </div>
 
       {/* Alertas */}
-      {(semDPA > 0 || avaliacaoVencida > 0) && (
+      {(withoutDPA > 0 || expiredAssessment > 0) && (
         <Card className="border-yellow-200 bg-yellow-50">
           <CardContent className="pt-4 pb-3">
             <div className="flex items-start gap-2 text-sm text-yellow-800">
               <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
               <span>
-                {semDPA > 0 && (
+                {withoutDPA > 0 && (
                   <>
                     <span className="font-medium">
-                      {semDPA} fornecedor{semDPA > 1 ? 'es' : ''} sem DPA assinado.
+                      {withoutDPA} fornecedor{withoutDPA > 1 ? 'es' : ''} sem DPA assinado.
                     </span>{' '}
                   </>
                 )}
-                {avaliacaoVencida > 0 && <>{avaliacaoVencida} com avaliação vencida.</>}
+                {expiredAssessment > 0 && <>{expiredAssessment} com avaliação vencida.</>}
               </span>
             </div>
           </CardContent>
@@ -126,7 +126,7 @@ export default async function FornecedoresPage({
         </Card>
         <Card>
           <CardContent className="pt-4 pb-3 text-center">
-            <p className="text-2xl font-bold text-red-600">{semDPA}</p>
+            <p className="text-2xl font-bold text-red-600">{withoutDPA}</p>
             <p className="text-xs text-gray-500 mt-0.5">Sem DPA</p>
           </CardContent>
         </Card>
@@ -134,7 +134,7 @@ export default async function FornecedoresPage({
           <CardContent className="pt-4 pb-3 text-center">
             <div className="flex items-center justify-center gap-1">
               <Globe className="h-4 w-4 text-blue-500" />
-              <p className="text-2xl font-bold text-gray-900">{internacionais}</p>
+              <p className="text-2xl font-bold text-gray-900">{international}</p>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">Internacionais</p>
           </CardContent>
@@ -184,8 +184,8 @@ export default async function FornecedoresPage({
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {items.map((item: any) => {
-                      const vencida =
-                        item.next_assessment_date && new Date(item.next_assessment_date) < hoje
+                      const assessmentExpired =
+                        item.next_assessment_date && new Date(item.next_assessment_date) < today
                       return (
                         <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                           <td className="py-3 px-4">
@@ -205,10 +205,10 @@ export default async function FornecedoresPage({
                             </div>
                           </td>
                           <td className="py-3 px-4 text-gray-600 text-xs">
-                            {categoriaLabel[item.category] ?? item.category}
+                            {categoryLabel[item.category] ?? item.category}
                           </td>
                           <td className="py-3 px-4 text-gray-600 text-xs">
-                            {tipoAcessoLabel[item.access_type] ?? item.access_type}
+                            {accessTypeLabel[item.access_type] ?? item.access_type}
                           </td>
                           <td className="py-3 px-4">
                             {item.access_type === 'no_data_access' ? (
@@ -225,7 +225,7 @@ export default async function FornecedoresPage({
                           </td>
                           <td className="py-3 px-4">
                             <Badge
-                              variant={riscoVariant[item.risk_level] ?? 'secondary'}
+                              variant={riskVariant[item.risk_level] ?? 'secondary'}
                               className="capitalize text-xs"
                             >
                               {item.risk_level}
@@ -233,13 +233,13 @@ export default async function FornecedoresPage({
                           </td>
                           <td className="py-3 px-4">
                             <Badge
-                              variant={diligenciaVariant[item.due_diligence_status] ?? 'secondary'}
+                              variant={dueDiligenceVariant[item.due_diligence_status] ?? 'secondary'}
                               className="text-xs"
                             >
-                              {diligenciaLabel[item.due_diligence_status] ??
+                              {dueDiligenceLabel[item.due_diligence_status] ??
                                 item.due_diligence_status}
                             </Badge>
-                            {vencida && (
+                            {assessmentExpired && (
                               <p className="text-xs text-red-500 mt-0.5">
                                 Venceu {formatDate(item.next_assessment_date)}
                               </p>
@@ -308,16 +308,16 @@ export default async function FornecedoresPage({
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       <Badge
-                        variant={riscoVariant[item.risk_level] ?? 'secondary'}
+                        variant={riskVariant[item.risk_level] ?? 'secondary'}
                         className="capitalize text-xs"
                       >
                         {item.risk_level}
                       </Badge>
                       <Badge
-                        variant={diligenciaVariant[item.due_diligence_status] ?? 'secondary'}
+                        variant={dueDiligenceVariant[item.due_diligence_status] ?? 'secondary'}
                         className="text-xs"
                       >
-                        {diligenciaLabel[item.due_diligence_status] ?? item.due_diligence_status}
+                        {dueDiligenceLabel[item.due_diligence_status] ?? item.due_diligence_status}
                       </Badge>
                       {item.access_type !== 'no_data_access' &&
                         (item.has_dpa ? (
@@ -331,7 +331,7 @@ export default async function FornecedoresPage({
                         ))}
                     </div>
                     <p className="text-xs text-gray-500">
-                      {categoriaLabel[item.category]} · {tipoAcessoLabel[item.access_type]}
+                      {categoryLabel[item.category]} · {accessTypeLabel[item.access_type]}
                     </p>
                   </div>
                 ))}

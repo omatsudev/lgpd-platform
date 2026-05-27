@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/utils'
 import { AlertCircle, FileText, Plus } from 'lucide-react'
 import Link from 'next/link'
 
-const tipoLabel: Record<string, string> = {
+const typeLabel: Record<string, string> = {
   privacy_policy: 'Política de Privacidade',
   privacy_notice: 'Aviso de Privacidade',
   security_policy: 'Política de Segurança',
@@ -55,18 +55,18 @@ export default async function DocumentosPage({
       `title.ilike.%${q}%,type.ilike.%${q}%,description.ilike.%${q}%,responsible.ilike.%${q}%`,
     )
 
-  const { data: documentos } = companyId
+  const { data: documents } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const items = documentos ?? []
-  const hoje = new Date()
-  const expirados = items.filter(
-    (d: any) => d.expiration_date && new Date(d.expiration_date) < hoje,
+  const items = documents ?? []
+  const today = new Date()
+  const expired = items.filter(
+    (d: any) => d.expiration_date && new Date(d.expiration_date) < today,
   ).length
-  const vencendoEm30 = items.filter((d: any) => {
+  const expiringIn30 = items.filter((d: any) => {
     if (!d.expiration_date) return false
-    const diff = (new Date(d.expiration_date).getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)
+    const diff = (new Date(d.expiration_date).getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
     return diff >= 0 && diff <= 30
   }).length
 
@@ -86,21 +86,21 @@ export default async function DocumentosPage({
         </Link>
       </div>
 
-      {(expirados > 0 || vencendoEm30 > 0) && (
+      {(expired > 0 || expiringIn30 > 0) && (
         <Card className="border-yellow-200 bg-yellow-50">
           <CardContent className="pt-4 pb-3">
             <div className="flex items-start gap-2 text-sm text-yellow-800">
               <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
               <span>
-                {expirados > 0 && (
+                {expired > 0 && (
                   <>
                     <span className="font-medium">
-                      {expirados} documento{expirados > 1 ? 's' : ''} expirado
-                      {expirados > 1 ? 's' : ''}.
+                      {expired} documento{expired > 1 ? 's' : ''} expirado
+                      {expired > 1 ? 's' : ''}.
                     </span>{' '}
                   </>
                 )}
-                {vencendoEm30 > 0 && <>{vencendoEm30} vencendo nos próximos 30 dias.</>}
+                {expiringIn30 > 0 && <>{expiringIn30} vencendo nos próximos 30 dias.</>}
               </span>
             </div>
           </CardContent>
@@ -153,14 +153,14 @@ export default async function DocumentosPage({
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {items.map((item: any) => {
-                      const expirado = item.expiration_date && new Date(item.expiration_date) < hoje
+                      const expirado = item.expiration_date && new Date(item.expiration_date) < today
                       return (
                         <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                           <td className="py-3 px-4 font-medium text-gray-900 max-w-[200px] truncate">
                             {item.title}
                           </td>
                           <td className="py-3 px-4 text-gray-600 text-xs">
-                            {tipoLabel[item.type] ?? item.type}
+                            {typeLabel[item.type] ?? item.type}
                           </td>
                           <td className="py-3 px-4 text-gray-500 text-xs font-mono">
                             v{item.version}
@@ -201,7 +201,7 @@ export default async function DocumentosPage({
               {/* Mobile */}
               <div className="md:hidden divide-y divide-gray-100">
                 {items.map((item: any) => {
-                  const expirado = item.expiration_date && new Date(item.expiration_date) < hoje
+                  const expirado = item.expiration_date && new Date(item.expiration_date) < today
                   return (
                     <div key={item.id} className="p-4 space-y-2">
                       <div className="flex items-start justify-between gap-2">
@@ -221,7 +221,7 @@ export default async function DocumentosPage({
                         </Badge>
                         <span className="text-xs text-gray-500 font-mono">v{item.version}</span>
                       </div>
-                      <p className="text-xs text-gray-500">{tipoLabel[item.type] ?? item.type}</p>
+                      <p className="text-xs text-gray-500">{typeLabel[item.type] ?? item.type}</p>
                       {item.expiration_date && (
                         <p
                           className={`text-xs ${expirado ? 'text-red-600 font-medium' : 'text-gray-400'}`}

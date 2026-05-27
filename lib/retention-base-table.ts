@@ -95,7 +95,7 @@ export const RETENTION_BASE_TABLE: RetentionBaseItem[] = [
   },
 ]
 
-export const EVENTOS_INICIAIS = [
+export const INITIAL_EVENTS = [
   'Rescisão do contrato de trabalho',
   'Término da relação contratual',
   'Data do documento',
@@ -108,7 +108,7 @@ export const EVENTOS_INICIAIS = [
   'Outro',
 ]
 
-export const DESTINACOES_FINAIS = [
+export const FINAL_DISPOSITIONS = [
   'Descarte seguro',
   'Anonimização',
   'Devolução ao titular',
@@ -118,7 +118,7 @@ export const DESTINACOES_FINAIS = [
   'Sobrescrita automática',
 ]
 
-export const FUNDAMENTOS_JURIDICOS = [
+export const LEGAL_BASES = [
   'LGPD Art. 7º, I (consentimento)',
   'LGPD Art. 7º, II (cumprimento de obrigação legal)',
   'LGPD Art. 7º, III (políticas públicas)',
@@ -135,7 +135,7 @@ export const FUNDAMENTOS_JURIDICOS = [
   'CFM Res. 1.821/2007',
 ]
 
-export const CATEGORIAS_DADOS = [
+export const DATA_CATEGORIES = [
   'Trabalhistas',
   'Previdenciários/SST',
   'FGTS/Previdência',

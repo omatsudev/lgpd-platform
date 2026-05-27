@@ -176,7 +176,7 @@ const TIPOS_ARMAZENAMENTO = [
   { value: 'hybrid', label: 'Híbrido' },
 ]
 
-const EVENTOS_INICIAIS = [
+const START_EVENTS = [
   'Desligamento do funcionário',
   'Encerramento do contrato',
   'Fim do atendimento',
@@ -188,7 +188,7 @@ const EVENTOS_INICIAIS = [
   'Outro',
 ]
 
-const DESTINACOES_FINAIS = [
+const END_DISPOSITIONS = [
   'Descarte seguro',
   'Anonimização',
   'Devolução ao titular',
@@ -1296,7 +1296,7 @@ function StepStorage({
               <SelectValue placeholder="Quando começa a contar..." />
             </SelectTrigger>
             <SelectContent>
-              {EVENTOS_INICIAIS.map((e) => (
+              {START_EVENTS.map((e) => (
                 <SelectItem key={e} value={e}>
                   {e}
                 </SelectItem>
@@ -1314,7 +1314,7 @@ function StepStorage({
               <SelectValue placeholder="Ao final do prazo..." />
             </SelectTrigger>
             <SelectContent>
-              {DESTINACOES_FINAIS.map((d) => (
+              {END_DISPOSITIONS.map((d) => (
                 <SelectItem key={d} value={d}>
                   {d}
                 </SelectItem>

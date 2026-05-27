@@ -58,9 +58,11 @@ export async function saveRetentionDisposal(data: RetentionDisposalData) {
   }
 
   if (data.id) {
-    await supabase.from('retention_disposals').update(payload).eq('id', data.id)
+    const { error: updateErr } = await supabase.from('retention_disposals').update(payload).eq('id', data.id)
+  if (updateErr) throw new Error(`Erro ao atualizar registro: ${updateErr.message}`)
   } else {
-    await supabase.from('retention_disposals').insert({ ...payload, created_by: user.id })
+    const { error: insertErr } = await supabase.from('retention_disposals').insert({ ...payload, created_by: user.id })
+  if (insertErr) throw new Error(`Erro ao criar registro: ${insertErr.message}`)
   }
 
   revalidatePath('/retention-disposal')
@@ -75,7 +77,7 @@ export async function registerDisposalHold(formData: globalThis.FormData) {
   if (!user) throw new Error('Não autenticado')
 
   const id = formData.get('id') as string
-  const motivo = formData.get('motivo') as string
+  const reason = formData.get('reason') as string
 
   const { data: item } = await supabase
     .from('retention_disposals')
@@ -83,17 +85,17 @@ export async function registerDisposalHold(formData: globalThis.FormData) {
     .eq('id', id)
     .single()
 
-  const historico = (item?.action_history ?? []) as object[]
-  historico.push({
+  const history = (item?.action_history ?? []) as object[]
+  history.push({
     acao: 'bloqueio',
     data: new Date().toISOString(),
     usuario: user.id,
-    motivo,
+    reason,
   })
 
   await supabase
     .from('retention_disposals')
-    .update({ hold_active: true, hold_reason: motivo, action_history: historico })
+    .update({ hold_active: true, hold_reason: reason, action_history: history })
     .eq('id', id)
 
   revalidatePath('/retention-disposal')
@@ -108,7 +110,7 @@ export async function registerDisposal(formData: globalThis.FormData) {
   if (!user) throw new Error('Não autenticado')
 
   const id = formData.get('id') as string
-  const metodo = formData.get('metodo') as string
+  const method = formData.get('method') as string
 
   const { data: item } = await supabase
     .from('retention_disposals')
@@ -116,19 +118,19 @@ export async function registerDisposal(formData: globalThis.FormData) {
     .eq('id', id)
     .single()
 
-  const historico = (item?.action_history ?? []) as object[]
-  historico.push({
+  const history = (item?.action_history ?? []) as object[]
+  history.push({
     acao: 'descarte',
     data: new Date().toISOString(),
     usuario: user.id,
-    metodo,
+    method,
   })
 
   await supabase
     .from('retention_disposals')
     .update({
-      action_history: historico,
-      notes: `Descarte realizado em ${new Date().toLocaleDateString('pt-BR')} — método: ${metodo}`,
+      action_history: history,
+      notes: `Descarte realizado em ${new Date().toLocaleDateString('pt-BR')} — método: ${method}`,
     })
     .eq('id', id)
 

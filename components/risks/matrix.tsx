@@ -30,11 +30,11 @@ const IMP_LABELS = [
 
 export function RiskMatrix({ items }: { items: any[] }) {
   // Agrupa riscos por (prob_inerente, imp_inerente)
-  const mapa: Record<string, any[]> = {}
+  const risksByScore: Record<string, any[]> = {}
   for (const r of items) {
     const key = `${r.inherent_probability}-${r.inherent_impact}`
-    if (!mapa[key]) mapa[key] = []
-    mapa[key].push(r)
+    if (!risksByScore[key]) risksByScore[key] = []
+    risksByScore[key].push(r)
   }
 
   return (
@@ -63,7 +63,7 @@ export function RiskMatrix({ items }: { items: any[] }) {
               </div>
               {[1, 2, 3, 4, 5].map((imp) => {
                 const key = `${prob}-${imp}`
-                const cell = mapa[key] ?? []
+                const cell = risksByScore[key] ?? []
                 return (
                   <div
                     key={imp}

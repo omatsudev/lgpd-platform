@@ -52,7 +52,9 @@
       "Bash(sed -i 's/categoria: item\\\\.category/category: item.category/g;    s/item\\\\.retention_start_event/item.startEvent/g;    s/item\\\\.final_disposition/item.finalDisposition/g;    s/item\\\\.categoria/item.category/g' /home/omatsu/dev/omatsu/lgpd-platform/components/retention-disposal/form.tsx)",
       "Bash(sed -i 's/categoria: initialData\\\\.categoria/category: initialData.category/g;    s/categoria: '\\\\'''\\\\'',$/category: '\\\\'''\\\\'',/g;    s/categoria:\\\\s*item\\\\.category/category: item.category/g' /home/omatsu/dev/omatsu/lgpd-platform/components/retention-disposal/form.tsx)",
       "Bash(sed -i 's/categoria: data\\\\.categoria/category: data.category/g;    s/categoria: string/category: string/g;    s/data\\\\.categoria/data.category/g' /home/omatsu/dev/omatsu/lgpd-platform/app/actions/retention-disposal.ts)",
-      "Bash(# The status variable uses mixed Portuguese/English - standardize to English *)"
+      "Bash(# The status variable uses mixed Portuguese/English - standardize to English *)",
+      "Bash(python3 /tmp/fix_rd_actions.py)",
+      "Bash(python3 /tmp/fix_risks_page.py)"
     ],
     "additionalDirectories": [
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]",

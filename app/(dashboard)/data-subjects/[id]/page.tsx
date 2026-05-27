@@ -10,7 +10,7 @@ import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const tipoMap: Record<string, string> = {
+const typeMap: Record<string, string> = {
   acesso: 'Acesso',
   exclusao: 'Exclusão',
   correcao: 'Correção',
@@ -31,23 +31,23 @@ export default async function TitularDetailPage({ params }: { params: Promise<{ 
   const { id } = await params
   const { supabase } = await getUserCompany()
 
-  const { data: solicitacao } = await supabase
+  const { data: request } = await supabase
     .from('data_subject_requests')
     .select('*')
     .eq('id', id)
     .single()
 
-  if (!solicitacao) notFound()
+  if (!request) notFound()
 
-  const status = statusMap[solicitacao.status] ?? {
-    label: solicitacao.status,
+  const status = statusMap[request.status] ?? {
+    label: request.status,
     variant: 'secondary' as const,
   }
-  const prazoDate = new Date(solicitacao.response_deadline)
-  const diasRestantes = Math.ceil(
-    (prazoDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+  const deadlineDate = new Date(request.response_deadline)
+  const daysLeft = Math.ceil(
+    (deadlineDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
   )
-  const atrasado = diasRestantes < 0 && solicitacao.status !== 'completed'
+  const overdue = daysLeft < 0 && request.status !== 'completed'
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -75,50 +75,50 @@ export default async function TitularDetailPage({ params }: { params: Promise<{ 
             <div>
               <span className="text-gray-500">Tipo:</span>{' '}
               <Badge variant="default" className="ml-1">
-                {tipoMap[solicitacao.type] ?? solicitacao.type}
+                {typeMap[request.type] ?? request.type}
               </Badge>
             </div>
             <div>
               <span className="text-gray-500">Titular:</span>{' '}
-              <span className="font-medium ml-1">{solicitacao.name}</span>
+              <span className="font-medium ml-1">{request.name}</span>
             </div>
             <div>
               <span className="text-gray-500">Email:</span>{' '}
-              <span className="font-medium ml-1">{solicitacao.email}</span>
+              <span className="font-medium ml-1">{request.email}</span>
             </div>
-            {solicitacao.cpf && (
+            {request.cpf && (
               <div>
                 <span className="text-gray-500">CPF:</span>{' '}
-                <span className="font-medium ml-1">{solicitacao.cpf}</span>
+                <span className="font-medium ml-1">{request.cpf}</span>
               </div>
             )}
             <div>
               <span className="text-gray-500">Recebido:</span>{' '}
-              <span className="font-medium ml-1">{formatDateTime(solicitacao.created_at)}</span>
+              <span className="font-medium ml-1">{formatDateTime(request.created_at)}</span>
             </div>
             <div
-              className={`flex items-center gap-1 ${atrasado ? 'text-red-600' : 'text-orange-600'}`}
+              className={`flex items-center gap-1 ${overdue ? 'text-red-600' : 'text-orange-600'}`}
             >
               <Clock className="h-3.5 w-3.5" />
               <span className="font-medium">
-                Prazo: {formatDate(solicitacao.response_deadline)}
-                {atrasado
+                Prazo: {formatDate(request.response_deadline)}
+                {overdue
                   ? ' (ATRASADO)'
-                  : solicitacao.status !== 'completed'
-                    ? ` (${diasRestantes}d restantes)`
+                  : request.status !== 'completed'
+                    ? ` (${daysLeft}d restantes)`
                     : ''}
               </span>
             </div>
           </div>
           <div className="pt-2">
             <p className="text-gray-500 mb-1">Solicitação:</p>
-            <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{solicitacao.description}</p>
+            <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{request.description}</p>
           </div>
-          {solicitacao.response && (
+          {request.response && (
             <div className="pt-2">
               <p className="text-gray-500 mb-1">Resposta enviada:</p>
               <p className="text-gray-800 bg-green-50 p-3 rounded-lg border border-green-100">
-                {solicitacao.response}
+                {request.response}
               </p>
             </div>
           )}
@@ -136,7 +136,7 @@ export default async function TitularDetailPage({ params }: { params: Promise<{ 
               <Label>Status</Label>
               <select
                 name="status"
-                defaultValue={solicitacao.status}
+                defaultValue={request.status}
                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="pending">Pendente</option>
@@ -149,7 +149,7 @@ export default async function TitularDetailPage({ params }: { params: Promise<{ 
               <Label>Resposta ao titular</Label>
               <Textarea
                 name="response"
-                defaultValue={solicitacao.response ?? ''}
+                defaultValue={request.response ?? ''}
                 rows={5}
                 placeholder="Descreva quais dados são tratados, com qual finalidade e base legal..."
               />
