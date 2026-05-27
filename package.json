@@ -1,12 +1,15 @@
 {
   "name": "lgpd-platform",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "release:patch": "npm version patch --no-git-tag-version && git add package.json && git commit -m \"chore: bump version to $(node -p \"require('./package.json').version\")\" && git tag v$(node -p \"require('./package.json').version\") && git push && git push --tags",
+    "release:minor": "npm version minor --no-git-tag-version && git add package.json && git commit -m \"chore: bump version to $(node -p \"require('./package.json').version\")\" && git tag v$(node -p \"require('./package.json').version\") && git push && git push --tags",
+    "release:major": "npm version major --no-git-tag-version && git add package.json && git commit -m \"chore: bump version to $(node -p \"require('./package.json').version\")\" && git tag v$(node -p \"require('./package.json').version\") && git push && git push --tags"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

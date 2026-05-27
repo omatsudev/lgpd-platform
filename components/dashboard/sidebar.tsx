@@ -87,6 +87,9 @@ function NavContent({ onClose, role }: { onClose?: () => void; role?: string | n
             Sair
           </button>
         </form>
+        <p className="px-3 pt-3 text-xs text-blue-300/50 select-none">
+          v{process.env.NEXT_PUBLIC_APP_VERSION ?? '1.0.0'}
+        </p>
       </div>
     </>
   )
