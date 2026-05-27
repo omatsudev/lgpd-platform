@@ -11,15 +11,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate and normalize URL
-    let urlNormalizada: string
+    let normalizedUrl: string
     try {
       const parsed = new URL(url.startsWith('http') ? url : `https://${url}`)
-      urlNormalizada = parsed.href
+      normalizedUrl = parsed.href
     } catch {
       return NextResponse.json({ error: 'URL inválida' }, { status: 400 })
     }
 
-    const domain = new URL(urlNormalizada).hostname
+    const domain = new URL(normalizedUrl).hostname
     const { companyId, user, supabase } = await getUserCompany()
 
     if (!user || !companyId) {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       .from('site_scans')
       .insert({
         company_id: companyId,
-        url: urlNormalizada,
+        url: normalizedUrl,
         domain,
         status: 'processing',
         created_by: user.id,
@@ -49,24 +49,24 @@ export async function POST(req: NextRequest) {
 
     // Run the scan
     try {
-      const resultado = await scanSite(urlNormalizada)
+      const scanResult = await scanSite(normalizedUrl)
 
       await supabase
         .from('site_scans')
         .update({
           status: 'completed',
-          cookies: resultado.cookies,
-          technologies: resultado.technologies,
-          has_cookie_banner: resultado.has_cookie_banner,
-          has_privacy_policy: resultado.has_privacy_policy,
-          privacy_policy_url: resultado.privacy_policy_url,
-          compliance_score: resultado.compliance_score,
-          issues: resultado.issues,
-          recommendations: resultado.recommendations,
+          cookies: scanResult.cookies,
+          technologies: scanResult.technologies,
+          has_cookie_banner: scanResult.has_cookie_banner,
+          has_privacy_policy: scanResult.has_privacy_policy,
+          privacy_policy_url: scanResult.privacy_policy_url,
+          compliance_score: scanResult.compliance_score,
+          issues: scanResult.issues,
+          recommendations: scanResult.recommendations,
         })
         .eq('id', scan.id)
 
-      return NextResponse.json({ id: scan.id, resultado })
+      return NextResponse.json({ id: scan.id, result: scanResult })
     } catch (err: any) {
       await supabase
         .from('site_scans')

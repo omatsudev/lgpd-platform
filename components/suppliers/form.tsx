@@ -294,7 +294,7 @@ export function FornecedorForm({ companyId, id, initialData }: FornecedorFormPro
     })
   }
 
-  const acessaDados = data.access_type !== 'no_data_access'
+  const accessesData = data.access_type !== 'no_data_access'
 
   return (
     <div className="space-y-6">
@@ -432,7 +432,7 @@ export function FornecedorForm({ companyId, id, initialData }: FornecedorFormPro
             </div>
           </div>
 
-          {acessaDados && (
+          {accessesData && (
             <>
               <div className="space-y-1.5">
                 <Label>Categorias de dados acessados</Label>
@@ -490,7 +490,7 @@ export function FornecedorForm({ companyId, id, initialData }: FornecedorFormPro
       </Card>
 
       {/* Seção 3: Contrato / DPA */}
-      {acessaDados && (
+      {accessesData && (
         <Card>
           <CardHeader className="pb-2">
             <SectionHeader

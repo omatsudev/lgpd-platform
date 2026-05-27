@@ -22,18 +22,18 @@ const statusLabel: Record<string, string> = {
   not_started: 'Não iniciado',
 }
 
-export default async function TreinamentoFormPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function TrainingFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
   const { companyId, supabase } = await getUserCompany()
 
-  let treinamento: any = null
+  let training: any = null
   let employees: any[] = []
 
   if (!isNew) {
     const { data: t } = await supabase.from('trainings').select('*').eq('id', id).single()
     if (!t) notFound()
-    treinamento = t
+    training = t
 
     const { data: colabs } = await supabase
       .from('training_employees')
@@ -53,7 +53,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {isNew ? 'Novo Treinamento' : treinamento?.title}
+            {isNew ? 'Novo Treinamento' : training?.title}
           </h1>
           <p className="text-sm text-gray-500">Gerencie conteúdo e acompanhe employees</p>
         </div>
@@ -73,7 +73,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
                 <Label>Título</Label>
                 <Input
                   name="title"
-                  defaultValue={treinamento?.title ?? ''}
+                  defaultValue={training?.title ?? ''}
                   placeholder="Nome do treinamento"
                   required
                 />
@@ -83,7 +83,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
                 <Textarea
                   name="description"
                   rows={2}
-                  defaultValue={treinamento?.description ?? ''}
+                  defaultValue={training?.description ?? ''}
                   placeholder="Descrição do treinamento"
                 />
               </div>
@@ -91,7 +91,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
                 <Label>Vídeo (URL YouTube/Vimeo)</Label>
                 <Input
                   name="video_url"
-                  defaultValue={treinamento?.video_url ?? ''}
+                  defaultValue={training?.video_url ?? ''}
                   placeholder="https://youtube.com/..."
                 />
               </div>
@@ -99,7 +99,7 @@ export default async function TreinamentoFormPage({ params }: { params: Promise<
                 <Label>Material PDF (URL)</Label>
                 <Input
                   name="pdf_url"
-                  defaultValue={treinamento?.pdf_url ?? ''}
+                  defaultValue={training?.pdf_url ?? ''}
                   placeholder="https://..."
                 />
               </div>

@@ -35,7 +35,7 @@ const statusLabel: Record<string, string> = {
   draft: 'Rascunho',
 }
 
-export default async function InventarioPage({
+export default async function InventoryPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>
@@ -52,11 +52,11 @@ export default async function InventarioPage({
       `process_name.ilike.%${q}%,data_type.ilike.%${q}%,purpose.ilike.%${q}%,legal_basis.ilike.%${q}%,responsible_department.ilike.%${q}%`,
     )
 
-  const { data: inventario } = companyId
+  const { data: inventoryData } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const items = inventario ?? []
+  const items = inventoryData ?? []
 
   return (
     <div className="space-y-5">
@@ -119,13 +119,13 @@ export default async function InventarioPage({
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {items.map((item: any) => {
-                      const nome = item.process_name || item.data_type || '—'
+                      const displayName = item.process_name || item.data_type || '—'
                       const risk = item.risk_level ?? 'low'
                       const status = item.record_status ?? 'draft'
                       return (
                         <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                           <td className="py-3 px-4 font-medium text-gray-900 max-w-[200px] truncate">
-                            {nome}
+                            {displayName}
                           </td>
                           <td className="py-3 px-4 text-gray-600 text-xs">
                             {item.responsible_department ?? '—'}
@@ -167,13 +167,13 @@ export default async function InventarioPage({
               {/* Mobile cards */}
               <div className="md:hidden divide-y divide-gray-100">
                 {items.map((item: any) => {
-                  const nome = item.process_name || item.data_type || '—'
+                  const displayName = item.process_name || item.data_type || '—'
                   const risk = item.risk_level ?? 'low'
                   const status = item.record_status ?? 'draft'
                   return (
                     <div key={item.id} className="p-4 space-y-2">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="font-medium text-gray-900 text-sm">{nome}</p>
+                        <p className="font-medium text-gray-900 text-sm">{displayName}</p>
                         <div className="flex gap-1">
                           <Link href={`/inventory/${item.id}/view`}>
                             <Button variant="ghost" size="sm" className="h-7 text-xs">

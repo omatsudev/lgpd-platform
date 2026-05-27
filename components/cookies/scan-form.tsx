@@ -27,7 +27,7 @@ type TechCat = 'analytics' | 'advertising' | 'social' | 'cms' | 'framework' | 'c
 type Level = 'critical' | 'high' | 'medium' | 'low'
 type TechRisk = 'high' | 'medium' | 'low'
 
-type ScanResultado = {
+type ScanResult = {
   cookies: Array<{
     name: string
     category: CookieCat
@@ -155,23 +155,23 @@ function CollapsibleSection({
 
 export function ScanForm({
   scanId,
-  resultado: resultadoInicial,
+  result: initialResult,
 }: {
   scanId?: string
-  resultado?: ScanResultado
+  result?: ScanResult
 }) {
   const router = useRouter()
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [resultado, setResultado] = useState<ScanResultado | null>(resultadoInicial ?? null)
+  const [result, setResult] = useState<ScanResult | null>(initialResult ?? null)
   const [scannedUrl, setScannedUrl] = useState('')
 
   const handleScan = async () => {
     if (!url.trim()) return
     setLoading(true)
     setError(null)
-    setResultado(null)
+    setResult(null)
 
     try {
       const res = await fetch('/api/cookies/scan', {
@@ -184,7 +184,7 @@ export function ScanForm({
       if (!res.ok || json.error) {
         setError(json.error ?? 'Erro ao escanear o site')
       } else {
-        setResultado(json.resultado)
+        setResult(json.result)
         setScannedUrl(url.trim())
         router.refresh()
       }
@@ -246,26 +246,26 @@ export function ScanForm({
         </Card>
       )}
 
-      {resultado && (
+      {result && (
         <div className="space-y-4">
           {/* Resumo */}
           <Card>
             <CardContent className="pt-6">
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <ScoreCircle score={resultado.compliance_score} />
+                <ScoreCircle score={result.compliance_score} />
                 <div className="flex-1 space-y-3 w-full">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Conformidade</p>
-                    <Progress value={resultado.compliance_score} className="h-2.5" />
+                    <Progress value={result.compliance_score} className="h-2.5" />
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <BoolCheck
-                      ok={resultado.has_privacy_policy}
+                      ok={result.has_privacy_policy}
                       labelOk="Política de Privacidade"
                       labelNao="Sem Política de Privacidade"
                     />
                     <BoolCheck
-                      ok={resultado.has_cookie_banner}
+                      ok={result.has_cookie_banner}
                       labelOk="Banner de cookies"
                       labelNao="Sem banner de cookies"
                     />
@@ -281,9 +281,9 @@ export function ScanForm({
                       {scannedUrl}
                     </a>
                   )}
-                  {resultado.privacy_policy_url && (
+                  {result.privacy_policy_url && (
                     <a
-                      href={resultado.privacy_policy_url}
+                      href={result.privacy_policy_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-xs text-blue-500 hover:underline ml-3"
@@ -298,12 +298,12 @@ export function ScanForm({
           </Card>
 
           {/* Problemas */}
-          {resultado.issues.length > 0 && (
+          {result.issues.length > 0 && (
             <Card>
               <CardContent className="pt-5">
-                <CollapsibleSection title="Problemas identificados" count={resultado.issues.length}>
+                <CollapsibleSection title="Problemas identificados" count={result.issues.length}>
                   <div className="space-y-2">
-                    {resultado.issues.map((p, i) => (
+                    {result.issues.map((p, i) => (
                       <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
                         <AlertTriangle
                           className={`h-4 w-4 mt-0.5 shrink-0 ${p.level === 'critical' || p.level === 'high' ? 'text-red-500' : p.level === 'medium' ? 'text-yellow-500' : 'text-gray-400'}`}
@@ -326,12 +326,12 @@ export function ScanForm({
           )}
 
           {/* Recomendações */}
-          {resultado.recommendations.length > 0 && (
+          {result.recommendations.length > 0 && (
             <Card>
               <CardContent className="pt-5">
-                <CollapsibleSection title="Recomendações" count={resultado.recommendations.length}>
+                <CollapsibleSection title="Recomendações" count={result.recommendations.length}>
                   <div className="space-y-2">
-                    {resultado.recommendations.map((r, i) => (
+                    {result.recommendations.map((r, i) => (
                       <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-blue-50">
                         <Shield className="h-4 w-4 mt-0.5 text-blue-500 shrink-0" />
                         <div>
@@ -347,15 +347,15 @@ export function ScanForm({
           )}
 
           {/* Tecnologias */}
-          {resultado.technologies.length > 0 && (
+          {result.technologies.length > 0 && (
             <Card>
               <CardContent className="pt-5">
                 <CollapsibleSection
                   title="Tecnologias e scripts detectados"
-                  count={resultado.technologies.length}
+                  count={result.technologies.length}
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {resultado.technologies.map((t, i) => (
+                    {result.technologies.map((t, i) => (
                       <div
                         key={i}
                         className="flex items-start justify-between gap-2 p-3 border rounded-lg"
@@ -377,12 +377,12 @@ export function ScanForm({
           )}
 
           {/* Cookies */}
-          {resultado.cookies.length > 0 && (
+          {result.cookies.length > 0 && (
             <Card>
               <CardContent className="pt-5">
                 <CollapsibleSection
                   title="Cookies detectados nos headers"
-                  count={resultado.cookies.length}
+                  count={result.cookies.length}
                 >
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
@@ -402,7 +402,7 @@ export function ScanForm({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
-                        {resultado.cookies.map((c, i) => (
+                        {result.cookies.map((c, i) => (
                           <tr key={i} className="hover:bg-gray-50">
                             <td className="py-2 px-2 font-mono text-gray-700">{c.name}</td>
                             <td className="py-2 px-2">
@@ -438,7 +438,7 @@ export function ScanForm({
             </Card>
           )}
 
-          {resultado.cookies.length === 0 && resultado.technologies.length === 0 && (
+          {result.cookies.length === 0 && result.technologies.length === 0 && (
             <Card>
               <CardContent className="py-6">
                 <div className="flex items-center gap-3 text-green-700">

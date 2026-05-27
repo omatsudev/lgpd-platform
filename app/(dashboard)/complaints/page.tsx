@@ -13,7 +13,7 @@ const statusMap: Record<string, { label: string; variant: 'warning' | 'default' 
   resolved: { label: 'Resolvido', variant: 'success' },
 }
 
-export default async function DenunciasPage({
+export default async function ComplaintsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>
@@ -27,11 +27,11 @@ export default async function DenunciasPage({
     .eq('company_id', companyId ?? '')
   if (q) query = query.or(`type.ilike.%${q}%,description.ilike.%${q}%,name.ilike.%${q}%`)
 
-  const { data: denuncias } = companyId
+  const { data: complaintsData } = companyId
     ? await query.order('created_at', { ascending: false })
     : { data: [] }
 
-  const items = denuncias ?? []
+  const items = complaintsData ?? []
 
   return (
     <div className="space-y-5">

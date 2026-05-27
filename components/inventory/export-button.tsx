@@ -15,7 +15,7 @@ type Item = {
   created_at?: string
 }
 
-const riscoLabel: Record<string, string> = { high: 'Alto', medium: 'Médio', low: 'Baixo' }
+const riskLabel: Record<string, string> = { high: 'Alto', medium: 'Médio', low: 'Baixo' }
 const statusLabel: Record<string, string> = { complete: 'Completo', draft: 'Rascunho' }
 
 function toCSV(items: Item[]): string {
@@ -36,7 +36,7 @@ function toCSV(items: Item[]): string {
       i.legal_basis ?? '',
       i.purpose ?? '',
       i.data_type ?? '',
-      riscoLabel[i.risk_level ?? ''] ?? i.risk_level ?? '',
+      riskLabel[i.risk_level ?? ''] ?? i.risk_level ?? '',
       statusLabel[i.record_status ?? ''] ?? i.record_status ?? '',
       i.created_at ? new Date(i.created_at).toLocaleDateString('pt-BR') : '',
     ]
@@ -55,7 +55,7 @@ export function ExportButton({ items }: { items: Item[] }) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `inventario-lgpd-${new Date().toISOString().slice(0, 10)}.csv`
+    a.download = `inventory-lgpd-${new Date().toISOString().slice(0, 10)}.csv`
     a.click()
     URL.revokeObjectURL(url)
     setOpen(false)

@@ -1,24 +1,11 @@
 import { RetentionDisposalForm } from '@/components/retention-disposal/form'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { RETENTION_STATUS_LABELS, RETENTION_STATUS_VARIANTS } from '@/lib/status-labels'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-
-const statusVariant: Record<string, 'success' | 'warning' | 'destructive' | 'secondary'> = {
-  regular: 'success',
-  proximo_vencimento: 'warning',
-  vencido: 'destructive',
-  bloqueado: 'secondary',
-}
-
-const statusLabel: Record<string, string> = {
-  regular: 'Regular',
-  proximo_vencimento: 'Próximo do Vencimento',
-  vencido: 'Vencido',
-  bloqueado: 'Bloqueado',
-}
 
 export default async function RetentionDisposalFormPage({
   params,
@@ -51,8 +38,8 @@ export default async function RetentionDisposalFormPage({
               {isNew ? 'Novo Registro de Retenção' : 'Editar Registro'}
             </h1>
             {item?.calculated_status && (
-              <Badge variant={statusVariant[item.calculated_status] ?? 'secondary'}>
-                {statusLabel[item.calculated_status] ?? item.calculated_status}
+              <Badge variant={RETENTION_STATUS_VARIANTS[item.calculated_status] ?? 'secondary'}>
+                {RETENTION_STATUS_LABELS[item.calculated_status] ?? item.calculated_status}
               </Badge>
             )}
           </div>

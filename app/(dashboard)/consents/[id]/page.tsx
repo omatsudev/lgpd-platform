@@ -7,15 +7,15 @@ import { ArrowLeft, CheckCircle2, MinusCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const canalLabel: Record<string, string> = {
+const channelLabel: Record<string, string> = {
   web: 'Web',
   app: 'App',
-  presencial: 'Presencial',
+  in_person: 'Presencial',
   email: 'E-mail',
   api: 'API',
 }
 
-export default async function ConsentimentoDetalhePage({
+export default async function ConsentDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
@@ -32,7 +32,7 @@ export default async function ConsentimentoDetalhePage({
   if (!reg) notFound()
 
   const status = reg.revoked ? 'revoked' : reg.accepted ? 'active' : 'refused'
-  const finalidade = reg.consent_purposes as any
+  const purpose = reg.consent_purposes as any
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -99,9 +99,9 @@ export default async function ConsentimentoDetalhePage({
           <CardTitle className="text-base">Finalidade</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <Row label="Nome" value={finalidade?.name} />
-          <Row label="Descrição" value={finalidade?.description} />
-          <Row label="Base legal" value={finalidade?.legal_basis} />
+          <Row label="Nome" value={purpose?.name} />
+          <Row label="Descrição" value={purpose?.description} />
+          <Row label="Base legal" value={purpose?.legal_basis} />
         </CardContent>
       </Card>
 
@@ -111,7 +111,7 @@ export default async function ConsentimentoDetalhePage({
           <CardTitle className="text-base">Metadados de Coleta</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <Row label="Canal" value={canalLabel[reg.channel] ?? reg.channel} />
+          <Row label="Canal" value={channelLabel[reg.channel] ?? reg.channel} />
           <Row label="Versão da política" value={reg.policy_version} />
           <Row label="IP de origem" value={reg.source_ip} mono />
           <Row label="Data/hora" value={formatDateTime(reg.created_at)} mono />

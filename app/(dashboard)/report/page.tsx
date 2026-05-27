@@ -1,64 +1,40 @@
 import { PrintButton } from '@/components/report/print-button'
 import { CHECKLIST } from '@/lib/checklist-items'
+import { scoreChecklist } from '@/lib/checklist-scoring'
+import { calculateRiskLevel, RISK_LEVEL_LABELS } from '@/lib/risk-scoring'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { FileText } from 'lucide-react'
 
-// ─── Helpers ──────────────────────────────────────────────────────────────
+// ─── Report components ─────────────────────────────────────────────────────
 
-function nivelRisco(prob: number, imp: number) {
-  const s = prob * imp
-  if (s >= 15) return 'Crítico'
-  if (s >= 9) return 'Alto'
-  if (s >= 4) return 'Médio'
-  return 'Baixo'
-}
-
-function scoreChecklist(checklistItems: any[]) {
-  const total = CHECKLIST.reduce((acc, c) => acc + c.items.length, 0)
-  const map: Record<string, string> = {}
-  for (const i of checklistItems) map[i.item_key] = i.status
-  const na = CHECKLIST.reduce(
-    (acc, c) => acc + c.items.filter((i) => map[i.key] === 'not_applicable').length,
-    0,
-  )
-  const done = CHECKLIST.reduce(
-    (acc, c) => acc + c.items.filter((i) => map[i.key] === 'completed').length,
-    0,
-  )
-  const efetivos = total - na
-  return { total, done, na, efetivos, pct: efetivos > 0 ? Math.round((done / efetivos) * 100) : 0 }
-}
-
-// ─── Componentes do relatório ─────────────────────────────────────────────
-
-function Secao({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-8 print:mb-6 break-inside-avoid-page">
       <h2 className="text-lg font-bold text-gray-900 border-b-2 border-blue-600 pb-1 mb-4 print:text-base">
-        {titulo}
+        {title}
       </h2>
       {children}
     </section>
   )
 }
 
-function MetricaBox({
+function MetricBox({
   label,
   value,
   sub,
-  destaque,
+  highlight,
 }: {
   label: string
   value: string | number
   sub?: string
-  destaque?: boolean
+  highlight?: boolean
 }) {
   return (
     <div
-      className={`border rounded-lg p-4 text-center ${destaque ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}
+      className={`border rounded-lg p-4 text-center ${highlight ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}
     >
-      <p className={`text-3xl font-bold ${destaque ? 'text-blue-700' : 'text-gray-900'}`}>
+      <p className={`text-3xl font-bold ${highlight ? 'text-blue-700' : 'text-gray-900'}`}>
         {value}
       </p>
       <p className="text-sm font-medium text-gray-700 mt-1">{label}</p>
@@ -67,7 +43,7 @@ function MetricaBox({
   )
 }
 
-function TabelaSimples({
+function SimpleTable({
   headers,
   rows,
 }: {
@@ -103,12 +79,12 @@ function TabelaSimples({
   )
 }
 
-// ─── Página principal ─────────────────────────────────────────────────────
+// ─── Page ──────────────────────────────────────────────────────────────────
 
-export default async function RelatorioPage() {
+export default async function ReportPage() {
   const { company, companyId, supabase } = await getUserCompany()
-  const hoje = new Date()
-  const reportDate = hoje.toLocaleDateString('pt-BR', {
+  const today = new Date()
+  const reportDate = today.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
@@ -121,7 +97,7 @@ export default async function RelatorioPage() {
     { data: documents },
     { data: risks },
     { data: suppliers },
-    { data: checklistItens },
+    { data: checklistItems },
     { data: dataSubjects },
     { data: consents },
   ] = await Promise.all([
@@ -160,7 +136,7 @@ export default async function RelatorioPage() {
   ])
 
   // Métricas calculadas
-  const checklist = scoreChecklist(checklistItens ?? [])
+  const checklist = scoreChecklist(checklistItems ?? [])
   const openRisks = (risks ?? []).filter((r: any) => r.status !== 'closed')
   const criticalRisks = openRisks.filter(
     (r: any) => r.inherent_probability * r.inherent_impact >= 15,
@@ -169,7 +145,7 @@ export default async function RelatorioPage() {
     (f: any) => f.access_type !== 'no_data_access' && !f.has_dpa,
   )
   const expiredDocuments = (documents ?? []).filter(
-    (d: any) => d.expiration_date && new Date(d.expiration_date) < hoje,
+    (d: any) => d.expiration_date && new Date(d.expiration_date) < today,
   )
   const openIncidents = (incidents ?? []).filter(
     (i: any) => !['resolved', 'closed'].includes(i.status),
@@ -179,7 +155,7 @@ export default async function RelatorioPage() {
 
   // Score geral de conformidade (média ponderada)
   const overallScore = Math.round(
-    checklist.pct * 0.4 +
+    checklist.percentage * 0.4 +
       (suppliersWithoutDPA.length === 0 ? 100 : Math.max(0, 100 - suppliersWithoutDPA.length * 20)) * 0.2 +
       (criticalRisks.length === 0 ? 100 : Math.max(0, 100 - criticalRisks.length * 25)) * 0.2 +
       (openIncidents.length === 0 ? 100 : Math.max(0, 100 - openIncidents.length * 15)) * 0.2,
@@ -239,21 +215,21 @@ export default async function RelatorioPage() {
         </div>
 
         {/* 1 — Score Geral */}
-        <Secao titulo="1. Índice de Conformidade LGPD">
+        <Section title="1. Índice de Conformidade LGPD">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-            <MetricaBox
+            <MetricBox
               label="Score Geral"
               value={`${overallScore}%`}
               sub="Conformidade estimada"
-              destaque
+              highlight
             />
-            <MetricaBox
+            <MetricBox
               label="Checklist"
-              value={`${checklist.pct}%`}
-              sub={`${checklist.done}/${checklist.efetivos} itens`}
+              value={`${checklist.percentage}%`}
+              sub={`${checklist.completed}/${checklist.total - checklist.notApplicable} itens`}
             />
-            <MetricaBox label="Riscos Críticos" value={criticalRisks.length} sub="Em aberto" />
-            <MetricaBox label="Fornecedores sem DPA" value={suppliersWithoutDPA.length} sub="Pendentes" />
+            <MetricBox label="Riscos Críticos" value={criticalRisks.length} sub="Em aberto" />
+            <MetricBox label="Fornecedores sem DPA" value={suppliersWithoutDPA.length} sub="Pendentes" />
           </div>
           <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
             <p>
@@ -262,13 +238,13 @@ export default async function RelatorioPage() {
               abertos (20%).
             </p>
           </div>
-        </Secao>
+        </Section>
 
         {/* 2 — Checklist */}
-        <Secao titulo="2. Checklist de Adequação">
+        <Section title="2. Checklist de Adequação">
           {(() => {
             const checklistMap: Record<string, string> = {}
-            for (const i of checklistItens ?? []) checklistMap[i.item_key] = i.status
+            for (const i of checklistItems ?? []) checklistMap[i.item_key] = i.status
 
             // Itens pendentes / em andamento (críticos e altos primeiro)
             const pendingItems = CHECKLIST.flatMap((cat) =>
@@ -279,8 +255,8 @@ export default async function RelatorioPage() {
                 )
                 .map((i) => ({
                   ...i,
-                  categoria: cat.label,
-                  statusAtual: checklistMap[i.key] ?? 'pending',
+                  category: cat.label,
+                  currentStatus: checklistMap[i.key] ?? 'pending',
                 })),
             ).sort((a, b) => {
               const ordem: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 }
@@ -372,7 +348,7 @@ export default async function RelatorioPage() {
                                 <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
                               </td>
                               <td className="py-2 px-3 text-gray-600 border border-gray-200 text-xs">
-                                {item.categoria}
+                                {item.category}
                               </td>
                               <td className="py-2 px-3 border border-gray-200">
                                 <span
@@ -382,7 +358,7 @@ export default async function RelatorioPage() {
                                 </span>
                               </td>
                               <td className="py-2 px-3 text-gray-600 border border-gray-200 text-xs">
-                                {statusLabel[item.statusAtual] ?? item.statusAtual}
+                                {statusLabel[item.currentStatus] ?? item.currentStatus}
                               </td>
                               <td className="py-2 px-3 text-blue-500 border border-gray-200 text-xs font-mono">
                                 {item.referencia ?? '—'}
@@ -403,17 +379,17 @@ export default async function RelatorioPage() {
               </>
             )
           })()}
-        </Secao>
+        </Section>
 
         {/* 3 — Inventário */}
-        <Secao titulo="3. Inventário de Dados">
+        <Section title="3. Inventário de Dados">
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <MetricaBox label="Total de processos" value={(inventory ?? []).length} />
-            <MetricaBox
+            <MetricBox label="Total de processos" value={(inventory ?? []).length} />
+            <MetricBox
               label="Completos"
               value={(inventory ?? []).filter((i: any) => i.record_status === 'complete').length}
             />
-            <MetricaBox
+            <MetricBox
               label="Rascunhos"
               value={
                 (inventory ?? []).filter(
@@ -423,7 +399,7 @@ export default async function RelatorioPage() {
             />
           </div>
           {(inventory ?? []).length > 0 && (
-            <TabelaSimples
+            <SimpleTable
               headers={['Processo', 'Setor', 'Base Legal', 'Risco']}
               rows={(inventory ?? [])
                 .slice(0, 15)
@@ -440,50 +416,50 @@ export default async function RelatorioPage() {
               * Exibindo 15 de {(inventory ?? []).length} registros.
             </p>
           )}
-        </Secao>
+        </Section>
 
         {/* 4 — Riscos */}
-        <Secao titulo="4. Gestão de Riscos">
+        <Section title="4. Gestão de Riscos">
           <div className="grid grid-cols-4 gap-4 mb-4">
-            <MetricaBox label="Total" value={(risks ?? []).length} />
-            <MetricaBox label="Críticos" value={criticalRisks.length} />
-            <MetricaBox
+            <MetricBox label="Total" value={(risks ?? []).length} />
+            <MetricBox label="Críticos" value={criticalRisks.length} />
+            <MetricBox
               label="Em tratamento"
               value={(risks ?? []).filter((r: any) => r.status === 'under_treatment').length}
             />
-            <MetricaBox
+            <MetricBox
               label="Encerrados"
               value={(risks ?? []).filter((r: any) => r.status === 'closed').length}
             />
           </div>
           {openRisks.length > 0 && (
-            <TabelaSimples
+            <SimpleTable
               headers={['Risco', 'Categoria', 'Nível', 'Estratégia', 'Status']}
               rows={openRisks
                 .slice(0, 10)
                 .map((r: any) => [
                   r.title,
                   categoryLabel[r.category] ?? r.category,
-                  nivelRisco(r.inherent_probability, r.inherent_impact),
+                  RISK_LEVEL_LABELS[calculateRiskLevel(r.inherent_probability, r.inherent_impact)],
                   r.strategy ?? '—',
                   r.status,
                 ])}
             />
           )}
-        </Secao>
+        </Section>
 
         {/* 5 — Incidentes */}
-        <Secao titulo="5. Incidentes de Segurança">
+        <Section title="5. Incidentes de Segurança">
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <MetricaBox label="Total" value={(incidents ?? []).length} />
-            <MetricaBox label="Em aberto" value={openIncidents.length} />
-            <MetricaBox
+            <MetricBox label="Total" value={(incidents ?? []).length} />
+            <MetricBox label="Em aberto" value={openIncidents.length} />
+            <MetricBox
               label="Notificou ANPD"
               value={(incidents ?? []).filter((i: any) => i.notified_anpd).length}
             />
           </div>
           {(incidents ?? []).length > 0 && (
-            <TabelaSimples
+            <SimpleTable
               headers={['Título', 'Tipo', 'Severidade', 'Status', 'Data']}
               rows={(incidents ?? [])
                 .slice(0, 10)
@@ -496,18 +472,18 @@ export default async function RelatorioPage() {
                 ])}
             />
           )}
-        </Secao>
+        </Section>
 
         {/* 6 — Fornecedores */}
-        <Secao titulo="6. Fornecedores e Terceiros">
+        <Section title="6. Fornecedores e Terceiros">
           <div className="grid grid-cols-4 gap-4 mb-4">
-            <MetricaBox label="Total" value={(suppliers ?? []).length} />
-            <MetricaBox
+            <MetricBox label="Total" value={(suppliers ?? []).length} />
+            <MetricBox
               label="Com DPA"
               value={(suppliers ?? []).filter((f: any) => f.has_dpa).length}
             />
-            <MetricaBox label="Sem DPA" value={suppliersWithoutDPA.length} />
-            <MetricaBox
+            <MetricBox label="Sem DPA" value={suppliersWithoutDPA.length} />
+            <MetricBox
               label="Internacionais"
               value={(suppliers ?? []).filter((f: any) => f.international_transfer).length}
             />
@@ -517,7 +493,7 @@ export default async function RelatorioPage() {
               <p className="text-sm font-medium text-red-700 mb-2">
                 Fornecedores sem DPA assinado:
               </p>
-              <TabelaSimples
+              <SimpleTable
                 headers={['Fornecedor', 'Categoria', 'Tipo de acesso', 'Diligência']}
                 rows={suppliersWithoutDPA.map((f: any) => [
                   f.name,
@@ -528,24 +504,24 @@ export default async function RelatorioPage() {
               />
             </>
           )}
-        </Secao>
+        </Section>
 
         {/* 7 — Documentos */}
-        <Secao titulo="7. Documentos de Conformidade">
+        <Section title="7. Documentos de Conformidade">
           <div className="grid grid-cols-4 gap-4 mb-4">
-            <MetricaBox label="Total" value={(documents ?? []).length} />
-            <MetricaBox
+            <MetricBox label="Total" value={(documents ?? []).length} />
+            <MetricBox
               label="Publicados"
               value={(documents ?? []).filter((d: any) => d.status === 'published').length}
             />
-            <MetricaBox
+            <MetricBox
               label="Em revisão"
               value={(documents ?? []).filter((d: any) => d.status === 'under_review').length}
             />
-            <MetricaBox label="Vencidos" value={expiredDocuments.length} />
+            <MetricBox label="Vencidos" value={expiredDocuments.length} />
           </div>
           {(documents ?? []).length > 0 && (
-            <TabelaSimples
+            <SimpleTable
               headers={['Documento', 'Tipo', 'Versão', 'Status', 'Expiração']}
               rows={(documents ?? [])
                 .slice(0, 10)
@@ -558,25 +534,25 @@ export default async function RelatorioPage() {
                 ])}
             />
           )}
-        </Secao>
+        </Section>
 
         {/* 8 — Titulares e Consentimentos */}
-        <Secao titulo="8. Direitos dos Titulares e Consentimentos">
+        <Section title="8. Direitos dos Titulares e Consentimentos">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <MetricaBox
+            <MetricBox
               label="Solicitações"
               value={(dataSubjects ?? []).length}
               sub="Total recebidas"
             />
-            <MetricaBox label="Pendentes" value={pendingDataSubjects.length} sub="Aguardando resposta" />
-            <MetricaBox
+            <MetricBox label="Pendentes" value={pendingDataSubjects.length} sub="Aguardando resposta" />
+            <MetricBox
               label="Consentimentos"
               value={(consents ?? []).length}
               sub="Total registrados"
             />
-            <MetricaBox label="Ativos" value={activeConsents.length} sub="Não revogados" />
+            <MetricBox label="Ativos" value={activeConsents.length} sub="Não revogados" />
           </div>
-        </Secao>
+        </Section>
 
         {/* Rodapé */}
         <div className="mt-10 pt-6 border-t border-gray-200 text-xs text-gray-400 flex justify-between">

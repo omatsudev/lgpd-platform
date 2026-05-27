@@ -7,7 +7,7 @@ import { formatDateTime } from '@/lib/utils'
 import { CheckCircle2, ClipboardList, MinusCircle, Plus, Send, XCircle } from 'lucide-react'
 import Link from 'next/link'
 
-const canalLabel: Record<string, string> = {
+const channelLabel: Record<string, string> = {
   web: 'Web',
   app: 'App',
   in_person: 'Presencial',
@@ -15,7 +15,7 @@ const canalLabel: Record<string, string> = {
   api: 'API',
 }
 
-export default async function ConsentimentosPage({
+export default async function ConsentsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string; tab?: string }>
@@ -33,24 +33,24 @@ export default async function ConsentimentosPage({
     : { data: [] }
 
   // Consentimentos com join de finalidade
-  let registrosQuery = supabase
+  let consentsQuery = supabase
     .from('consents')
     .select('*, consent_purposes(name)')
     .eq('company_id', companyId ?? '')
   if (q)
-    registrosQuery = registrosQuery.or(
+    consentsQuery = consentsQuery.or(
       `subject_email.ilike.%${q}%,subject_name.ilike.%${q}%,subject_tax_id.ilike.%${q}%`,
     )
 
-  const { data: registros } = companyId
-    ? await registrosQuery.order('created_at', { ascending: false }).limit(200)
+  const { data: consentsData } = companyId
+    ? await consentsQuery.order('created_at', { ascending: false }).limit(200)
     : { data: [] }
 
   const items = purposes ?? []
-  const regs = registros ?? []
-  const activeCount = regs.filter((r: any) => r.accepted && !r.revoked).length
-  const revogados = regs.filter((r: any) => r.revoked).length
-  const recusados = regs.filter((r: any) => !r.accepted).length
+  const records = consentsData ?? []
+  const activeCount = records.filter((r: any) => r.accepted && !r.revoked).length
+  const revokedCount = records.filter((r: any) => r.revoked).length
+  const refusedCount = records.filter((r: any) => !r.accepted).length
 
   return (
     <div className="space-y-5">
@@ -71,10 +71,10 @@ export default async function ConsentimentosPage({
       {/* Métricas */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Total', value: regs.length, icon: ClipboardList, color: 'text-gray-600' },
+          { label: 'Total', value: records.length, icon: ClipboardList, color: 'text-gray-600' },
           { label: 'Ativos', value: activeCount, icon: CheckCircle2, color: 'text-green-600' },
-          { label: 'Revogados', value: revogados, icon: XCircle, color: 'text-red-600' },
-          { label: 'Recusados', value: recusados, icon: MinusCircle, color: 'text-yellow-600' },
+          { label: 'Revogados', value: revokedCount, icon: XCircle, color: 'text-red-600' },
+          { label: 'Recusados', value: refusedCount, icon: MinusCircle, color: 'text-yellow-600' },
         ].map((m) => (
           <Card key={m.label}>
             <CardContent className="pt-4 pb-3">
@@ -93,7 +93,7 @@ export default async function ConsentimentosPage({
       {/* Abas */}
       <div className="flex gap-1 border-b border-gray-200">
         {[
-          { key: 'records', label: `Registros (${regs.length})` },
+          { key: 'records', label: `Registros (${records.length})` },
           { key: 'purposes', label: `Finalidades (${items.length})` },
         ].map((navTab) => (
           <Link
@@ -117,7 +117,7 @@ export default async function ConsentimentosPage({
             <SearchInput defaultValue={q ?? ''} placeholder="Buscar por e-mail, nome, CPF..." />
           </CardContent>
           <CardContent className="p-0">
-            {regs.length === 0 ? (
+            {records.length === 0 ? (
               <div className="py-12 text-center">
                 <CheckCircle2 className="h-10 w-10 text-gray-300 mx-auto mb-3" />
                 <p className="text-gray-500 font-medium">Nenhum consentimento registrado</p>
@@ -150,12 +150,12 @@ export default async function ConsentimentosPage({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {regs.map((reg: any) => {
+                      {records.map((reg: any) => {
                         const status = reg.revoked
-                          ? 'revogado'
+                          ? 'revoked'
                           : reg.accepted
-                            ? 'ativo'
-                            : 'recusado'
+                            ? 'active'
+                            : 'refused'
                         return (
                           <tr key={reg.id} className="hover:bg-gray-50 transition-colors">
                             <td className="py-3 px-4">
@@ -170,14 +170,14 @@ export default async function ConsentimentosPage({
                               {(reg.consent_purposes as any)?.name ?? '—'}
                             </td>
                             <td className="py-3 px-4">
-                              {status === 'ativo' && <Badge variant="success">Ativo</Badge>}
-                              {status === 'revogado' && (
+                              {status === 'active' && <Badge variant="success">Ativo</Badge>}
+                              {status === 'revoked' && (
                                 <Badge variant="destructive">Revogado</Badge>
                               )}
-                              {status === 'recusado' && <Badge variant="warning">Recusado</Badge>}
+                              {status === 'refused' && <Badge variant="warning">Recusado</Badge>}
                             </td>
                             <td className="py-3 px-4 text-gray-500 text-xs">
-                              {canalLabel[reg.channel] ?? reg.channel}
+                              {channelLabel[reg.channel] ?? reg.channel}
                             </td>
                             <td className="py-3 px-4 text-gray-500 text-xs font-mono">
                               {formatDateTime(reg.created_at)}
@@ -197,8 +197,8 @@ export default async function ConsentimentosPage({
                 </div>
 
                 <div className="md:hidden divide-y divide-gray-100">
-                  {regs.map((reg: any) => {
-                    const status = reg.revoked ? 'revogado' : reg.accepted ? 'ativo' : 'recusado'
+                  {records.map((reg: any) => {
+                    const status = reg.revoked ? 'revoked' : reg.accepted ? 'active' : 'refused'
                     return (
                       <div key={reg.id} className="p-4 space-y-2">
                         <div className="flex items-start justify-between gap-2">
@@ -215,23 +215,23 @@ export default async function ConsentimentosPage({
                           </Link>
                         </div>
                         <div className="flex gap-2 flex-wrap">
-                          {status === 'ativo' && (
+                          {status === 'active' && (
                             <Badge variant="success" className="text-xs">
                               Ativo
                             </Badge>
                           )}
-                          {status === 'revogado' && (
+                          {status === 'revoked' && (
                             <Badge variant="destructive" className="text-xs">
                               Revogado
                             </Badge>
                           )}
-                          {status === 'recusado' && (
+                          {status === 'refused' && (
                             <Badge variant="warning" className="text-xs">
                               Recusado
                             </Badge>
                           )}
                           <span className="text-xs text-gray-400">
-                            {canalLabel[reg.channel] ?? reg.channel}
+                            {channelLabel[reg.channel] ?? reg.channel}
                           </span>
                         </div>
                         <p className="text-xs text-gray-400 font-mono">
