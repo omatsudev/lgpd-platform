@@ -135,6 +135,7 @@ const TIPOS_GARANTIA = [
 
 type Fase = { ativo: boolean; controlador: boolean; operador: boolean }
 type FormData = Omit<InventarioData, 'company_id' | 'id'>
+type StepErrors = Record<string, string>
 
 const DEFAULT_FASE: Fase = { ativo: false, controlador: false, operador: false }
 
@@ -230,6 +231,20 @@ function EmptyState({ label }: { label: string }) {
   return <div className="text-center py-6 text-sm text-gray-400 border border-dashed rounded-lg">{label}</div>
 }
 
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null
+  return (
+    <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
+      <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+      {msg}
+    </p>
+  )
+}
+
+function errBorder(hasError: boolean) {
+  return hasError ? 'border-red-400 focus:border-red-400' : ''
+}
+
 function Pill({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
     <button type="button" onClick={onClick}
@@ -244,7 +259,7 @@ function Pill({ label, selected, onClick }: { label: string; selected: boolean; 
 
 // ─── Etapa 0 — Identificação ─────────────────────────────────────────────────
 
-function StepIdentificacao({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
+function StepIdentificacao({ data, update, errors = {} }: { data: FormData; update: (f: keyof FormData, v: any) => void; errors?: StepErrors }) {
   const id = data.identificacao
   const setControlador = (field: keyof typeof id.controlador, value: string) =>
     update('identificacao', { ...id, controlador: { ...id.controlador, [field]: value } })
@@ -256,7 +271,8 @@ function StepIdentificacao({ data, update }: { data: FormData; update: (f: keyof
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Nome *</Label>
-            <Input value={id.controlador.nome} onChange={e => setControlador('nome', e.target.value)} placeholder="Razão social ou nome do controlador" />
+            <Input className={errBorder(!!errors.controlador_nome)} value={id.controlador.nome} onChange={e => setControlador('nome', e.target.value)} placeholder="Razão social ou nome do controlador" />
+            <FieldError msg={errors.controlador_nome} />
           </div>
           <div className="space-y-1.5">
             <Label>E-mail</Label>
@@ -286,7 +302,7 @@ function StepIdentificacao({ data, update }: { data: FormData; update: (f: keyof
 
 // ─── Etapa 1 — Processo ──────────────────────────────────────────────────────
 
-function StepProcesso({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
+function StepProcesso({ data, update, errors = {} }: { data: FormData; update: (f: keyof FormData, v: any) => void; errors?: StepErrors }) {
   const [outroSetor, setOutroSetor] = useState('')
 
   const toggleSetor = (s: string) => {
@@ -306,7 +322,8 @@ function StepProcesso({ data, update }: { data: FormData; update: (f: keyof Form
     <div className="space-y-4">
       <div className="space-y-2">
         <Label>Nome do Processo *</Label>
-        <Input value={data.process_name} onChange={e => update('process_name', e.target.value)} placeholder="Ex: Gestão de Recursos Humanos, Atendimento ao Cliente..." />
+        <Input className={errBorder(!!errors.process_name)} value={data.process_name} onChange={e => update('process_name', e.target.value)} placeholder="Ex: Gestão de Recursos Humanos, Atendimento ao Cliente..." />
+        <FieldError msg={errors.process_name} />
       </div>
       <div className="space-y-2">
         <Label>Setores envolvidos no tratamento</Label>
@@ -379,7 +396,7 @@ function StepCicloVida({ data, update }: { data: FormData; update: (f: keyof For
 
 // ─── Etapa 3 — Dados ─────────────────────────────────────────────────────────
 
-function StepDados({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
+function StepDados({ data, update, errors = {} }: { data: FormData; update: (f: keyof FormData, v: any) => void; errors?: StepErrors }) {
   const [expandedCat, setExpandedCat] = useState<string | null>(null)
   const [tooltip, setTooltip] = useState<string | null>(null)
 
@@ -415,6 +432,7 @@ function StepDados({ data, update }: { data: FormData; update: (f: keyof FormDat
   return (
     <div className="space-y-4">
       <p className="text-sm text-gray-500">Selecione as categorias de dados pessoais tratados neste processo.</p>
+      <FieldError msg={errors.data_categories} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {CATEGORIAS.map(cat => {
           const selected = data.data_categories.includes(cat.id)
@@ -521,7 +539,7 @@ function StepDados({ data, update }: { data: FormData; update: (f: keyof FormDat
 
 // ─── Etapa 4 — Tratamento ────────────────────────────────────────────────────
 
-function StepTratamento({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
+function StepTratamento({ data, update, errors = {} }: { data: FormData; update: (f: keyof FormData, v: any) => void; errors?: StepErrors }) {
   const addCompartilhamento = () => update('shared_details', [...data.shared_details, { com_quem: '', finalidade: '' }])
   const removeCompartilhamento = (i: number) => update('shared_details', data.shared_details.filter((_, idx) => idx !== i))
   const updateCompartilhamento = (i: number, field: keyof CompartilhamentoItem, value: string) =>
@@ -531,7 +549,7 @@ function StepTratamento({ data, update }: { data: FormData; update: (f: keyof Fo
     <div className="space-y-5">
       <div className="space-y-2">
         <Label>Frequência do Tratamento *</Label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className={`grid grid-cols-3 gap-3 ${errors.processing_frequency ? 'ring-1 ring-red-400 rounded-lg p-1' : ''}`}>
           {['Contínuo', 'Eventual', 'Único'].map(freq => (
             <button key={freq} type="button" onClick={() => update('processing_frequency', freq.toLowerCase())}
               className={`rounded-lg border p-3 text-sm font-medium transition-colors ${data.processing_frequency === freq.toLowerCase() ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300 text-gray-700'}`}>
@@ -539,6 +557,7 @@ function StepTratamento({ data, update }: { data: FormData; update: (f: keyof Fo
             </button>
           ))}
         </div>
+        <FieldError msg={errors.processing_frequency} />
       </div>
       <div className="space-y-3">
         <Label>Os dados são compartilhados com terceiros?</Label>
@@ -584,7 +603,7 @@ function StepTratamento({ data, update }: { data: FormData; update: (f: keyof Fo
 
 // ─── Etapa 5 — Base Legal ────────────────────────────────────────────────────
 
-function StepBaseLegal({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
+function StepBaseLegal({ data, update, errors = {} }: { data: FormData; update: (f: keyof FormData, v: any) => void; errors?: StepErrors }) {
   const toggleBase = (bl: string) => {
     const cur = data.legal_bases
     update('legal_bases', cur.includes(bl) ? cur.filter(x => x !== bl) : [...cur, bl])
@@ -594,11 +613,13 @@ function StepBaseLegal({ data, update }: { data: FormData; update: (f: keyof For
     <div className="space-y-5">
       <div className="space-y-2">
         <Label>Finalidade do Tratamento *</Label>
-        <Textarea value={data.purpose} onChange={e => update('purpose', e.target.value)} placeholder="Descreva para qual finalidade os dados são tratados..." rows={3} />
+        <Textarea className={errBorder(!!errors.purpose)} value={data.purpose} onChange={e => update('purpose', e.target.value)} placeholder="Descreva para qual finalidade os dados são tratados..." rows={3} />
+        <FieldError msg={errors.purpose} />
       </div>
       <div className="space-y-2">
         <Label>Base(s) Legal(is) *</Label>
         <p className="text-xs text-gray-500">Selecione todas as bases legais aplicáveis (art. 7º LGPD). É possível selecionar mais de uma.</p>
+        <FieldError msg={errors.legal_bases} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {BASES_LEGAIS.map(bl => {
             const selected = data.legal_bases.includes(bl)
@@ -622,7 +643,8 @@ function StepBaseLegal({ data, update }: { data: FormData; update: (f: keyof For
       {data.legal_bases.includes('Consentimento do titular') && (
         <div className="space-y-2">
           <Label>Forma de coleta do consentimento *</Label>
-          <Input value={data.consent_collection_method} onChange={e => update('consent_collection_method', e.target.value)} placeholder="Ex: Checkbox no site, termo assinado, WhatsApp..." />
+          <Input className={errBorder(!!errors.consent_collection_method)} value={data.consent_collection_method} onChange={e => update('consent_collection_method', e.target.value)} placeholder="Ex: Checkbox no site, termo assinado, WhatsApp..." />
+          <FieldError msg={errors.consent_collection_method} />
           <p className="text-xs text-gray-500">O consentimento deve ser livre, informado, inequívoco e documentado.</p>
         </div>
       )}
@@ -632,7 +654,7 @@ function StepBaseLegal({ data, update }: { data: FormData; update: (f: keyof For
 
 // ─── Etapa 6 — Titular ───────────────────────────────────────────────────────
 
-function StepTitular({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
+function StepTitular({ data, update, errors = {} }: { data: FormData; update: (f: keyof FormData, v: any) => void; errors?: StepErrors }) {
   const toggleFonte = (v: string) => {
     const cur = data.data_sources
     update('data_sources', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
@@ -661,6 +683,7 @@ function StepTitular({ data, update }: { data: FormData; update: (f: keyof FormD
     <div className="space-y-5">
       <div className="space-y-2">
         <Label>Fonte dos dados * <span className="text-xs font-normal text-gray-400">(múltipla seleção)</span></Label>
+        <FieldError msg={errors.data_sources} />
         <div className="grid grid-cols-3 gap-3">
           {FONTES.map(opt => {
             const active = data.data_sources.includes(opt.value)
@@ -675,6 +698,7 @@ function StepTitular({ data, update }: { data: FormData; update: (f: keyof FormD
       </div>
       <div className="space-y-2">
         <Label>Categoria do titular * <span className="text-xs font-normal text-gray-400">(múltipla seleção)</span></Label>
+        <FieldError msg={errors.data_subject_categories} />
         <div className="grid grid-cols-2 gap-3">
           {CATEGORIAS_TITULAR.map(opt => {
             const active = data.data_subject_categories.includes(opt.value)
@@ -693,7 +717,7 @@ function StepTitular({ data, update }: { data: FormData; update: (f: keyof FormD
 
 // ─── Etapa 7 — Armazenamento e Retenção ─────────────────────────────────────
 
-function StepArmazenamento({ data, update }: { data: FormData; update: (f: keyof FormData, v: any) => void }) {
+function StepArmazenamento({ data, update, errors = {} }: { data: FormData; update: (f: keyof FormData, v: any) => void; errors?: StepErrors }) {
   const toggleTipo = (v: string) => {
     const cur = data.storage_types
     update('storage_types', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
@@ -709,6 +733,7 @@ function StepArmazenamento({ data, update }: { data: FormData; update: (f: keyof
       <div className="space-y-2">
         <Label>Tipo(s) de armazenamento *</Label>
         <p className="text-xs text-gray-500">Selecione todos os tipos utilizados.</p>
+        <FieldError msg={errors.storage_types} />
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {TIPOS_ARMAZENAMENTO.map(opt => {
             const selected = data.storage_types.includes(opt.value)
@@ -723,7 +748,8 @@ function StepArmazenamento({ data, update }: { data: FormData; update: (f: keyof
       </div>
       <div className="space-y-2">
         <Label>Onde exatamente? *</Label>
-        <Input value={data.storage_location} onChange={e => update('storage_location', e.target.value)} placeholder="Ex: AWS S3, Google Drive, Servidor interno, Pastas físicas..." />
+        <Input className={errBorder(!!errors.storage_location)} value={data.storage_location} onChange={e => update('storage_location', e.target.value)} placeholder="Ex: AWS S3, Google Drive, Servidor interno, Pastas físicas..." />
+        <FieldError msg={errors.storage_location} />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -1029,6 +1055,51 @@ function StepRevisao({ data, risco }: { data: FormData; risco: ReturnType<typeof
   )
 }
 
+// ─── Validação por etapa ──────────────────────────────────────────────────────
+
+function validateStep(step: number, data: FormData): StepErrors {
+  const e: StepErrors = {}
+  switch (step) {
+    case 0:
+      if (!data.identificacao.controlador.nome.trim())
+        e['controlador_nome'] = 'Nome do controlador é obrigatório'
+      break
+    case 1:
+      if (!data.process_name.trim())
+        e['process_name'] = 'Nome do processo é obrigatório'
+      break
+    case 3:
+      if (data.data_categories.length === 0)
+        e['data_categories'] = 'Selecione pelo menos uma categoria de dados pessoais'
+      break
+    case 4:
+      if (!data.processing_frequency)
+        e['processing_frequency'] = 'Selecione a frequência do tratamento'
+      break
+    case 5:
+      if (!data.purpose.trim())
+        e['purpose'] = 'Descreva a finalidade do tratamento'
+      if (data.legal_bases.length === 0)
+        e['legal_bases'] = 'Selecione pelo menos uma base legal (art. 7º LGPD)'
+      if (data.legal_bases.includes('Consentimento do titular') && !data.consent_collection_method.trim())
+        e['consent_collection_method'] = 'Informe como o consentimento é coletado'
+      break
+    case 6:
+      if (data.data_sources.length === 0)
+        e['data_sources'] = 'Selecione pelo menos uma fonte de dados'
+      if (data.data_subject_categories.length === 0)
+        e['data_subject_categories'] = 'Selecione pelo menos uma categoria de titular'
+      break
+    case 7:
+      if (data.storage_types.length === 0)
+        e['storage_types'] = 'Selecione pelo menos um tipo de armazenamento'
+      if (!data.storage_location.trim())
+        e['storage_location'] = 'Informe onde exatamente os dados são armazenados'
+      break
+  }
+  return e
+}
+
 // ─── Wizard principal ────────────────────────────────────────────────────────
 
 interface WizardProps {
@@ -1044,10 +1115,44 @@ export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
-  const update = (field: keyof FormData, value: any) =>
+  const [stepErrors, setStepErrors] = useState<StepErrors>({})
+
+  const update = (field: keyof FormData, value: any) => {
     setData(prev => ({ ...prev, [field]: value }))
+    // Limpa erro do campo ao editar
+    setStepErrors(prev => {
+      const next = { ...prev }
+      // Mapeamento simples campo → chave de erro
+      const keyMap: Record<string, string> = {
+        process_name: 'process_name',
+        purpose: 'purpose',
+        processing_frequency: 'processing_frequency',
+        storage_location: 'storage_location',
+        consent_collection_method: 'consent_collection_method',
+        legal_bases: 'legal_bases',
+        data_categories: 'data_categories',
+        data_sources: 'data_sources',
+        data_subject_categories: 'data_subject_categories',
+        storage_types: 'storage_types',
+        identificacao: 'controlador_nome',
+      }
+      const k = keyMap[field as string]
+      if (k) delete next[k]
+      return next
+    })
+  }
 
   const risco = calcularRisco(data)
+
+  const handleNext = () => {
+    const errs = validateStep(step, data)
+    if (Object.keys(errs).length > 0) {
+      setStepErrors(errs)
+      return
+    }
+    setStepErrors({})
+    setStep(s => s + 1)
+  }
 
   const handleSave = async (status: 'draft' | 'complete') => {
     setSaving(true)
@@ -1063,14 +1168,14 @@ export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
   }
 
   const stepContent = [
-    <StepIdentificacao key={0}  data={data} update={update} />,
-    <StepProcesso      key={1}  data={data} update={update} />,
+    <StepIdentificacao key={0}  data={data} update={update} errors={stepErrors} />,
+    <StepProcesso      key={1}  data={data} update={update} errors={stepErrors} />,
     <StepCicloVida     key={2}  data={data} update={update} />,
-    <StepDados         key={3}  data={data} update={update} />,
-    <StepTratamento    key={4}  data={data} update={update} />,
-    <StepBaseLegal     key={5}  data={data} update={update} />,
-    <StepTitular       key={6}  data={data} update={update} />,
-    <StepArmazenamento key={7}  data={data} update={update} />,
+    <StepDados         key={3}  data={data} update={update} errors={stepErrors} />,
+    <StepTratamento    key={4}  data={data} update={update} errors={stepErrors} />,
+    <StepBaseLegal     key={5}  data={data} update={update} errors={stepErrors} />,
+    <StepTitular       key={6}  data={data} update={update} errors={stepErrors} />,
+    <StepArmazenamento key={7}  data={data} update={update} errors={stepErrors} />,
     <StepTransferencia key={8}  data={data} update={update} />,
     <StepContratos     key={9}  data={data} update={update} />,
     <StepImpacto       key={10} data={data} update={update} />,
@@ -1101,7 +1206,7 @@ export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
           {STEPS.map((s, i) => {
             const Icon = s.icon
             return (
-              <button key={i} onClick={() => setStep(i)}
+              <button key={i} onClick={() => { setStepErrors({}); setStep(i) }}
                 className={`flex flex-col items-center gap-1 text-xs transition-colors ${i === step ? 'text-blue-600 font-semibold' : i < step ? 'text-green-600' : 'text-gray-400'}`}>
                 <div className={`h-7 w-7 rounded-full flex items-center justify-center border-2 transition-colors ${i === step ? 'border-blue-500 bg-blue-50' : i < step ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
                   {i < step ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Icon className="h-3.5 w-3.5" />}
@@ -1131,7 +1236,7 @@ export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
       )}
 
       <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={() => setStep(s => s - 1)} disabled={step === 0}>
+        <Button variant="outline" onClick={() => { setStepErrors({}); setStep(s => s - 1) }} disabled={step === 0}>
           <ChevronLeft className="h-4 w-4 mr-1" /> Anterior
         </Button>
         <div className="flex gap-2">
@@ -1139,9 +1244,9 @@ export function InventarioWizard({ companyId, initialData, id }: WizardProps) {
             Salvar rascunho
           </Button>
           {step < STEPS.length - 1 ? (
-            <Button onClick={() => setStep(s => s + 1)}>Próximo <ChevronRight className="h-4 w-4 ml-1" /></Button>
+            <Button onClick={handleNext}>Próximo <ChevronRight className="h-4 w-4 ml-1" /></Button>
           ) : (
-            <Button onClick={() => handleSave('complete')} disabled={saving || !data.process_name || !data.legal_bases.length || !data.purpose}>
+            <Button onClick={() => handleSave('complete')} disabled={saving}>
               {saving ? 'Salvando...' : 'Salvar Inventário'}
             </Button>
           )}
