@@ -54,12 +54,21 @@
       "Bash(sed -i 's/categoria: data\\\\.categoria/category: data.category/g;    s/categoria: string/category: string/g;    s/data\\\\.categoria/data.category/g' /home/omatsu/dev/omatsu/lgpd-platform/app/actions/retention-disposal.ts)",
       "Bash(# The status variable uses mixed Portuguese/English - standardize to English *)",
       "Bash(python3 /tmp/fix_rd_actions.py)",
-      "Bash(python3 /tmp/fix_risks_page.py)"
+      "Bash(python3 /tmp/fix_risks_page.py)",
+      "Bash(sed -i 's/acaoMap/actionMap/g' /home/omatsu/dev/omatsu/lgpd-platform/app/\\\\\\(dashboard\\\\\\)/audit-logs/page.tsx)",
+      "Bash(sed -i 's/LogsPage/AuditLogsPage/g' /home/omatsu/dev/omatsu/lgpd-platform/app/\\\\\\(dashboard\\\\\\)/audit-logs/page.tsx)",
+      "Bash(sed -i s/RiscoForm/RiskForm/g /home/omatsu/dev/omatsu/lgpd-platform/components/risks/form.tsx '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/risks/[id]/page.tsx')",
+      "Bash(sed -i s/RiscoFormPage/RiskFormPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/risks/[id]/page.tsx')",
+      "Bash(sed -i 's/FornecedorFormProps/SupplierFormProps/g; s/FornecedorForm/SupplierForm/g' /home/omatsu/dev/omatsu/lgpd-platform/components/suppliers/form.tsx '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/suppliers/[id]/page.tsx')",
+      "Bash(sed -i s/FornecedorFormPage/SupplierFormPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/suppliers/[id]/page.tsx')",
+      "Bash(sed -i 's/IncidenteForm/IncidentForm/g; s/IncidenteFormPage/IncidentFormPage/g' /home/omatsu/dev/omatsu/lgpd-platform/components/incidents/form.tsx '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/incidents/[id]/page.tsx')",
+      "Bash(sed -i 's/DocumentoFormProps/DocumentFormProps/g; s/DocumentoForm/DocumentForm/g; s/DocumentoFormPage/DocumentFormPage/g' /home/omatsu/dev/omatsu/lgpd-platform/components/documents/form.tsx '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/documents/[id]/page.tsx')"
     ],
     "additionalDirectories": [
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]",
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]/ver",
-      "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/consents/[id]"
+      "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/consents/[id]",
+      "/home/omatsu/dev/omatsu/lgpd-platform/app/(public)/lgpd/[slug]"
     ]
   }
 }

@@ -1,11 +1,11 @@
-import { IncidenteForm } from '@/components/incidents/form'
+import { IncidentForm } from '@/components/incidents/form'
 import { Button } from '@/components/ui/button'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export default async function IncidenteFormPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function IncidentFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
 
@@ -34,7 +34,7 @@ export default async function IncidenteFormPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      <IncidenteForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
+      <IncidentForm companyId={companyId ?? ''} id={isNew ? undefined : id} initialData={item} />
     </div>
   )
 }

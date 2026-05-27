@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (!company) {
-    return NextResponse.redirect(new URL(`/lgpd/${company_slug}?error=empresa_nao_encontrada`, request.url))
+    return NextResponse.redirect(new URL(`/lgpd/${company_slug}?error=company_not_found`, request.url))
   }
 
   // Legal deadline: 15 business days
@@ -37,5 +37,5 @@ export async function POST(request: NextRequest) {
     response_deadline: deadline.toISOString().split('T')[0],
   })
 
-  return NextResponse.redirect(new URL(`/lgpd/${company_slug}?success=solicitacao_enviada`, request.url))
+  return NextResponse.redirect(new URL(`/lgpd/${company_slug}?success=request_submitted`, request.url))
 }

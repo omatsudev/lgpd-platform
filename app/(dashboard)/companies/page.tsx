@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Building2, ExternalLink, Plus } from 'lucide-react'
 import Link from 'next/link'
 
-export default async function EmpresasPage({
+export default async function CompaniesPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>
@@ -18,20 +18,20 @@ export default async function EmpresasPage({
   } = await supabase.auth.getUser()
   const { q } = await searchParams
 
-  const { data: vinculos } = await supabase
+  const { data: memberships } = await supabase
     .from('user_companies')
     .select('company_id, role, companies(id, name, tax_id, sector, slug, compliance_score)')
     .eq('user_id', user!.id)
     .order('created_at')
 
-  const todas = (vinculos ?? []).map((v: any) => v.companies).filter(Boolean)
+  const allCompanies = (memberships ?? []).map((v: any) => v.companies).filter(Boolean)
   const companies = q
-    ? todas.filter((e: any) =>
+    ? allCompanies.filter((e: any) =>
         [e.name, e.tax_id, e.sector].some((f: string | null) =>
           f?.toLowerCase().includes(q.toLowerCase()),
         ),
       )
-    : todas
+    : allCompanies
 
   return (
     <div className="space-y-5">

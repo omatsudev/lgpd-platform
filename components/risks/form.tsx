@@ -174,7 +174,7 @@ interface RiskFormProps {
   initialData?: any
 }
 
-export function RiscoForm({ companyId, id, initialData }: RiskFormProps) {
+export function RiskForm({ companyId, id, initialData }: RiskFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()

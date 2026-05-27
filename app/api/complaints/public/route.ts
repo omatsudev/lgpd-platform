@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (!company) {
-    return NextResponse.redirect(new URL(`/lgpd/${company_slug}?error=empresa_nao_encontrada`, request.url))
+    return NextResponse.redirect(new URL(`/lgpd/${company_slug}?error=company_not_found`, request.url))
   }
 
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
@@ -35,5 +35,5 @@ export async function POST(request: NextRequest) {
     source_ip: ip,
   })
 
-  return NextResponse.redirect(new URL(`/lgpd/${company_slug}?success=denuncia_enviada`, request.url))
+  return NextResponse.redirect(new URL(`/lgpd/${company_slug}?success=complaint_submitted`, request.url))
 }

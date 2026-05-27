@@ -6,14 +6,14 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { Download, Shield } from 'lucide-react'
 
-const acaoMap: Record<string, 'default' | 'success' | 'warning' | 'destructive' | 'secondary'> = {
+const actionMap: Record<string, 'default' | 'success' | 'warning' | 'destructive' | 'secondary'> = {
   CREATE: 'success',
   UPDATE: 'default',
   DELETE: 'destructive',
   ACCESS: 'secondary',
 }
 
-export default async function LogsPage({
+export default async function AuditLogsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>
@@ -110,7 +110,7 @@ export default async function LogsPage({
                         </td>
                         <td className="py-3 px-4 text-gray-700">{log.user_email}</td>
                         <td className="py-3 px-4">
-                          <Badge variant={acaoMap[log.action] ?? 'secondary'}>{log.action}</Badge>
+                          <Badge variant={actionMap[log.action] ?? 'secondary'}>{log.action}</Badge>
                         </td>
                         <td className="py-3 px-4 text-gray-600">{log.resource}</td>
                         <td className="py-3 px-4 text-gray-500">{log.details ?? '—'}</td>
@@ -126,7 +126,7 @@ export default async function LogsPage({
                 {items.map((log: any) => (
                   <div key={log.id} className="p-4 space-y-2">
                     <div className="flex items-center justify-between gap-2">
-                      <Badge variant={acaoMap[log.action] ?? 'secondary'} className="text-xs">
+                      <Badge variant={actionMap[log.action] ?? 'secondary'} className="text-xs">
                         {log.action}
                       </Badge>
                       <span className="text-xs text-gray-400 font-mono">

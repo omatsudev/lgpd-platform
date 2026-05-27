@@ -18,7 +18,7 @@ export type ChecklistCategory = {
 
 export const CHECKLIST: ChecklistCategory[] = [
   {
-    id: 'governanca',
+    id: 'governance',
     label: 'Governança e Responsabilidade',
     icon: 'Shield',
     items: [
@@ -62,7 +62,7 @@ export const CHECKLIST: ChecklistCategory[] = [
     ],
   },
   {
-    id: 'inventario',
+    id: 'inventory',
     label: 'Inventário e Mapeamento',
     icon: 'Database',
     items: [
@@ -107,7 +107,7 @@ export const CHECKLIST: ChecklistCategory[] = [
     ],
   },
   {
-    id: 'consentimento',
+    id: 'consent',
     label: 'Consentimento e Base Legal',
     icon: 'ClipboardCheck',
     items: [
@@ -145,7 +145,7 @@ export const CHECKLIST: ChecklistCategory[] = [
     ],
   },
   {
-    id: 'direitos',
+    id: 'rights',
     label: 'Direitos dos Titulares',
     icon: 'Users',
     items: [
@@ -182,7 +182,7 @@ export const CHECKLIST: ChecklistCategory[] = [
     ],
   },
   {
-    id: 'seguranca',
+    id: 'security',
     label: 'Segurança da Informação',
     icon: 'Lock',
     items: [
@@ -231,7 +231,7 @@ export const CHECKLIST: ChecklistCategory[] = [
     ],
   },
   {
-    id: 'fornecedores',
+    id: 'suppliers',
     label: 'Fornecedores e Terceiros',
     icon: 'Truck',
     items: [
@@ -269,7 +269,7 @@ export const CHECKLIST: ChecklistCategory[] = [
     ],
   },
   {
-    id: 'treinamento',
+    id: 'training',
     label: 'Treinamento e Cultura',
     icon: 'GraduationCap',
     items: [
@@ -303,7 +303,7 @@ export const CHECKLIST: ChecklistCategory[] = [
     ],
   },
   {
-    id: 'ripd',
+    id: 'dpia',
     label: 'RIPD e Avaliação de Impacto',
     icon: 'FileSearch',
     items: [
@@ -334,4 +334,4 @@ export const CHECKLIST: ChecklistCategory[] = [
   },
 ]
 
-export const TOTAL_ITENS = CHECKLIST.reduce((acc, cat) => acc + cat.items.length, 0)
+export const TOTAL_ITEMS = CHECKLIST.reduce((acc, cat) => acc + cat.items.length, 0)

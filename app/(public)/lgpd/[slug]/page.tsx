@@ -8,17 +8,17 @@ import { AlertTriangle, FileText, Mail, Phone, QrCode, Users } from 'lucide-reac
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
-export default async function LGPDPublicaPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function LGPDPublicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const supabase = await createClient()
 
-  const { data: empresa } = await supabase
+  const { data: company } = await supabase
     .from('companies')
     .select('id, name, tax_id, dpo_name, dpo_email, dpo_phone, privacy_policy_url')
     .eq('slug', slug)
     .single()
 
-  if (!empresa) notFound()
+  if (!company) notFound()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -34,7 +34,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
               className="object-contain rounded-lg"
             />
             <div className="border-l border-gray-200 pl-3">
-              <p className="font-bold text-gray-900 text-sm">{empresa.name}</p>
+              <p className="font-bold text-gray-900 text-sm">{company.name}</p>
               <p className="text-xs text-gray-400">Portal de Privacidade</p>
             </div>
           </div>
@@ -46,7 +46,7 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
         <div className="text-center space-y-2">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Portal de Privacidade</h1>
           <p className="text-gray-500 max-w-2xl mx-auto text-sm md:text-base">
-            A {empresa.name} respeita sua privacidade e está comprometida com a proteção dos seus
+            A {company.name} respeita sua privacidade e está comprometida com a proteção dos seus
             dados, em conformidade com a LGPD.
           </p>
         </div>
@@ -60,22 +60,22 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-1.5 text-sm">
-              {empresa.dpo_name ? (
+              {company.dpo_name ? (
                 <>
-                  <p className="font-medium text-gray-900">{empresa.dpo_name}</p>
-                  {empresa.dpo_email && (
+                  <p className="font-medium text-gray-900">{company.dpo_name}</p>
+                  {company.dpo_email && (
                     <a
-                      href={`mailto:${empresa.dpo_email}`}
+                      href={`mailto:${company.dpo_email}`}
                       className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 break-all"
                     >
                       <Mail className="h-3.5 w-3.5 flex-shrink-0" />
-                      {empresa.dpo_email}
+                      {company.dpo_email}
                     </a>
                   )}
-                  {empresa.dpo_phone && (
+                  {company.dpo_phone && (
                     <div className="flex items-center gap-1.5 text-gray-500">
                       <Phone className="h-3.5 w-3.5 flex-shrink-0" />
-                      {empresa.dpo_phone}
+                      {company.dpo_phone}
                     </div>
                   )}
                 </>
@@ -93,9 +93,9 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-gray-500">Consulte como tratamos seus dados pessoais.</p>
-              {empresa.privacy_policy_url ? (
+              {company.privacy_policy_url ? (
                 <Button variant="outline" size="sm" className="w-full" asChild>
-                  <a href={empresa.privacy_policy_url} target="_blank" rel="noopener noreferrer">
+                  <a href={company.privacy_policy_url} target="_blank" rel="noopener noreferrer">
                     Acessar Política
                   </a>
                 </Button>
@@ -230,8 +230,8 @@ export default async function LGPDPublicaPage({ params }: { params: Promise<{ sl
 
       <footer className="border-t border-gray-200 mt-10 py-5 text-center text-xs text-gray-400 px-4">
         <p>
-          {empresa.name}
-          {empresa.tax_id ? ` — CNPJ: ${empresa.tax_id}` : ''}
+          {company.name}
+          {company.tax_id ? ` — CNPJ: ${company.tax_id}` : ''}
         </p>
         <p className="mt-1">
           Desenvolvido com{' '}

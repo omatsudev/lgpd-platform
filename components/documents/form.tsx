@@ -97,13 +97,13 @@ function SectionHeader({
 
 // ─── Componente principal ─────────────────────────────────────────────────
 
-interface DocumentoFormProps {
+interface DocumentFormProps {
   companyId: string
   id?: string
   initialData?: any
 }
 
-export function DocumentoForm({ companyId, id, initialData }: DocumentoFormProps) {
+export function DocumentForm({ companyId, id, initialData }: DocumentFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [deleting, startDeleting] = useTransition()
