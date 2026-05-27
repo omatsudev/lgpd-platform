@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const { slug, purpose_id, email, name, cpf, accepted, policy_version, channel } = body
 
     if (!slug || !purpose_id || !email || accepted === undefined) {
-      return NextResponse.json({ error: 'Campos obrigatórios: slug, purpose_id, email, accepted' }, { status: 400 })
+      return NextResponse.json({ error: 'Required fields: slug, purpose_id, email, accepted' }, { status: 400 })
     }
 
     const supabase = await createClient()
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (!company) {
-      return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 404 })
+      return NextResponse.json({ error: 'Company not found' }, { status: 404 })
     }
 
     // Verify the purpose belongs to the company
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (!purpose) {
-      return NextResponse.json({ error: 'Finalidade não encontrada ou inativa' }, { status: 404 })
+      return NextResponse.json({ error: 'Purpose not found or inactive' }, { status: 404 })
     }
 
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
@@ -65,11 +65,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ id: record.id, registered: true }, { status: 201 })
   } catch (err: any) {
-    return NextResponse.json({ error: err.message ?? 'Erro interno' }, { status: 500 })
+    return NextResponse.json({ error: err.message ?? 'Internal server error' }, { status: 500 })
   }
 }
 
-// GET /api/consents/public?slug=X&email=Y&finalidade_id=Z
+// GET /api/consents/public?slug=X&email=Y&purpose_id=Z
 // Checks if a data subject has an active consent for a purpose
 export async function GET(req: NextRequest) {
   try {
@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
     const purpose_id = searchParams.get('purpose_id')
 
     if (!slug || !email) {
-      return NextResponse.json({ error: 'slug e email são obrigatórios' }, { status: 400 })
+      return NextResponse.json({ error: 'slug and email are required' }, { status: 400 })
     }
 
     const supabase = await createClient()
@@ -91,7 +91,7 @@ export async function GET(req: NextRequest) {
       .single()
 
     if (!company) {
-      return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 404 })
+      return NextResponse.json({ error: 'Company not found' }, { status: 404 })
     }
 
     let query = supabase
@@ -111,6 +111,6 @@ export async function GET(req: NextRequest) {
       records: records ?? [],
     })
   } catch (err: any) {
-    return NextResponse.json({ error: err.message ?? 'Erro interno' }, { status: 500 })
+    return NextResponse.json({ error: err.message ?? 'Internal server error' }, { status: 500 })
   }
 }

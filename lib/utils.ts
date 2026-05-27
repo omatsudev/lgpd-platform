@@ -38,7 +38,7 @@ export function generateUniqueLink(companyId: string, employeeId: string) {
   return `${companyId.slice(0, 8)}-${employeeId.slice(0, 8)}-${timestamp}`
 }
 
-export const BASE_LEGAL_OPTIONS = [
+export const LEGAL_BASIS_OPTIONS = [
   'Consentimento do titular',
   'Cumprimento de obrigação legal',
   'Execução de políticas públicas',
@@ -51,7 +51,7 @@ export const BASE_LEGAL_OPTIONS = [
   'Proteção ao crédito',
 ]
 
-export const TIPO_DADO_OPTIONS = [
+export const DATA_TYPE_OPTIONS = [
   'Dados de identificação',
   'Dados financeiros',
   'Dados de saúde',

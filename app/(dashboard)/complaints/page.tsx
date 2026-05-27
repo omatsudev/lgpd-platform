@@ -44,7 +44,7 @@ export default async function ComplaintsPage({
         </div>
         {company?.slug && (
           <Button variant="outline" size="sm" asChild>
-            <a href={`/lgpd/${company.slug}#denuncia`} target="_blank" rel="noopener noreferrer">
+            <a href={`/lgpd/${company.slug}#complaint`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="h-4 w-4 mr-1" /> Canal público
             </a>
           </Button>

@@ -26,7 +26,7 @@ export async function saveDocument(data: DocumentData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const payload = {
     company_id: data.company_id,
@@ -59,7 +59,7 @@ export async function deleteDocument(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   await supabase.from('documents').delete().eq('id', id)

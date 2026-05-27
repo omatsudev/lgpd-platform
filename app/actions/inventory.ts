@@ -118,7 +118,7 @@ export async function saveInventory(data: InventoryData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const dataType =
     data.dataCategories.length > 0
@@ -168,12 +168,12 @@ export async function saveInventory(data: InventoryData) {
 
   if (data.id) {
     const { error } = await supabase.from('data_inventory').update(payload).eq('id', data.id)
-    if (error) throw new Error(`Erro ao atualizar inventário: ${error.message}`)
+    if (error) throw new Error(`Failed to update inventory: ${error.message}`)
   } else {
     const { error } = await supabase
       .from('data_inventory')
       .insert({ ...payload, created_by: user.id })
-    if (error) throw new Error(`Erro ao salvar inventário: ${error.message}`)
+    if (error) throw new Error(`Failed to save inventory: ${error.message}`)
   }
 
   revalidatePath('/inventory')
@@ -185,7 +185,7 @@ export async function deleteInventory(formData: globalThis.FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   await supabase.from('data_inventory').delete().eq('id', id)

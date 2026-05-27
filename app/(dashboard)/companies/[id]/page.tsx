@@ -9,7 +9,7 @@ import { ArrowLeft, Building2 } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export default async function EmpresaFormPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CompanyFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
   const { supabase } = await getUserCompany()

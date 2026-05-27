@@ -4,19 +4,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { DATA_SUBJECT_REQUEST_TYPE_LABELS } from '@/lib/status-labels'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate, formatDateTime } from '@/lib/utils'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const typeMap: Record<string, string> = {
-  acesso: 'Acesso',
-  exclusao: 'Exclusão',
-  correcao: 'Correção',
-  portabilidade: 'Portabilidade',
-  oposicao: 'Oposição',
-}
+const typeMap = DATA_SUBJECT_REQUEST_TYPE_LABELS
 const statusMap: Record<
   string,
   { label: string; variant: 'warning' | 'default' | 'success' | 'destructive' }
@@ -27,7 +22,7 @@ const statusMap: Record<
   rejected: { label: 'Recusado', variant: 'destructive' },
 }
 
-export default async function TitularDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function DataSubjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { supabase } = await getUserCompany()
 

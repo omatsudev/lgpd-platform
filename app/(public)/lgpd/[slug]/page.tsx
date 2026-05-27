@@ -125,7 +125,7 @@ export default async function LGPDPublicPage({ params }: { params: Promise<{ slu
         {/* Formulários */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Titular */}
-          <Card id="titular">
+          <Card id="data-subject">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Users className="h-5 w-5 text-blue-600" /> Exercer meus Direitos
@@ -151,11 +151,11 @@ export default async function LGPDPublicPage({ params }: { params: Promise<{ slu
                     required
                   >
                     <option value="">Selecione...</option>
-                    <option value="acesso">Acesso aos dados</option>
-                    <option value="correcao">Correção de dados</option>
-                    <option value="exclusao">Exclusão de dados</option>
-                    <option value="portabilidade">Portabilidade</option>
-                    <option value="oposicao">Oposição ao tratamento</option>
+                    <option value="access">Acesso aos dados</option>
+                    <option value="correction">Correção de dados</option>
+                    <option value="deletion">Exclusão de dados</option>
+                    <option value="portability">Portabilidade</option>
+                    <option value="objection">Oposição ao tratamento</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">
@@ -170,7 +170,7 @@ export default async function LGPDPublicPage({ params }: { params: Promise<{ slu
           </Card>
 
           {/* Denúncia */}
-          <Card id="denuncia">
+          <Card id="complaint">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <AlertTriangle className="h-5 w-5 text-orange-500" /> Canal de Denúncia

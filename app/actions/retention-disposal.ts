@@ -37,7 +37,7 @@ export async function saveRetentionDisposal(data: RetentionDisposalData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const payload = {
     company_id: data.company_id,
@@ -59,10 +59,10 @@ export async function saveRetentionDisposal(data: RetentionDisposalData) {
 
   if (data.id) {
     const { error: updateErr } = await supabase.from('retention_disposals').update(payload).eq('id', data.id)
-  if (updateErr) throw new Error(`Erro ao atualizar registro: ${updateErr.message}`)
+  if (updateErr) throw new Error(`Failed to update record: ${updateErr.message}`)
   } else {
     const { error: insertErr } = await supabase.from('retention_disposals').insert({ ...payload, created_by: user.id })
-  if (insertErr) throw new Error(`Erro ao criar registro: ${insertErr.message}`)
+  if (insertErr) throw new Error(`Failed to create record: ${insertErr.message}`)
   }
 
   revalidatePath('/retention-disposal')
@@ -74,7 +74,7 @@ export async function registerDisposalHold(formData: globalThis.FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   const reason = formData.get('reason') as string
@@ -107,7 +107,7 @@ export async function registerDisposal(formData: globalThis.FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   const method = formData.get('method') as string
@@ -143,7 +143,7 @@ export async function deleteRetentionDisposal(formData: globalThis.FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string
   await supabase.from('retention_disposals').delete().eq('id', id)

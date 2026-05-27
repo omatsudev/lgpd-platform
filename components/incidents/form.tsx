@@ -92,8 +92,8 @@ function defaultState(): FormState {
     anpd_protocol: '',
     notified_subjects: false,
     subjects_notification_date: '',
-    operadores_envolvidos: '',
-    relatorio_impacto: '',
+    operators_involved: '',
+    impact_report: '',
   }
 }
 
@@ -177,8 +177,8 @@ export function IncidentForm({ companyId, id, initialData }: IncidentFormProps) 
       anpd_protocol: initialData.anpd_protocol ?? '',
       notified_subjects: initialData.notified_subjects ?? false,
       subjects_notification_date: initialData.subjects_notification_date ?? '',
-      operadores_envolvidos: initialData.operadores_envolvidos ?? '',
-      relatorio_impacto: initialData.relatorio_impacto ?? '',
+      operators_involved: initialData.operators_involved ?? '',
+      impact_report: initialData.impact_report ?? '',
     }
   })
 
@@ -462,11 +462,11 @@ export function IncidentForm({ companyId, id, initialData }: IncidentFormProps) 
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="operadores_envolvidos">Operadores envolvidos</Label>
+            <Label htmlFor="operators_involved">Operadores envolvidos</Label>
             <Textarea
-              id="operadores_envolvidos"
-              value={data.operadores_envolvidos}
-              onChange={(e) => update('operadores_envolvidos', e.target.value)}
+              id="operators_involved"
+              value={data.operators_involved}
+              onChange={(e) => update('operators_involved', e.target.value)}
               placeholder="Liste os operadores de dados envolvidos no incidente (fornecedores, parceiros, subcontratados...)"
               rows={2}
             />
@@ -485,8 +485,8 @@ export function IncidentForm({ companyId, id, initialData }: IncidentFormProps) 
         </CardHeader>
         <CardContent>
           <Textarea
-            value={data.relatorio_impacto}
-            onChange={(e) => update('relatorio_impacto', e.target.value)}
+            value={data.impact_report}
+            onChange={(e) => update('impact_report', e.target.value)}
             placeholder="Descreva o impacto potencial do incidente aos titulares: riscos identificados, probabilidade de dano, gravidade, mitigações adotadas..."
             rows={5}
           />

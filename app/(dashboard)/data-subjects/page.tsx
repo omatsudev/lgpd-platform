@@ -2,18 +2,13 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { SearchInput } from '@/components/ui/search-input'
+import { DATA_SUBJECT_REQUEST_TYPE_LABELS } from '@/lib/status-labels'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { Clock, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 
-const typeMap: Record<string, string> = {
-  acesso: 'Acesso',
-  exclusao: 'Exclusão',
-  correcao: 'Correção',
-  portabilidade: 'Portabilidade',
-  oposicao: 'Oposição',
-}
+const typeMap = DATA_SUBJECT_REQUEST_TYPE_LABELS
 const statusMap: Record<
   string,
   { label: string; variant: 'warning' | 'default' | 'success' | 'destructive' | 'secondary' }
@@ -24,7 +19,7 @@ const statusMap: Record<
   rejected: { label: 'Recusado', variant: 'destructive' },
 }
 
-export default async function TitularesPage({
+export default async function DataSubjectsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>
@@ -56,7 +51,7 @@ export default async function TitularesPage({
         </div>
         {company?.slug && (
           <Button variant="outline" size="sm" asChild>
-            <a href={`/lgpd/${company.slug}#titular`} target="_blank" rel="noopener noreferrer">
+            <a href={`/lgpd/${company.slug}#data-subject`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="h-4 w-4 mr-1" /> Formulário público
             </a>
           </Button>

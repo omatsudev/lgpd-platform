@@ -9,7 +9,7 @@ export async function saveCompany(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string | null
   const name = formData.get('name') as string

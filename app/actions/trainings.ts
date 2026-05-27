@@ -9,7 +9,7 @@ export async function saveTraining(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const id = formData.get('id') as string | null
   const companyId = formData.get('company_id') as string
@@ -47,7 +47,7 @@ export async function addCollaborator(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Não autenticado')
+  if (!user) throw new Error('Not authenticated')
 
   const trainingId = formData.get('training_id') as string
   const name = formData.get('name') as string
