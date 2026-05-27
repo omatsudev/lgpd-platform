@@ -62,7 +62,7 @@ export default async function RetentionDisposalPage({
             Controle de prazos de guarda e ciclo de vida dos dados (LGPD Art. 16)
           </p>
         </div>
-        <Link href="/retention-disposal/novo">
+        <Link href="/retention-disposal/new">
           <Button size="sm">
             <Plus className="h-4 w-4 mr-1" /> Novo Registro
           </Button>
@@ -154,7 +154,7 @@ export default async function RetentionDisposalPage({
                 : 'Nenhum registro de retenção cadastrado ainda.'}
             </p>
             {!q && !status && (
-              <Link href="/retention-disposal/novo">
+              <Link href="/retention-disposal/new">
                 <Button size="sm" className="mt-4">
                   <Plus className="h-4 w-4 mr-1" /> Criar primeiro registro
                 </Button>

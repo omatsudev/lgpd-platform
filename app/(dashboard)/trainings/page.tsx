@@ -86,7 +86,7 @@ export default async function TrainingsPage({
           </p>
         </div>
         {tab === 'trainings' && (
-          <Link href="/trainings/novo">
+          <Link href="/trainings/new">
             <Button>
               <Plus className="h-4 w-4 mr-1" /> Novo Treinamento
             </Button>

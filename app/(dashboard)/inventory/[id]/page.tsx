@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 export default async function InventoryFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const isNew = id === 'novo'
+  const isNew = id === 'new'
 
   const { companyId, supabase } = await getUserCompany()
 

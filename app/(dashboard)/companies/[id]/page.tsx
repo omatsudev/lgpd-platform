@@ -11,7 +11,7 @@ import { notFound } from 'next/navigation'
 
 export default async function CompanyFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const isNew = id === 'novo'
+  const isNew = id === 'new'
   const { supabase } = await getUserCompany()
 
   let company: any = null
