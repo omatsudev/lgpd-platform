@@ -36,7 +36,7 @@ export default function CadastroPage() {
                   <input
                     type="radio"
                     name="type"
-                    value="empresa"
+                    value="company"
                     className="sr-only peer"
                     defaultChecked
                   />
