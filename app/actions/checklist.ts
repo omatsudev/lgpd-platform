@@ -37,6 +37,7 @@ export async function atualizarItemChecklist(formData: FormData) {
 
   if (error) throw new Error(error.message)
 
-  revalidatePath('/checklist')
+  // Não revalida /checklist — o estado é gerenciado client-side no ChecklistBoard.
+  // Revalida apenas /relatorio para que o relatório reflita as mudanças.
   revalidatePath('/relatorio')
 }

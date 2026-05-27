@@ -68,6 +68,7 @@ function ItemRow({
   const [savingStatus, setSavingStatus] = useState<ChecklistStatus | null>(null)
   const [savingDetails, setSavingDetails] = useState(false)
   const [savedDetails, setSavedDetails] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [form, setForm] = useState<ItemState>({
     status: state?.status ?? 'pending',
@@ -95,15 +96,20 @@ function ItemRow({
   // Clique num botão de status: atualiza imediatamente (otimista) e salva em background
   const handleStatusClick = async (newStatus: ChecklistStatus) => {
     if (savingStatus) return
+    const previousStatus = form.status
     setForm(prev => ({ ...prev, status: newStatus }))
-    onStatusChange(item.key, newStatus)           // ← atualiza contadores do board
+    onStatusChange(item.key, newStatus)
     setSavingStatus(newStatus)
+    setSaveError(null)
     try {
       await persist({ ...form, status: newStatus })
-    } catch {
-      // Reverte se falhar
-      setForm(prev => ({ ...prev, status: form.status }))
-      onStatusChange(item.key, form.status)
+    } catch (err) {
+      // Reverte estado otimista e mostra o erro
+      setForm(prev => ({ ...prev, status: previousStatus }))
+      onStatusChange(item.key, previousStatus)
+      const msg = err instanceof Error ? err.message : 'Erro ao salvar'
+      setSaveError(msg)
+      console.error('[checklist] save status failed:', msg)
     } finally {
       setSavingStatus(null)
     }
@@ -114,11 +120,16 @@ function ItemRow({
     if (savingDetails) return
     setSavingDetails(true)
     setSavedDetails(false)
+    setSaveError(null)
     try {
       await persist(form)
       setSavedDetails(true)
       if (savedTimer.current) clearTimeout(savedTimer.current)
       savedTimer.current = setTimeout(() => setSavedDetails(false), 2500)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Erro ao salvar'
+      setSaveError(msg)
+      console.error('[checklist] save details failed:', msg)
     } finally {
       setSavingDetails(false)
     }
@@ -214,6 +225,12 @@ function ItemRow({
               className="text-sm"
             />
           </div>
+
+          {saveError && (
+            <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-2 py-1">
+              ✕ {saveError}
+            </p>
+          )}
 
           <div className="flex items-center gap-3">
             <Button size="sm" onClick={handleSaveDetails} disabled={savingDetails}>
