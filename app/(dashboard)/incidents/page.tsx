@@ -82,7 +82,7 @@ export default async function IncidentsPage({
             Registro e resposta a incidentes de segurança (LGPD Art. 48)
           </p>
         </div>
-        <Link href="/incidents/novo">
+        <Link href="/incidents/new">
           <Button size="sm">
             <Plus className="h-4 w-4 mr-1" /> Registrar Incidente
           </Button>

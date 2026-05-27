@@ -61,7 +61,7 @@ export default async function ConsentsPage({
             Registro e rastreabilidade de consentimentos LGPD
           </p>
         </div>
-        <Link href="/consents/purposes/nova">
+        <Link href="/consents/purposes/new">
           <Button size="sm">
             <Plus className="h-4 w-4 mr-1" /> Nova Finalidade
           </Button>
@@ -322,7 +322,7 @@ export default async function ConsentsPage({
               )
             })
           )}
-          <Link href="/consents/purposes/nova">
+          <Link href="/consents/purposes/new">
             <Button variant="outline" size="sm" className="w-full">
               <Plus className="h-4 w-4 mr-1" /> Nova Finalidade
             </Button>

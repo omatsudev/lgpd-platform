@@ -69,7 +69,7 @@ export default async function InventoryPage({
         </div>
         <div className="flex gap-2">
           <ExportButton items={items} />
-          <Link href="/inventory/novo">
+          <Link href="/inventory/new">
             <Button size="sm">
               <Plus className="h-4 w-4 mr-1" /> Novo
             </Button>

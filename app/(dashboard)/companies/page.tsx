@@ -40,7 +40,7 @@ export default async function CompaniesPage({
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">Empresas Gerenciadas</h1>
           <p className="text-sm text-gray-500 mt-0.5">Empresas sob sua responsabilidade como DPO</p>
         </div>
-        <Link href="/companies/novo">
+        <Link href="/companies/new">
           <Button>
             <Plus className="h-4 w-4 mr-1" /> Nova Empresa
           </Button>

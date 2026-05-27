@@ -196,7 +196,7 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
                   <Field label="Local armazenamento" value={cat.storageLocation} />
                   <Field label="Categoria do titular" value={cat.dataSubjectCategory} />
                   <Field label="Setor responsável" value={cat.responsibleDepartment} />
-                  <Field label="Necessidade de DPIA" value={cat.dpiaRequired} />
+                  <Field label="Necessidade de DPIA" value={{ yes: 'Sim', no: 'Não', to_evaluate: 'A avaliar' }[cat.dpiaRequired] ?? cat.dpiaRequired} />
                 </div>
               </div>
             ))}

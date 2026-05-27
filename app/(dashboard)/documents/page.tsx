@@ -79,7 +79,7 @@ export default async function DocumentosPage({
             Políticas, termos e documentos de conformidade LGPD
           </p>
         </div>
-        <Link href="/documents/novo">
+        <Link href="/documents/new">
           <Button size="sm">
             <Plus className="h-4 w-4 mr-1" /> Novo Documento
           </Button>

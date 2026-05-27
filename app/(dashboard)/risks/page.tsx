@@ -58,7 +58,7 @@ export default async function RisksPage({
             Identificação, avaliação e tratamento de riscos LGPD
           </p>
         </div>
-        <Link href="/risks/novo">
+        <Link href="/risks/new">
           <Button size="sm">
             <Plus className="h-4 w-4 mr-1" /> Novo Risco
           </Button>

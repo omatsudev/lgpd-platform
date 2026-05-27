@@ -871,9 +871,9 @@ function StepData({
                             <SelectValue placeholder="Selecione..." />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="sim">Sim</SelectItem>
-                            <SelectItem value="nao">Não</SelectItem>
-                            <SelectItem value="a_avaliar">A avaliar</SelectItem>
+                            <SelectItem value="yes">Sim</SelectItem>
+                            <SelectItem value="no">Não</SelectItem>
+                            <SelectItem value="to_evaluate">A avaliar</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -1627,7 +1627,7 @@ function StepImpact({
   const risk = calculateRisk(data)
   const riskInfo = riskConfig[risk]
   const dpiaFinal =
-    data.requiresDpia === 'automatic' ? (dpiaRecommended ? 'sim' : 'nao') : data.requiresDpia
+    data.requiresDpia === 'automatic' ? (dpiaRecommended ? 'yes' : 'no') : data.requiresDpia
 
   return (
     <div className="space-y-5">
@@ -1662,8 +1662,8 @@ function StepImpact({
         <div className="grid grid-cols-3 gap-3">
           {[
             { value: 'automatic', label: `Automático (${dpiaRecommended ? 'Sim' : 'Não'})` },
-            { value: 'sim', label: 'Sim' },
-            { value: 'nao', label: 'Não' },
+            { value: 'yes', label: 'Sim' },
+            { value: 'no', label: 'Não' },
           ].map((opt) => (
             <button
               key={opt.value}
@@ -1676,7 +1676,7 @@ function StepImpact({
           ))}
         </div>
         <p className="text-xs text-gray-500">
-          RIPD final: <strong>{dpiaFinal === 'sim' ? 'Necessário' : 'Não necessário'}</strong>
+          RIPD final: <strong>{dpiaFinal === 'yes' ? 'Necessário' : 'Não necessário'}</strong>
         </p>
       </div>
     </div>
@@ -1923,7 +1923,7 @@ export function InventoryWizard({ companyId, initialData, id }: WizardProps) {
       // Re-throw erros de redirect (NEXT_REDIRECT) — são navegação, não falhas
       if (isRedirectError(err)) throw err
       setSaving(false)
-      setSaveError('Erro ao save. Verifique os campos obrigatórios e tente novamente.')
+      setSaveError('Erro ao salvar. Verifique os campos obrigatórios e tente novamente.')
     }
   }
 

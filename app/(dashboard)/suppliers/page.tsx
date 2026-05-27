@@ -88,7 +88,7 @@ export default async function SuppliersPage({
             Mapeamento e due diligence de fornecedores com acesso a dados
           </p>
         </div>
-        <Link href="/suppliers/novo">
+        <Link href="/suppliers/new">
           <Button size="sm">
             <Plus className="h-4 w-4 mr-1" /> Novo Fornecedor
           </Button>
