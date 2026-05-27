@@ -2,7 +2,7 @@ import { InventoryWizard } from '@/components/inventory/wizard'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { notFound } from 'next/navigation'
 
-export default async function InventarioFormPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function InventoryFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
 

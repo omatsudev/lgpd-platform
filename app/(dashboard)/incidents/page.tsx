@@ -48,7 +48,7 @@ const typeLabel: Record<string, string> = {
   other: 'Outro',
 }
 
-export default async function IncidentesPage({
+export default async function IncidentsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>

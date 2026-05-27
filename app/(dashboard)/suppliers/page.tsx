@@ -49,7 +49,7 @@ const dueDiligenceLabel: Record<string, string> = {
   expired: 'Expirado',
 }
 
-export default async function FornecedoresPage({
+export default async function SuppliersPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>

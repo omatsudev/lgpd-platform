@@ -20,7 +20,7 @@ const statusVariant: Record<string, 'secondary' | 'warning' | 'default' | 'succe
   closed: 'success',
 }
 
-export default async function RiscosPage({
+export default async function RisksPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string; tab?: string }>

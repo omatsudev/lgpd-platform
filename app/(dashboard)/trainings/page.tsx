@@ -7,7 +7,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { Plus, Send, Users } from 'lucide-react'
 import Link from 'next/link'
 
-export default async function TreinamentosPage({
+export default async function TrainingsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string; tab?: string }>
