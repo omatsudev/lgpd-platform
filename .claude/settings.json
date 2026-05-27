@@ -70,7 +70,14 @@
       "Bash(sed -i s/TitularDetailPage/DataSubjectDetailPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/data-subjects/[id]/page.tsx')",
       "Bash(sed -i s/TitularesPage/DataSubjectsPage/g '/home/omatsu/dev/omatsu/lgpd-platform/app/\\(dashboard\\)/data-subjects/page.tsx')",
       "Bash(grep -vE '\"[^\"]*\"|\\\\x27[^\\\\x27]*\\\\x27|`[^`]*`')",
-      "Bash(sed -i 's/function Campo\\(/function Field\\(/g; s/<Campo /<Field /g; s/<\\\\/Campo>/<\\\\/Field>/g' app/\\\\\\(dashboard\\\\\\)/inventory/\\\\[id\\\\]/view/page.tsx)"
+      "Bash(sed -i 's/function Campo\\(/function Field\\(/g; s/<Campo /<Field /g; s/<\\\\/Campo>/<\\\\/Field>/g' app/\\\\\\(dashboard\\\\\\)/inventory/\\\\[id\\\\]/view/page.tsx)",
+      "Bash(grep -vE '\\(//|className|label|placeholder|title|description|text|\"[^\"]*\"|`[^`]*`\\)')",
+      "Bash(python3 -)",
+      "Bash(sed -i 's/async function RiscosPage\\(/async function RisksPage\\(/g' \"app/\\(dashboard\\)/risks/page.tsx\")",
+      "Bash(sed -i 's/async function TreinamentosPage\\(/async function TrainingsPage\\(/g' \"app/\\(dashboard\\)/trainings/page.tsx\")",
+      "Bash(sed -i 's/async function FornecedoresPage\\(/async function SuppliersPage\\(/g' \"app/\\(dashboard\\)/suppliers/page.tsx\")",
+      "Bash(sed -i 's/async function IncidentesPage\\(/async function IncidentsPage\\(/g' \"app/\\(dashboard\\)/incidents/page.tsx\")",
+      "Bash(sed -i 's/async function InventarioFormPage\\(/async function InventoryFormPage\\(/g' \"app/\\(dashboard\\)/inventory/[id]/page.tsx\")"
     ],
     "additionalDirectories": [
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]",
