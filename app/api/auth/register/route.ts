@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     options: {
       data: {
         name,
-        role: tipo === 'dpo' ? 'dpo' : 'empresa',
+        role: tipo === 'dpo' ? 'dpo' : 'company',
       },
       emailRedirectTo: `${new URL(request.url).origin}/api/auth/callback`,
     },

@@ -71,72 +71,72 @@ const STEPS = [
 
 // 6 fases conforme relatorio_lgpd.pdf §5 Etapa 2
 const FASES = [
-  { id: 'coleta', label: 'Coleta' },
-  { id: 'uso', label: 'Uso' },
-  { id: 'armazenamento', label: 'Armazenamento' },
-  { id: 'compartilhamento', label: 'Compartilhamento' },
-  { id: 'retencao', label: 'Retenção' },
-  { id: 'descarte', label: 'Descarte' },
+  { id: 'collection', label: 'Coleta' },
+  { id: 'use', label: 'Uso' },
+  { id: 'storage', label: 'Armazenamento' },
+  { id: 'sharing', label: 'Compartilhamento' },
+  { id: 'retention', label: 'Retenção' },
+  { id: 'disposal', label: 'Descarte' },
 ]
 
 const CATEGORIAS = [
   {
-    id: 'identificacao_pessoal',
+    id: 'personal_identification',
     label: 'Identificação pessoal',
     desc: 'Nome, endereço, data de nascimento, telefone',
   },
   {
-    id: 'dados_governamentais',
+    id: 'government_data',
     label: 'Dados governamentais',
     desc: 'CPF, RG, CNH, título de eleitor, passaporte',
   },
   {
-    id: 'identificacao_eletronica',
+    id: 'electronic_identification',
     label: 'Identificação eletrônica',
     desc: 'IP, login, cookies, histórico de navegação, dispositivos',
   },
   {
-    id: 'dados_financeiros',
+    id: 'financial_data',
     label: 'Dados financeiros',
     desc: 'Conta bancária, cartão, renda, patrimônio, dívidas',
   },
   {
-    id: 'consentimentos',
+    id: 'consent_data',
     label: 'Consentimentos',
     desc: 'Coletados mediante autorização expressa do titular',
   },
   {
-    id: 'caracteristicas_pessoais',
+    id: 'personal_characteristics',
     label: 'Características pessoais',
     desc: 'Cor, altura, peso, aparência física',
   },
   {
-    id: 'caracteristicas_psicologicas',
+    id: 'psychological_characteristics',
     label: 'Características psicológicas',
     desc: 'Personalidade, comportamento, preferências, opiniões',
   },
   {
-    id: 'composicao_familiar',
+    id: 'family_composition',
     label: 'Composição familiar',
     desc: 'Estado civil, filhos, cônjuge, dependentes',
   },
   {
-    id: 'educacao',
+    id: 'education',
     label: 'Educação',
     desc: 'Escolaridade, cursos, diplomas, certificados, histórico escolar',
   },
-  { id: 'profissao', label: 'Profissão', desc: 'Cargo, salário, CTPS, histórico profissional' },
+  { id: 'occupation', label: 'Profissão', desc: 'Cargo, salário, CTPS, histórico profissional' },
   {
-    id: 'imagem_video_voz',
+    id: 'image_video_voice',
     label: 'Vídeo / Imagem / Voz',
     desc: 'Fotos, gravações de áudio/vídeo, reconhecimento facial',
   },
   {
-    id: 'dados_sensiveis',
+    id: 'sensitive_data',
     label: 'Dados sensíveis (saúde)',
     desc: 'Origem racial, religião, saúde, biometria, orientação sexual, opinião política',
   },
-  { id: 'outros', label: 'Outros', desc: 'Outras categorias de dados não listadas acima' },
+  { id: 'other', label: 'Outros', desc: 'Outras categorias de dados não listadas acima' },
 ]
 
 const BASES_LEGAIS = [
@@ -168,12 +168,12 @@ const SETORES = [
 
 // Tipos de armazenamento — relatorio_lgpd.pdf §5 Etapa 6 (múltiplos)
 const TIPOS_ARMAZENAMENTO = [
-  { value: 'nuvem', label: 'Nuvem (cloud)' },
-  { value: 'servidor_local', label: 'Servidor local' },
-  { value: 'papel', label: 'Físico / Papel' },
+  { value: 'cloud', label: 'Nuvem (cloud)' },
+  { value: 'local_server', label: 'Servidor local' },
+  { value: 'paper', label: 'Físico / Papel' },
   { value: 'erp', label: 'ERP / Sistema' },
-  { value: 'terceiro', label: 'Terceiros' },
-  { value: 'hibrido', label: 'Híbrido' },
+  { value: 'third_party', label: 'Terceiros' },
+  { value: 'hybrid', label: 'Híbrido' },
 ]
 
 const EVENTOS_INICIAIS = [
@@ -238,12 +238,12 @@ function createDefaultFormData(): FormData {
     responsibleDepartments: [],
     processDescription: '',
     lifecyclePhases: {
-      coleta: { ...DEFAULT_PHASE },
-      uso: { ...DEFAULT_PHASE },
-      armazenamento: { ...DEFAULT_PHASE },
-      compartilhamento: { ...DEFAULT_PHASE },
-      retencao: { ...DEFAULT_PHASE },
-      descarte: { ...DEFAULT_PHASE },
+      collection: { ...DEFAULT_PHASE },
+      use: { ...DEFAULT_PHASE },
+      storage: { ...DEFAULT_PHASE },
+      sharing: { ...DEFAULT_PHASE },
+      retention: { ...DEFAULT_PHASE },
+      disposal: { ...DEFAULT_PHASE },
     },
     dataCategories: [],
     dataCategoriesDetail: [],
@@ -281,7 +281,7 @@ function createDefaultFormData(): FormData {
 // ─── Risco ───────────────────────────────────────────────────────────────────
 
 function calculateRisk(data: FormData): 'baixo' | 'medio' | 'alto' {
-  const temSensiveis = data.dataCategories.includes('dados_sensiveis')
+  const temSensiveis = data.dataCategories.includes('sensitive_data')
   const semBaseLegal = data.legalBases.length === 0
   if (temSensiveis || semBaseLegal) return 'alto'
   if (data.dataShared || !data.retentionPeriod) return 'medio'
@@ -289,7 +289,7 @@ function calculateRisk(data: FormData): 'baixo' | 'medio' | 'alto' {
 }
 
 function suggestDpia(data: FormData): boolean {
-  return data.dataCategories.includes('dados_sensiveis') || data.dataShared
+  return data.dataCategories.includes('sensitive_data') || data.dataShared
 }
 
 const riskConfig = {
@@ -688,7 +688,7 @@ function StepData({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {CATEGORIAS.map((cat) => {
           const selected = data.dataCategories.includes(cat.id)
-          const isSensivel = cat.id === 'dados_sensiveis'
+          const isSensivel = cat.id === 'sensitive_data'
           return (
             <button
               key={cat.id}
@@ -725,7 +725,7 @@ function StepData({
         })}
       </div>
 
-      {data.dataCategories.includes('dados_sensiveis') && (
+      {data.dataCategories.includes('sensitive_data') && (
         <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
           <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
           <span>
@@ -1640,7 +1640,7 @@ function StepImpact({
           <Badge variant={riskInfo.badge}>{riskInfo.label}</Badge>
         </div>
         <div className="mt-2 space-y-1 text-xs text-gray-600">
-          {data.dataCategories.includes('dados_sensiveis') && (
+          {data.dataCategories.includes('sensitive_data') && (
             <p>• Dados sensíveis identificados → risk elevado</p>
           )}
           {data.legalBases.length === 0 && <p>• Sem base legal definida → alerta crítico</p>}
