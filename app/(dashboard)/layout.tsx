@@ -6,12 +6,12 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, company: empresa, companyId, role, companies } = await getUserCompany()
+  const { user, company: activeCompany, companyId, role, companies } = await getUserCompany()
 
   if (!user) redirect('/login')
 
-  // Cria empresa automaticamente apenas para usuários sem nenhuma empresa vinculada
-  // (não aplica a DPOs que ainda não foram atribuídos a nenhuma empresa)
+  // Cria activeCompany automaticamente apenas para usuários sem nenhuma activeCompany vinculada
+  // (não aplica a DPOs que ainda não foram atribuídos a nenhuma activeCompany)
   if (user && !companyId && companies.length === 0) {
     const supabase = await createClient()
     const userName = (user.user_metadata?.name as string) || user.email || 'Usuário'
@@ -41,7 +41,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       })
       redirect('/dashboard?setup=1')
     }
-    // Se criação falhou, renderiza sem empresa
+    // Se criação falhou, renderiza sem activeCompany
   }
 
   return (
@@ -49,7 +49,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <Sidebar role={role} />
       <div className="flex flex-1 flex-col lg:ml-64 overflow-hidden">
         <Header
-          companyName={empresa?.name}
+          companyName={activeCompany?.name}
           userName={user?.email}
           companies={companies}
           currentCompanyId={companyId}

@@ -16,7 +16,8 @@
       "Bash(sed -i -e s/RetencaoDescarteData/RetentionDisposalData/g app/actions/retention-disposal.ts)",
       "Bash(sed -i -e 's/riscoVariant\\\\b/riskVariant/g' -e 's/riscoLabel\\\\b/riskLabel/g' -e 's/\\\\brisco\\\\b/risk/g' 'app/\\(dashboard\\)/inventory/page.tsx')",
       "Bash(sed -i -e 's/const { data: treinamentosColabs }/const { data: trainingCollaborators }/g' -e s/treinamentosColabs/trainingCollaborators/g -e 's/{ key: '\\\\''treinamentos'\\\\'', label/{ key: '\\\\''trainings'\\\\'', label/g' -e 's/aba === '\\\\''treinamentos'\\\\''/aba === '\\\\''trainings'\\\\''/g' -e 's/aba = '\\\\''treinamentos'\\\\''/aba = '\\\\''trainings'\\\\''/g' -e 's/treinamentos\\\\.length/trainings.length/g' -e 's/treinamentos\\\\.map/trainings.map/g' -e 's/treinamentos\\\\[/trainings[/g' 'app/\\(dashboard\\)/trainings/page.tsx')",
-      "Bash(npx prettier *)"
+      "Bash(npx prettier *)",
+      "Bash(npx next *)"
     ],
     "additionalDirectories": [
       "/home/omatsu/dev/omatsu/lgpd-platform/app/(dashboard)/inventory/[id]",
