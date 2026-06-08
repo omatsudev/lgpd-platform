@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { CookiesResetButton } from '@/components/cookies-reset-button'
 import { FeaturesGrid } from '@/components/features-grid'
 
 // ─── SVG helpers ─────────────────────────────────────────────────────────────
@@ -1201,11 +1202,9 @@ export default function HomePage() {
           <div className="foot-bottom">
             <span>© 2026 Serra Privacy. Todos os direitos reservados. CNPJ 00.000.000/0001-00</span>
             <div style={{ display: 'flex', gap: 22 }}>
-              {['Privacidade', 'Termos', 'Cookies'].map((l) => (
-                <a key={l} href="#" style={{ color: '#94A3B8', textDecoration: 'none' }}>
-                  {l}
-                </a>
-              ))}
+              <a href="/docs/aviso_de_privacidade_serra_privacy.pdf" target="_blank" rel="noopener noreferrer" style={{ color: '#94A3B8', textDecoration: 'none' }}>Privacidade</a>
+              <Link href="/termos" style={{ color: '#94A3B8', textDecoration: 'none' }}>Termos</Link>
+              <CookiesResetButton />
             </div>
           </div>
         </div>
