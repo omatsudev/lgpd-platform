@@ -68,7 +68,7 @@ export default function HomePage() {
         .nav-row   { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0; }
         .nav-links { display: flex; gap: 28px; align-items: center; font-size: 14.5px; font-weight: 500; color: #334155; }
         .nav-btn   { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; font-size: 14px; font-weight: 600; border-radius: 999px; background: #0B1B3D; color: #fff; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
-        .logo-img  { object-fit: contain; height: 80px; width: auto; }
+        .logo-img  { object-fit: contain; height: 64px; width: auto; }
 
         .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 18px; }
 
@@ -121,7 +121,7 @@ export default function HomePage() {
           .hv-float     { padding: 10px 12px; gap: 8px; }
           .nav-links    { display: none; }
           .nav-row      { padding: 12px 0; }
-          .logo-img     { height: 64px !important; }
+          .logo-img     { height: 56px !important; }
           .eyebrow      { font-size: 11.5px; }
           .sec-head h2  { font-size: 26px; }
           .sec-head p   { font-size: 15px; }
@@ -233,8 +233,8 @@ export default function HomePage() {
             <Image
               src="/logo-serra-privacy.png"
               alt="Serra Privacy"
-              width={80}
-              height={80}
+              width={64}
+              height={64}
               className="logo-img"
               priority
             />
@@ -1248,12 +1248,12 @@ export default function HomePage() {
                 <Image
                   src="/logo-serra-privacy.png"
                   alt="Serra Privacy"
-                  width={80}
-                  height={80}
+                  width={64}
+                  height={64}
                   style={{
                     objectFit: 'contain',
-                    height: 80,
-                    width: 80,
+                    height: 64,
+                    width: 64,
                     opacity: 0.95,
                   }}
                 />
