@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
+import { CookieBanner } from '@/components/cookie-banner'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="pt-BR" className="h-full">
       <body className={`${inter.variable} ${jakarta.variable} font-sans min-h-full bg-gray-50`}>
         {children}
+        <CookieBanner />
       </body>
     </html>
   )
