@@ -242,7 +242,7 @@ export default function HomePage() {
           </Link>
 
           {/* col 2: links — centralizados */}
-          <div className="nav-links">
+          <div className="nav-links" style={{ justifySelf: 'center' }}>
             {[
               { label: 'Início', href: '#' },
               { label: 'Produtos', href: '#features' },
