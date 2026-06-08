@@ -29,8 +29,8 @@ export default async function LGPDPublicPage({ params }: { params: Promise<{ slu
             <Image
               src="/logo-serra-privacy.png"
               alt="Serra Privacy"
-              width={40}
-              height={40}
+              width={52}
+              height={52}
               className="object-contain"
             />
             <div className="border-l border-gray-200 pl-3">
