@@ -1277,7 +1277,7 @@ export default function HomePage() {
                 {[
                   {
                     label: 'LinkedIn',
-                    href: 'https://br.linkedin.com/company/serralgpd',
+                    href: 'https://www.linkedin.com/in/serralgpd/',
                     svg: (
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19 0h-14C2.2 0 0 2.2 0 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5V5c0-2.8-2.2-5-5-5zM8 19H5V8h3v11zM6.5 6.7c-1 0-1.7-.7-1.7-1.6S5.5 3.5 6.5 3.5s1.7.7 1.7 1.6-.7 1.6-1.7 1.6zM20 19h-3v-5.6c0-1.6-.6-2.4-1.7-2.4-1.4 0-2.1.9-2.1 2.4V19h-3V8h3v1.4c.5-.8 1.5-1.5 3.1-1.5 2.2 0 3.7 1.4 3.7 4.2V19z" />
