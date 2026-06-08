@@ -240,39 +240,41 @@ export default function HomePage() {
             />
           </Link>
 
-          <div className="nav-links">
-            {[
-              { label: 'Início', href: '#' },
-              { label: 'Produtos', href: '#features' },
-              { label: 'Soluções', href: '#modulos' },
-              { label: 'Sobre nós', href: '#sobre' },
-              { label: 'Case de sucesso', href: '#cases' },
-              { label: 'Contato', href: '#contato' },
-              { label: 'Login', href: '/login' },
-            ].map((l) => (
-              <Link
-                key={l.label}
-                href={l.href}
-                style={{
-                  color: '#334155',
-                  textDecoration: 'none',
-                  padding: '6px 0',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {l.label}
-              </Link>
-            ))}
-          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+            <div className="nav-links">
+              {[
+                { label: 'Início', href: '#' },
+                { label: 'Produtos', href: '#features' },
+                { label: 'Soluções', href: '#modulos' },
+                { label: 'Sobre nós', href: '#sobre' },
+                { label: 'Case de sucesso', href: '#cases' },
+                { label: 'Contato', href: '#contato' },
+                { label: 'Login', href: '/login' },
+              ].map((l) => (
+                <Link
+                  key={l.label}
+                  href={l.href}
+                  style={{
+                    color: '#334155',
+                    textDecoration: 'none',
+                    padding: '6px 0',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
 
-          <a
-            href="https://wa.me/552422353709"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="nav-btn"
-          >
-            Solicitar demonstração <IconArrow />
-          </a>
+            <a
+              href="https://wa.me/552422353709"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-btn"
+            >
+              Solicitar demonstração <IconArrow />
+            </a>
+          </div>
         </div>
       </nav>
 
