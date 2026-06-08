@@ -65,7 +65,7 @@ export default function HomePage() {
         .hero-meta     { display: flex; align-items: center; gap: 18px; font-size: 13.5px; color: #94A3B8; margin-top: 8px; flex-wrap: wrap; }
         .hv-float      { position: absolute; background: white; border-radius: 14px; padding: 14px 16px; box-shadow: 0 20px 40px -15px rgba(15,23,42,0.25); display: flex; gap: 12px; align-items: center; z-index: 3; }
 
-        .nav-row   { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 16px 0; }
+        .nav-row   { display: flex; align-items: center; padding: 16px 0; }
         .nav-links { display: flex; gap: 28px; align-items: center; font-size: 14.5px; font-weight: 500; color: #334155; }
         .nav-btn   { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; font-size: 14px; font-weight: 600; border-radius: 999px; background: #0B1B3D; color: #fff; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
         .logo-img  { object-fit: contain; height: 80px; width: auto; }
@@ -225,7 +225,7 @@ export default function HomePage() {
         }}
       >
         <div className="lp-container nav-row">
-          {/* col 1: logo */}
+          
           <Link
             href="/"
             aria-label="Serra Privacy"
@@ -241,8 +241,8 @@ export default function HomePage() {
             />
           </Link>
 
-          {/* col 2: links — centralizados */}
-          <div className="nav-links" style={{ justifySelf: 'center' }}>
+          
+          <div className="nav-links" style={{ margin: '0 auto' }}>
             {[
               { label: 'Início', href: '#' },
               { label: 'Produtos', href: '#features' },
@@ -267,17 +267,15 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* col 3: botão — alinhado à direita */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <a
-              href="https://wa.me/552422353709"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-btn"
-            >
-              Solicitar demonstração <IconArrow />
-            </a>
-          </div>
+          
+          <a
+            href="https://wa.me/552422353709"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-btn"
+          >
+            Solicitar demonstração <IconArrow />
+          </a>
         </div>
       </nav>
 
