@@ -9,19 +9,19 @@ interface LogoProps {
 
 export function Logo({ size = 'md', variant = 'text', href = '/' }: LogoProps) {
   const sizes = {
-    sm: { w: 100, h: 36 },
-    md: { w: 140, h: 50 },
-    lg: { w: 200, h: 72 },
+    sm: { w: 36, h: 36 },
+    md: { w: 50, h: 50 },
+    lg: { w: 72, h: 72 },
   }
 
   const content =
     variant === 'image' ? (
       <Image
-        src="/logo.jpg"
+        src="/logo-serra-privacy.png"
         alt="Serra Privacy"
         width={sizes[size].w}
         height={sizes[size].h}
-        className="object-contain rounded-lg"
+        className="object-contain"
         priority
       />
     ) : (

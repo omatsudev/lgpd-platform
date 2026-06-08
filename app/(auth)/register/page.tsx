@@ -15,10 +15,10 @@ export default function CadastroPage() {
       <div className="w-full max-w-lg space-y-6">
         <div className="flex justify-center">
           <Image
-            src="/logo-transparent.png"
+            src="/logo-serra-privacy.png"
             alt="Serra Privacy"
-            width={180}
-            height={80}
+            width={90}
+            height={90}
             className="object-contain"
             priority
           />

@@ -27,11 +27,11 @@ export default async function LGPDPublicPage({ params }: { params: Promise<{ slu
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Image
-              src="/logo.jpg"
+              src="/logo-serra-privacy.png"
               alt="Serra Privacy"
-              width={100}
-              height={36}
-              className="object-contain rounded-lg"
+              width={40}
+              height={40}
+              className="object-contain"
             />
             <div className="border-l border-gray-200 pl-3">
               <p className="font-bold text-gray-900 text-sm">{company.name}</p>
