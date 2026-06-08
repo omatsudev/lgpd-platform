@@ -104,8 +104,8 @@ function NavContent({ onClose, role }: { onClose?: () => void; role?: string | n
           <Image
             src="/logo-serra-privacy.png"
             alt="Serra Privacy"
-            width={44}
-            height={44}
+            width={56}
+            height={56}
             className="object-contain"
             priority
           />
