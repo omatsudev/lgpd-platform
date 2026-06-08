@@ -11,7 +11,7 @@ const jakarta = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Serra Privacy — Adequação à LGPD',
+  title: 'Serra Privacy | Adequação à LGPD',
   description: 'Plataforma SaaS completa para adequação à Lei Geral de Proteção de Dados',
 }
 
