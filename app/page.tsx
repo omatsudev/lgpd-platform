@@ -351,7 +351,7 @@ export default function HomePage() {
 
               <p style={{ fontSize: 18, color: '#475569', maxWidth: 520, lineHeight: 1.65 }}>
                 Gerencie, proteja e transforme seus dados em vantagem competitiva. Conformidade
-                contínua à LGPD em um único ambiente — automatizado, auditável e seguro.
+                contínua à LGPD em um único ambiente: automatizado, auditável e seguro.
               </p>
 
               <div className="hero-ctas">
