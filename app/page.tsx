@@ -198,11 +198,16 @@ export default function HomePage() {
             <span style={{ display: 'none' }}>Conformidade total para sua empresa</span>
           </div>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center', padding: '8px 0' }}>
-            <a href="#contato" style={{ color: '#B7C2DA', textDecoration: 'none' }}>
-              +55 (11) 4002-8922
+            <a
+              href="https://wa.me/552422353709"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#B7C2DA', textDecoration: 'none' }}
+            >
+              +55 (24) 2235-3709
             </a>
-            <a href="#contato" style={{ color: '#B7C2DA', textDecoration: 'none' }}>
-              contato@serraprivacy.com.br
+            <a href="mailto:serralgpd@gmail.com" style={{ color: '#B7C2DA', textDecoration: 'none' }}>
+              serralgpd@gmail.com
             </a>
           </div>
         </div>
@@ -226,9 +231,9 @@ export default function HomePage() {
             style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}
           >
             <Image
-              src="/logo-transparent.png"
+              src="/logo-serra-privacy.png"
               alt="Serra Privacy"
-              width={130}
+              width={46}
               height={46}
               className="logo-img"
               priority
@@ -260,9 +265,14 @@ export default function HomePage() {
             ))}
           </div>
 
-          <Link href="/register" className="nav-btn">
+          <a
+            href="https://wa.me/552422353709"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-btn"
+          >
             Solicitar demonstração <IconArrow />
-          </Link>
+          </a>
         </div>
       </nav>
 
@@ -341,18 +351,21 @@ export default function HomePage() {
               </p>
 
               <div className="hero-ctas">
-                <Link
-                  href="/register"
+                <a
+                  href="https://wa.me/552422353709"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hero-cta-btn"
                   style={{
                     background: 'linear-gradient(135deg, #1D4ED8, #2563EB 60%, #3B82F6)',
                     color: '#fff',
                     boxShadow:
                       '0 6px 16px -6px rgba(37,99,235,0.6), inset 0 1px 0 rgba(255,255,255,0.18)',
+                    textDecoration: 'none',
                   }}
                 >
                   Solicitar demonstração <IconArrow />
-                </Link>
+                </a>
                 <Link
                   href="#features"
                   className="hero-cta-btn"
@@ -566,11 +579,15 @@ export default function HomePage() {
           </span>
           <div style={{ display: 'flex', gap: 40, alignItems: 'center', flexWrap: 'wrap' }}>
             {[
-              { glyph: '◆', name: 'Northwind' },
-              { glyph: '●', name: 'Volux Bank' },
-              { glyph: '▲', name: 'Atlas Saúde' },
-              { glyph: '◼', name: 'Pravo Legal' },
-              { glyph: '⬡', name: 'Carbono & Co.' },
+              { glyph: '◆', name: 'Lakaza Construção' },
+              { glyph: '●', name: 'Mieten Locações' },
+              { glyph: '▲', name: 'Adjucol' },
+              { glyph: '◼', name: 'Relevo Store' },
+              { glyph: '⬡', name: 'Hólon' },
+              { glyph: '◆', name: 'Tecnoserra' },
+              { glyph: '●', name: 'Schelble Abrasivos' },
+              { glyph: '▲', name: 'ADR Andaimes' },
+              { glyph: '◼', name: 'Plana3' },
             ].map(({ glyph, name }) => (
               <span
                 key={name}
@@ -1194,8 +1211,10 @@ export default function HomePage() {
               </p>
             </div>
             <div className="cta-btns">
-              <Link
-                href="/register"
+              <a
+                href="https://wa.me/552422353709"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -1211,7 +1230,7 @@ export default function HomePage() {
                 }}
               >
                 Solicitar demonstração <IconArrow />
-              </Link>
+              </a>
               <Link
                 href="#contato"
                 style={{
@@ -1246,15 +1265,14 @@ export default function HomePage() {
             <div>
               <Link href="/" aria-label="Serra Privacy">
                 <Image
-                  src="/logo-transparent.png"
+                  src="/logo-serra-privacy.png"
                   alt="Serra Privacy"
-                  width={130}
+                  width={46}
                   height={46}
                   style={{
                     objectFit: 'contain',
                     height: 46,
-                    width: 'auto',
-                    filter: 'brightness(0) invert(1)',
+                    width: 46,
                     opacity: 0.92,
                   }}
                 />
@@ -1275,6 +1293,7 @@ export default function HomePage() {
                 {[
                   {
                     label: 'LinkedIn',
+                    href: 'https://br.linkedin.com/company/serralgpd',
                     svg: (
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19 0h-14C2.2 0 0 2.2 0 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5V5c0-2.8-2.2-5-5-5zM8 19H5V8h3v11zM6.5 6.7c-1 0-1.7-.7-1.7-1.6S5.5 3.5 6.5 3.5s1.7.7 1.7 1.6-.7 1.6-1.7 1.6zM20 19h-3v-5.6c0-1.6-.6-2.4-1.7-2.4-1.4 0-2.1.9-2.1 2.4V19h-3V8h3v1.4c.5-.8 1.5-1.5 3.1-1.5 2.2 0 3.7 1.4 3.7 4.2V19z" />
@@ -1283,6 +1302,7 @@ export default function HomePage() {
                   },
                   {
                     label: 'Instagram',
+                    href: 'https://instagram.com/serra_lgpd',
                     svg: (
                       <svg
                         width="16"
@@ -1298,18 +1318,12 @@ export default function HomePage() {
                       </svg>
                     ),
                   },
-                  {
-                    label: 'YouTube',
-                    svg: (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M23 7s-.2-1.6-.9-2.3c-.8-.9-1.8-.9-2.2-1C16.6 3.5 12 3.5 12 3.5s-4.6 0-7.9.3c-.5 0-1.4 0-2.2.9C1.2 5.4 1 7 1 7S.8 8.9.8 10.7v1.7c0 1.9.2 3.7.2 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.7.3 7.7.3s4.6 0 7.9-.3c.5 0 1.4 0 2.2-.9.7-.7.9-2.3.9-2.3s.2-1.9.2-3.7v-1.7C23.2 8.9 23 7 23 7zM9.7 14.5V8.3l6 3.1-6 3.1z" />
-                      </svg>
-                    ),
-                  },
-                ].map(({ label, svg }) => (
+                ].map(({ label, href, svg }) => (
                   <a
                     key={label}
-                    href="#"
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label={label}
                     style={{
                       width: 36,
@@ -1332,17 +1346,11 @@ export default function HomePage() {
               { title: 'Produto', links: ['Funcionalidades', 'Módulos', 'Integrações', 'Roadmap'] },
               {
                 title: 'Soluções',
-                links: [
-                  'Para DPOs',
-                  'Para Empresas',
-                  'DPO as a Service',
-                  'Saúde & Financeiro',
-                  'Setor Público',
-                ],
+                links: ['Para DPOs', 'Para Empresas', 'DPO as a Service'],
               },
               {
                 title: 'Empresa',
-                links: ['Sobre nós', 'Cases de sucesso', 'Blog', 'Contato', 'Trabalhe conosco'],
+                links: ['Sobre nós', 'Cases de sucesso', 'Contato'],
               },
             ].map((col) => (
               <div key={col.title}>

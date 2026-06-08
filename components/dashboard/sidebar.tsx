@@ -102,11 +102,11 @@ function NavContent({ onClose, role }: { onClose?: () => void; role?: string | n
       <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
         <Link href="/" onClick={onClose}>
           <Image
-            src="/logo.jpg"
+            src="/logo-serra-privacy.png"
             alt="Serra Privacy"
-            width={130}
-            height={46}
-            className="object-contain rounded-lg"
+            width={44}
+            height={44}
+            className="object-contain"
             priority
           />
         </Link>

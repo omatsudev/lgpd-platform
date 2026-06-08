@@ -7,10 +7,10 @@ interface LogoProps {
 }
 
 export function Logo({ className = '', width = 148, light = false }: LogoProps) {
-  const height = Math.round((width * 635) / 1152)
+  const height = width
   return (
     <Image
-      src="/logo-transparent.png"
+      src="/logo-serra-privacy.png"
       alt="Serra Privacy"
       width={width}
       height={height}

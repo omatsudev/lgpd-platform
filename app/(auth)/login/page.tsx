@@ -14,11 +14,11 @@ export default function LoginPage() {
       {/* Left — branding */}
       <div className="hidden lg:flex flex-1 flex-col items-center justify-center p-12 text-white">
         <Image
-          src="/logo.jpg"
+          src="/logo-serra-privacy.png"
           alt="Serra Privacy"
-          width={280}
-          height={100}
-          className="object-contain rounded-xl mb-8"
+          width={140}
+          height={140}
+          className="object-contain mb-8"
           priority
         />
         <h2 className="text-2xl font-bold text-center mb-3">Plataforma de Adequação à LGPD</h2>
@@ -47,11 +47,11 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <div className="flex justify-center lg:hidden">
             <Image
-              src="/logo.jpg"
+              src="/logo-serra-privacy.png"
               alt="Serra Privacy"
-              width={180}
-              height={65}
-              className="object-contain rounded-xl"
+              width={90}
+              height={90}
+              className="object-contain"
               priority
             />
           </div>
