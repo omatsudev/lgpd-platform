@@ -1271,7 +1271,7 @@ export default function HomePage() {
                   maxWidth: 320,
                 }}
               >
-                Plataforma inteligente de governança de dados — LGPD, IA e ESG em um único ambiente.
+                Plataforma inteligente de governança de dados com LGPD, IA e ESG em um único ambiente.
                 Conformidade contínua e segura para empresas brasileiras.
               </p>
               <div style={{ display: 'flex', gap: 10 }}>
