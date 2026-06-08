@@ -225,11 +225,11 @@ export default function HomePage() {
         }}
       >
         <div className="lp-container nav-row">
-          {/* col 1: logo — alinhado à esquerda */}
+          {/* col 1: logo */}
           <Link
             href="/"
             aria-label="Serra Privacy"
-            style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}
+            style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0, marginLeft: 40 }}
           >
             <Image
               src="/logo-serra-privacy.png"
