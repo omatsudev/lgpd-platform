@@ -1327,14 +1327,30 @@ export default function HomePage() {
             </div>
 
             {[
-              { title: 'Produto', links: ['Funcionalidades', 'Módulos', 'Integrações', 'Roadmap'] },
+              {
+                title: 'Produto',
+                links: [
+                  { label: 'Funcionalidades', href: '#features' },
+                  { label: 'Módulos', href: '#modulos' },
+                  { label: 'Integrações', href: '#modulos' },
+                  { label: 'Roadmap', href: '#modulos' },
+                ],
+              },
               {
                 title: 'Soluções',
-                links: ['Para DPOs', 'Para Empresas', 'DPO as a Service'],
+                links: [
+                  { label: 'Para DPOs', href: '#modulos' },
+                  { label: 'Para Empresas', href: '#features' },
+                  { label: 'DPO as a Service', href: '#modulos' },
+                ],
               },
               {
                 title: 'Empresa',
-                links: ['Sobre nós', 'Cases de sucesso', 'Contato'],
+                links: [
+                  { label: 'Sobre nós', href: '#sobre' },
+                  { label: 'Cases de sucesso', href: '#cases' },
+                  { label: 'Contato', href: '#contato' },
+                ],
               },
             ].map((col) => (
               <div key={col.title}>
@@ -1360,13 +1376,13 @@ export default function HomePage() {
                     gap: 12,
                   }}
                 >
-                  {col.links.map((link) => (
-                    <li key={link}>
+                  {col.links.map(({ label, href }) => (
+                    <li key={label}>
                       <a
-                        href="#"
+                        href={href}
                         style={{ color: '#B7C2DA', fontSize: 14, textDecoration: 'none' }}
                       >
-                        {link}
+                        {label}
                       </a>
                     </li>
                   ))}
