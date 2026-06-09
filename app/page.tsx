@@ -989,6 +989,126 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── SOBRE NÓS ── */}
+      <section id="sobre" className="lp-section">
+        <div className="lp-container">
+          <div className="sec-head">
+            <span className="eyebrow" style={{ background: '#EFF4FF', color: '#1D4ED8' }}>
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: '#2563EB',
+                  display: 'inline-block',
+                }}
+              />
+              Sobre nós
+            </span>
+            <h2>Quem está por trás da Serra Privacy</h2>
+            <p>
+              A Serra Privacy nasceu do encontro de duas mentes movidas por propósitos complementares.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 28,
+              maxWidth: 880,
+              margin: '0 auto 56px',
+            }}
+          >
+            {[
+              {
+                initials: 'JP',
+                name: 'João Paulo',
+                role: 'Especialista em LGPD & Privacidade',
+                bg: '#EAF1FF',
+                fg: '#2563EB',
+                text: 'João Paulo descobriu a LGPD ainda na faculdade. O que começou como tema de monografia virou uma obsessão. Não pelo lado burocrático da lei, mas pelo que ela representa: o direito das pessoas de terem controle sobre seus próprios dados. Com o tempo, essa paixão se transformou em especialização, e a especialização em uma pergunta que não saía da cabeça: por que conformidade com a LGPD ainda é tão difícil para a maioria das empresas?',
+              },
+              {
+                initials: 'LO',
+                name: 'Lauro Omatsu',
+                role: 'Co-fundador & Desenvolvedor',
+                bg: '#E4F7EE',
+                fg: '#059669',
+                text: 'Lauro sempre enxergou a tecnologia como linguagem de solução. Desenvolvedor com experiência em sistemas de alta complexidade, ele tem um jeito particular de trabalhar: começa pelo problema, não pela solução. Antes de escrever uma linha de código, entende onde o processo trava e por que as coisas falham. Quando conheceu a realidade da adequação à LGPD nas empresas, viu o mesmo padrão de sempre: um problema sério, processos quebrados e ferramentas que não estavam à altura.',
+              },
+            ].map((founder) => (
+              <div
+                key={founder.name}
+                style={{
+                  background: 'white',
+                  border: '1px solid #EEF1F6',
+                  borderRadius: 24,
+                  padding: '32px 28px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                  <div
+                    style={{
+                      width: 52,
+                      height: 52,
+                      borderRadius: '50%',
+                      background: founder.bg,
+                      color: founder.fg,
+                      display: 'grid',
+                      placeItems: 'center',
+                      fontWeight: 800,
+                      fontSize: 16,
+                      flexShrink: 0,
+                      fontFamily: 'var(--font-jakarta,"Plus Jakarta Sans",sans-serif)',
+                    }}
+                  >
+                    {founder.initials}
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-jakarta,"Plus Jakarta Sans",sans-serif)',
+                        fontWeight: 700,
+                        fontSize: 17,
+                        color: '#0F172A',
+                      }}
+                    >
+                      {founder.name}
+                    </div>
+                    <div style={{ fontSize: 13, color: founder.fg, fontWeight: 500 }}>
+                      {founder.role}
+                    </div>
+                  </div>
+                </div>
+                <p style={{ fontSize: 15, color: '#475569', lineHeight: 1.7, margin: 0 }}>
+                  {founder.text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div
+            style={{
+              maxWidth: 680,
+              margin: '0 auto',
+              textAlign: 'center',
+              padding: '32px 40px',
+              background: 'linear-gradient(135deg, #F8FAFF 0%, #F0F7FF 100%)',
+              borderRadius: 20,
+              border: '1px solid #E0EAFF',
+            }}
+          >
+            <p style={{ fontSize: 17, color: '#334155', lineHeight: 1.75, margin: 0 }}>
+              Quando os dois se encontraram, a resposta para essa pergunta começou a tomar forma.
+              Juntos, criaram uma ferramenta de governança de dados inteligente, capaz de transformar
+              a complexidade da LGPD em processos claros, rastreáveis e gerenciáveis para empresas
+              de qualquer tamanho.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="lp-section" style={{ background: '#FBFCFE' }}>
         <div className="lp-container">
