@@ -1104,10 +1104,9 @@ export default function HomePage() {
             }}
           >
             <p style={{ fontSize: 17, color: '#334155', lineHeight: 1.75, margin: 0 }}>
-              Quando os dois se encontraram, a resposta para essa pergunta começou a tomar forma.
-              Juntos, criaram uma ferramenta de governança de dados inteligente, capaz de transformar
-              a complexidade da LGPD em processos claros, rastreáveis e gerenciáveis para empresas
-              de qualquer tamanho.
+              Quando os dois se encontraram, a ideia tomou forma. Juntos, criaram uma ferramenta de
+              governança de dados inteligente, capaz de transformar a complexidade da LGPD em
+              processos claros, rastreáveis e gerenciáveis para empresas de qualquer tamanho.
             </p>
           </div>
         </div>
