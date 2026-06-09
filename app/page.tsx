@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { CookiesResetButton } from '@/components/cookies-reset-button'
 import { FeaturesGrid } from '@/components/features-grid'
+import { NavMobileMenu } from '@/components/home/nav-mobile'
 
 // ─── SVG helpers ─────────────────────────────────────────────────────────────
 
@@ -67,16 +68,17 @@ export default function HomePage() {
         .hero-meta     { display: flex; align-items: center; gap: 18px; font-size: 13.5px; color: #94A3B8; margin-top: 8px; flex-wrap: wrap; }
         .hv-float      { position: absolute; background: white; border-radius: 14px; padding: 14px 16px; box-shadow: 0 20px 40px -15px rgba(15,23,42,0.25); display: flex; gap: 12px; align-items: center; z-index: 3; }
 
-        .nav-row   { display: flex; align-items: center; padding: 16px 0; }
-        .nav-links { display: flex; gap: 28px; align-items: center; font-size: 14.5px; font-weight: 500; color: #334155; }
-        .nav-btn   { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; font-size: 14px; font-weight: 600; border-radius: 999px; background: #0B1B3D; color: #fff; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
-        .logo-img  { object-fit: contain; height: 80px; width: auto; }
+        .nav-row      { display: flex; align-items: center; padding: 16px 0; position: relative; }
+        .nav-links    { display: flex; gap: 28px; align-items: center; font-size: 15px; font-weight: 500; color: #334155; }
+        .nav-btn      { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; font-size: 14px; font-weight: 600; border-radius: 999px; background: #0B1B3D; color: #fff; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+        .logo-img     { object-fit: contain; height: 80px; width: auto; }
+        .nav-hamburger { display: none; }
 
         .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 18px; }
 
         .sec-head    { text-align: center; max-width: 740px; margin: 0 auto 56px; }
         .sec-head h2 { font-family: var(--font-jakarta,"Plus Jakarta Sans",system-ui,sans-serif); font-size: clamp(30px,3.6vw,44px); font-weight: 800; color: #0F172A; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 14px; }
-        .sec-head p  { font-size: 17px; color: #475569; }
+        .sec-head p  { font-size: 18px; color: #475569; }
 
         .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
         .feature-card  { background: white; border: 1px solid #EEF1F6; border-radius: 20px; padding: 28px; position: relative; }
@@ -121,9 +123,11 @@ export default function HomePage() {
           .hero-cta-btn { justify-content: center; width: 100%; }
           .hero-meta    { font-size: 12.5px; gap: 10px; justify-content: center; }
           .hv-float     { padding: 10px 12px; gap: 8px; }
-          .nav-links    { display: none; }
-          .nav-row      { padding: 12px 0; }
-          .logo-img     { height: 64px !important; }
+          .nav-links     { display: none; }
+          .nav-hamburger { display: flex !important; }
+          .nav-btn       { display: none; }
+          .nav-row       { padding: 12px 0; }
+          .logo-img      { height: 64px !important; }
           .eyebrow      { font-size: 11.5px; }
           .sec-head h2  { font-size: 26px; }
           .sec-head p   { font-size: 15px; }
@@ -273,7 +277,8 @@ export default function HomePage() {
             </Link>
           </div>
 
-          
+          <NavMobileMenu />
+
           <a
             href="https://wa.me/552422353709"
             target="_blank"
