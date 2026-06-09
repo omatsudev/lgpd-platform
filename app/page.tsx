@@ -1039,7 +1039,7 @@ export default function HomePage() {
                 role: 'Co-fundador & Desenvolvedor',
                 bg: '#E4F7EE',
                 fg: '#059669',
-                text: 'Lauro sempre enxergou a tecnologia como linguagem de solução. Desenvolvedor com experiência em sistemas de alta complexidade, ele tem um jeito particular de trabalhar: não trata sintomas. Vai até a raiz do problema, entende exatamente o que trava e por quê, e só então constrói. E quando constrói, resolve. Quando conheceu a realidade da adequação à LGPD nas empresas, viu o mesmo padrão de sempre: um problema sério, processos quebrados e ferramentas que não estavam à altura.',
+                text: 'Lauro sempre enxergou a tecnologia como linguagem de solução. Desenvolvedor com experiência em sistemas de alta complexidade, ele tem um jeito particular de trabalhar: não trata sintomas. Vai até a raiz do problema, entende exatamente o que trava e por quê, e só então constrói. E quando constrói, resolve. Quando conheceu a realidade da adequação à LGPD nas empresas, viu o mesmo padrão de sempre: processos quebrados e ferramentas que não estavam à altura.',
               },
             ].map((founder) => (
               <div
