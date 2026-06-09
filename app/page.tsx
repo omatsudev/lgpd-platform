@@ -56,7 +56,7 @@ export default function HomePage() {
 
         /* ── base ── */
         .lp-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-        .lp-section   { padding: 100px 0; }
+        .lp-section   { padding: 100px 0; scroll-margin-top: 100px; }
 
         .hero-section  { padding: 84px 0 120px; }
         .hero-grid     { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 72px; align-items: center; }
@@ -250,11 +250,9 @@ export default function HomePage() {
               { label: 'Produtos', href: '#features' },
               { label: 'Soluções', href: '#modulos' },
               { label: 'Sobre nós', href: '#sobre' },
-              { label: 'Case de sucesso', href: '#cases' },
               { label: 'Contato', href: '#contato' },
-              { label: 'Login', href: '/login' },
             ].map((l) => (
-              <Link
+              <a
                 key={l.label}
                 href={l.href}
                 style={{
@@ -265,8 +263,14 @@ export default function HomePage() {
                 }}
               >
                 {l.label}
-              </Link>
+              </a>
             ))}
+            <Link
+              href="/login"
+              style={{ color: '#334155', textDecoration: 'none', padding: '6px 0', whiteSpace: 'nowrap' }}
+            >
+              Login
+            </Link>
           </div>
 
           
@@ -1081,7 +1085,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-                <p style={{ fontSize: 15, color: '#475569', lineHeight: 1.7, margin: 0 }}>
+                <p style={{ fontSize: 15, color: '#475569', lineHeight: 1.7, margin: 0, textAlign: 'justify' }}>
                   {founder.text}
                 </p>
               </div>
@@ -1276,7 +1280,7 @@ export default function HomePage() {
                 title: 'Empresa',
                 links: [
                   { label: 'Sobre nós', href: '#sobre' },
-                  { label: 'Cases de sucesso', href: '#cases' },
+                  { label: 'Cases de sucesso', href: '#contato' },
                   { label: 'Contato', href: '#contato' },
                 ],
               },
