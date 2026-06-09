@@ -564,29 +564,30 @@ export default function HomePage() {
       </header>
 
       {/* ── TRUST STRIP ── */}
-      <div style={{ borderTop: '1px solid #EEF1F6', background: '#F7F9FC', padding: '28px 0' }}>
-        <div
-          className="lp-container"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 48,
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-          }}
-        >
+      <div style={{ borderTop: '1px solid #EEF1F6', background: '#F7F9FC', padding: '32px 0' }}>
+        <div className="lp-container" style={{ textAlign: 'center' }}>
           <span
             style={{
+              display: 'block',
               fontSize: '12.5px',
               fontWeight: 600,
               color: '#94A3B8',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
+              marginBottom: 20,
             }}
           >
             Empresas que confiam na Serra Privacy
           </span>
-          <div style={{ display: 'flex', gap: 40, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(5, auto)',
+              gap: '16px 40px',
+              justifyContent: 'center',
+              justifyItems: 'center',
+            }}
+          >
             {[
               { glyph: '◆', name: 'Lakaza Construção' },
               { glyph: '●', name: 'Mieten Locações' },
@@ -607,6 +608,7 @@ export default function HomePage() {
                   color: '#94A3B8',
                   letterSpacing: '-0.01em',
                   opacity: 0.85,
+                  whiteSpace: 'nowrap',
                 }}
               >
                 <span style={{ color: '#64748B', marginRight: 4 }}>{glyph}</span>
