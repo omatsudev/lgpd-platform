@@ -124,7 +124,7 @@ export default function HomePage() {
           .hero-meta    { font-size: 12.5px; gap: 10px; justify-content: center; }
           .hv-float     { padding: 10px 12px; gap: 8px; }
           .nav-links     { display: none; }
-          .nav-hamburger { display: flex !important; }
+          .nav-hamburger { display: flex !important; margin-left: auto; }
           .nav-btn       { display: none; }
           .nav-row       { padding: 12px 0; }
           .logo-img      { height: 64px !important; }
