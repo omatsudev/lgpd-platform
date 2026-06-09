@@ -123,10 +123,9 @@ export default function HomePage() {
           .hero-cta-btn { justify-content: center; width: 100%; }
           .hero-meta    { font-size: 12.5px; gap: 10px; justify-content: center; }
           .hv-float     { padding: 10px 12px; gap: 8px; }
-          .nav-links      { display: none; }
-          .nav-hamburger  { display: flex !important; margin-left: auto; }
-          .nav-btn        { display: none; }
-          .nav-logo-link  { margin-left: 0 !important; }
+          .nav-links     { display: none; }
+          .nav-hamburger { display: flex !important; margin-left: auto; }
+          .nav-btn       { display: none; }
           .nav-row       { padding: 12px 0; }
           .logo-img      { height: 64px !important; }
           .eyebrow      { font-size: 11.5px; }
@@ -236,7 +235,6 @@ export default function HomePage() {
           <Link
             href="/"
             aria-label="Serra Privacy"
-            className="nav-logo-link"
             style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0, marginLeft: 40 }}
           >
             <Image
