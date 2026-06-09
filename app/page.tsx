@@ -124,7 +124,7 @@ export default function HomePage() {
           .hero-meta    { font-size: 12.5px; gap: 10px; justify-content: center; }
           .hv-float     { padding: 10px 12px; gap: 8px; }
           .nav-links     { display: none; }
-          .nav-hamburger { display: flex !important; margin-left: auto; }
+          .nav-hamburger { display: flex !important; margin-left: auto; margin-right: 18px; }
           .nav-btn       { display: none; }
           .nav-row       { padding: 12px 0; }
           .logo-img      { height: 64px !important; }
@@ -1328,10 +1328,10 @@ export default function HomePage() {
           </div>
 
           <div className="foot-bottom">
-            <span>© 2026 Serra Privacy. Todos os direitos reservados. CNPJ 00.000.000/0001-00</span>
+            <span>© 2026 Serra Privacy. Todos os direitos reservados. CNPJ 42.349.132/0001-73</span>
             <div style={{ display: 'flex', gap: 22 }}>
               <a href="/docs/aviso_de_privacidade_serra_privacy.pdf" target="_blank" rel="noopener noreferrer" style={{ color: '#94A3B8', textDecoration: 'none' }}>Privacidade</a>
-              <Link href="/termos" style={{ color: '#94A3B8', textDecoration: 'none' }}>Termos</Link>
+              <a href="/docs/termos_de_uso_serra_privacy.pdf" target="_blank" rel="noopener noreferrer" style={{ color: '#94A3B8', textDecoration: 'none' }}>Termos</a>
               <CookiesResetButton />
             </div>
           </div>

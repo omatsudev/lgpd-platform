@@ -27,7 +27,6 @@ export function NavMobileMenu() {
           cursor: 'pointer',
           padding: 8,
           color: '#334155',
-          display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
