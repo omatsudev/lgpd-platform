@@ -589,15 +589,15 @@ export default function HomePage() {
             }}
           >
             {[
+              { glyph: '▲', name: 'ADR Andaimes' },
+              { glyph: '▲', name: 'Adjucol' },
+              { glyph: '⬡', name: 'Hólon' },
               { glyph: '◆', name: 'Lakaza Construção' },
               { glyph: '●', name: 'Mieten Locações' },
-              { glyph: '▲', name: 'Adjucol' },
-              { glyph: '◼', name: 'Relevo Store' },
-              { glyph: '⬡', name: 'Hólon' },
-              { glyph: '◆', name: 'Tecnoserra' },
-              { glyph: '●', name: 'Schelble Abrasivos' },
-              { glyph: '▲', name: 'ADR Andaimes' },
               { glyph: '◼', name: 'Plana3' },
+              { glyph: '◼', name: 'Relevo Store' },
+              { glyph: '●', name: 'Schelble Abrasivos' },
+              { glyph: '◆', name: 'Tecnoserra' },
             ].map(({ glyph, name }) => (
               <span
                 key={name}
