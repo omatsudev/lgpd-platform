@@ -579,43 +579,41 @@ export default function HomePage() {
           >
             Empresas que confiam na Serra Privacy
           </span>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(5, auto)',
-              gap: '16px 40px',
-              justifyContent: 'center',
-              justifyItems: 'center',
-            }}
-          >
-            {[
+          {[
+            [
               { glyph: '▲', name: 'ADR Andaimes' },
               { glyph: '▲', name: 'Adjucol' },
               { glyph: '⬡', name: 'Hólon' },
               { glyph: '◆', name: 'Lakaza Construção' },
               { glyph: '●', name: 'Mieten Locações' },
+            ],
+            [
               { glyph: '◼', name: 'Plana3' },
               { glyph: '◼', name: 'Relevo Store' },
               { glyph: '●', name: 'Schelble Abrasivos' },
               { glyph: '◆', name: 'Tecnoserra' },
-            ].map(({ glyph, name }) => (
-              <span
-                key={name}
-                style={{
-                  fontFamily: 'var(--font-jakarta,"Plus Jakarta Sans",sans-serif)',
-                  fontWeight: 700,
-                  fontSize: 18,
-                  color: '#94A3B8',
-                  letterSpacing: '-0.01em',
-                  opacity: 0.85,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                <span style={{ color: '#64748B', marginRight: 4 }}>{glyph}</span>
-                {name}
-              </span>
-            ))}
-          </div>
+            ],
+          ].map((row, i) => (
+            <div key={i} style={{ display: 'flex', gap: 40, justifyContent: 'center', flexWrap: 'wrap' }}>
+              {row.map(({ glyph, name }) => (
+                <span
+                  key={name}
+                  style={{
+                    fontFamily: 'var(--font-jakarta,"Plus Jakarta Sans",sans-serif)',
+                    fontWeight: 700,
+                    fontSize: 18,
+                    color: '#94A3B8',
+                    letterSpacing: '-0.01em',
+                    opacity: 0.85,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <span style={{ color: '#64748B', marginRight: 4 }}>{glyph}</span>
+                  {name}
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
 
