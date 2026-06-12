@@ -247,7 +247,7 @@ export default async function DashboardPage() {
       name: 'Página Pública LGPD',
       href: '/settings',
       progress: Math.round(
-        (([company?.slug, company?.dpo_name && company?.dpo_email, company?.privacy_policy_url].filter(
+        ([company?.slug, company?.dpo_name && company?.dpo_email, company?.privacy_policy_url].filter(
           Boolean,
         ).length /
           3) *

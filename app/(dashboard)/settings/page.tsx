@@ -1,3 +1,4 @@
+import { updatePassword, updateProfile } from '@/app/actions/profile'
 import { saveCompanyData, saveDpo, savePrivacyPolicy } from '@/app/actions/settings'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -7,8 +8,29 @@ import { Label } from '@/components/ui/label'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ExternalLink, QrCode, Shield } from 'lucide-react'
 
-export default async function SettingsPage() {
-  const { company } = await getUserCompany()
+const PROFILE_ERRORS: Record<string, string> = {
+  empty: 'Informe seu nome.',
+  '1': 'Não foi possível atualizar o perfil. Tente novamente.',
+}
+
+const PASSWORD_ERRORS: Record<string, string> = {
+  short: 'A nova senha deve ter pelo menos 6 caracteres.',
+  mismatch: 'As senhas não coincidem.',
+  '1': 'Não foi possível atualizar a senha. Tente novamente.',
+}
+
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    profile_ok?: string
+    profile_error?: string
+    password_ok?: string
+    password_error?: string
+  }>
+}) {
+  const { user, company } = await getUserCompany()
+  const { profile_ok, profile_error, password_ok, password_error } = await searchParams
 
   const slug = company?.slug ?? ''
   const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://lgpdplatform.com'}/lgpd/${slug}`
@@ -19,6 +41,70 @@ export default async function SettingsPage() {
         <h1 className="text-2xl font-bold text-gray-900">Configurações</h1>
         <p className="text-sm text-gray-500 mt-1">Configure sua empresa e página pública LGPD</p>
       </div>
+
+      {/* Meu Perfil */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Meu Perfil</CardTitle>
+          <CardDescription>Suas informações pessoais de acesso</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {profile_ok && (
+            <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-md px-3 py-2">
+              Perfil atualizado com sucesso.
+            </p>
+          )}
+          {profile_error && (
+            <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+              {PROFILE_ERRORS[profile_error] ?? PROFILE_ERRORS['1']}
+            </p>
+          )}
+          <form action={updateProfile} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Nome</Label>
+                <Input
+                  name="name"
+                  defaultValue={(user?.user_metadata?.name as string) ?? ''}
+                  placeholder="Seu nome completo"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input value={user?.email ?? ''} disabled />
+              </div>
+            </div>
+            <Button type="submit">Salvar Perfil</Button>
+          </form>
+
+          <div className="border-t border-gray-100 pt-6">
+            {password_ok && (
+              <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-md px-3 py-2 mb-4">
+                Senha atualizada com sucesso.
+              </p>
+            )}
+            {password_error && (
+              <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-md px-3 py-2 mb-4">
+                {PASSWORD_ERRORS[password_error] ?? PASSWORD_ERRORS['1']}
+              </p>
+            )}
+            <form action={updatePassword} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Nova senha</Label>
+                  <Input name="password" type="password" minLength={6} required />
+                </div>
+                <div className="space-y-2">
+                  <Label>Confirmar nova senha</Label>
+                  <Input name="confirm_password" type="password" minLength={6} required />
+                </div>
+              </div>
+              <Button type="submit">Alterar Senha</Button>
+            </form>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Dados da Empresa */}
       <Card>
