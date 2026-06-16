@@ -10,9 +10,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login')
 
-  // Cria activeCompany automaticamente apenas para usuários sem nenhuma activeCompany vinculada
-  // (não aplica a DPOs que ainda não foram atribuídos a nenhuma activeCompany)
-  if (user && !companyId && companies.length === 0) {
+  // Cria empresa automaticamente para usuários tipo 'company' sem nenhuma vinculada.
+  // DPOs não ganham empresa automática — eles adicionam clientes manualmente via /companies.
+  const isDpo = (user?.user_metadata?.role as string) === 'dpo'
+  if (user && !isDpo && !companyId && companies.length === 0) {
     const supabase = await createClient()
     const userName = (user.user_metadata?.name as string) || user.email || 'Usuário'
     const companyFinalName = `Empresa de ${userName.split('@')[0]}`

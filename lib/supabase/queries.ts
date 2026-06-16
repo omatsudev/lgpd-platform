@@ -17,7 +17,8 @@ export const getUserCompany = cache(async function getUserCompany() {
     .order('created_at')
 
   if (!ucRows?.length) {
-    return { user, company: null, companyId: null, role: null, companies: [], supabase }
+    const fallbackRole = (user.user_metadata?.role as string | undefined) ?? null
+    return { user, company: null, companyId: null, role: fallbackRole, companies: [], supabase }
   }
 
   // Lê empresa selecionada via cookie (para DPOs que gerenciam múltiplas empresas)
@@ -43,11 +44,16 @@ export const getUserCompany = cache(async function getUserCompany() {
       ucRows.map((uc) => uc.company_id),
     )
 
+  // user_metadata.role (definido no cadastro: 'dpo' | 'company') tem precedência
+  // sobre user_companies.role ('admin') para determinar o perfil de navegação
+  const metaRole = user.user_metadata?.role as string | undefined
+  const effectiveRole = metaRole ?? (targetUc.role as string)
+
   return {
     user,
     company: company ?? null,
     companyId: targetUc.company_id,
-    role: targetUc.role as string,
+    role: effectiveRole,
     companies: (allCompanies ?? []) as { id: string; name: string }[],
     supabase,
   }
