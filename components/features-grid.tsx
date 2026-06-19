@@ -87,6 +87,18 @@ const features = [
     desc: 'Mantenha rastreabilidade total das ações realizadas na plataforma para fins de auditoria.',
     icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="16" y2="17" /><line x1="8" y1="9" x2="10" y2="9" /></svg>,
   },
+  {
+    bg: '#EDE9FE', fg: '#7C3AED',
+    title: 'Governança de IA',
+    desc: 'Gerencie riscos e conformidade no uso de inteligência artificial, garantindo transparência e ética.',
+    icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a4 4 0 0 1 4 4c0 1.1-.9 2-2 2h-4a2 2 0 0 1-2-2 4 4 0 0 1 4-4z" /><path d="M12 8v4" /><circle cx="12" cy="16" r="4" /><path d="M8 16H4M20 16h-4" /></svg>,
+  },
+  {
+    bg: '#ECFDF5', fg: '#047857',
+    title: 'Gestão ESG',
+    desc: 'Integre práticas ambientais, sociais e de governança à sua estratégia de conformidade corporativa.',
+    icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20c4 0 5-5 5-5s1 5 5 5a4.49 4.49 0 0 0 1.29-.3L20.29 22l1.89-.66C20.1 16.17 17.9 10 9 8" /><path d="M10 2c1 .5 2 2 2 5" /><path d="M14 2c-1 .5-2 2-2 5" /></svg>,
+  },
 ]
 
 const VISIBLE_DEFAULT = 9

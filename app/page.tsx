@@ -199,9 +199,8 @@ export default function HomePage() {
               >
                 <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z" />
               </svg>
-              LGPD · ISO 27001 · SOC 2
+              Conformidade total para sua empresa
             </span>
-            <span style={{ display: 'none' }}>Conformidade total para sua empresa</span>
           </div>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center', padding: '8px 0' }}>
             <a
@@ -254,20 +253,35 @@ export default function HomePage() {
               { label: 'Produtos', href: '#features' },
               { label: 'Soluções', href: '#modulos' },
               { label: 'Sobre nós', href: '#sobre' },
-              { label: 'Contato', href: '#contato' },
+              { label: 'Contato', href: '/contato' },
             ].map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                style={{
-                  color: '#334155',
-                  textDecoration: 'none',
-                  padding: '6px 0',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {l.label}
-              </a>
+              l.href.startsWith('/') ? (
+                <Link
+                  key={l.label}
+                  href={l.href}
+                  style={{
+                    color: '#334155',
+                    textDecoration: 'none',
+                    padding: '6px 0',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {l.label}
+                </Link>
+              ) : (
+                <a
+                  key={l.label}
+                  href={l.href}
+                  style={{
+                    color: '#334155',
+                    textDecoration: 'none',
+                    padding: '6px 0',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {l.label}
+                </a>
+              )
             ))}
             <Link
               href="/login"
@@ -279,14 +293,12 @@ export default function HomePage() {
 
           <NavMobileMenu />
 
-          <a
-            href="https://wa.me/552422353709"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/contato"
             className="nav-btn"
           >
             Solicitar demonstração <IconArrow />
-          </a>
+          </Link>
         </div>
       </nav>
 
@@ -313,20 +325,6 @@ export default function HomePage() {
           <div className="hero-grid">
             {/* Left */}
             <div>
-              <span className="eyebrow" style={{ background: '#EFF4FF', color: '#1D4ED8' }}>
-                <span
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: '50%',
-                    background: '#2563EB',
-                    display: 'inline-block',
-                    flexShrink: 0,
-                  }}
-                />
-                Plataforma de Governança · LGPD · IA · ESG
-              </span>
-
               <h1
                 className="hero-h1"
                 style={{
@@ -365,10 +363,8 @@ export default function HomePage() {
               </p>
 
               <div className="hero-ctas">
-                <a
-                  href="https://wa.me/552422353709"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/contato"
                   className="hero-cta-btn"
                   style={{
                     background: 'linear-gradient(135deg, #1D4ED8, #2563EB 60%, #3B82F6)',
@@ -379,7 +375,7 @@ export default function HomePage() {
                   }}
                 >
                   Solicitar demonstração <IconArrow />
-                </a>
+                </Link>
                 <Link
                   href="#features"
                   className="hero-cta-btn"
@@ -904,6 +900,60 @@ export default function HomePage() {
                 ],
                 btnClass: '#6D28D9',
               },
+              {
+                bg: '#FFF7ED',
+                fg: '#EA580C',
+                icon: (
+                  <svg
+                    width="30"
+                    height="30"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 0v1a3 3 0 0 0 6 0V7m0 0v1a3 3 0 0 0 6 0V7M4 21V10M20 21V10" />
+                    <path d="M12 21V14" />
+                  </svg>
+                ),
+                title: 'Governo — Conformidade para o setor público',
+                desc: 'Soluções específicas para órgãos governamentais e autarquias, garantindo conformidade com a LGPD e transparência na gestão de dados públicos.',
+                items: [
+                  { bold: 'Adequação LGPD', rest: ' para órgãos públicos' },
+                  { bold: '', rest: 'Transparência e prestação de contas' },
+                  { bold: '', rest: 'Gestão de dados sensíveis de cidadãos' },
+                  { bold: '', rest: 'Relatórios para auditorias e fiscalização' },
+                  { bold: '', rest: 'Suporte à Lei de Acesso à Informação' },
+                ],
+                btnClass: '#EA580C',
+              },
+              {
+                bg: '#FEF9C3',
+                fg: '#A16207',
+                icon: (
+                  <svg
+                    width="30"
+                    height="30"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z" />
+                    <path d="M9 12h6M12 9v6" />
+                  </svg>
+                ),
+                title: 'NR-1 — Saúde e Segurança do Trabalho',
+                desc: 'Apoio à conformidade com a NR-1 e gestão de riscos ocupacionais, integrando saúde do trabalhador à governança corporativa.',
+                items: [
+                  { bold: 'Gestão de riscos', rest: ' ocupacionais' },
+                  { bold: '', rest: 'Inventário de perigos e riscos' },
+                  { bold: '', rest: 'Planos de ação e mitigação' },
+                  { bold: '', rest: 'Documentação e evidências de conformidade' },
+                  { bold: '', rest: 'Integração com governança corporativa' },
+                ],
+                btnClass: '#A16207',
+              },
             ].map((mod) => (
               <div key={mod.title} className="mod-card">
                 <div
@@ -973,7 +1023,7 @@ export default function HomePage() {
                 </ul>
                 <div style={{ marginTop: 'auto' }}>
                   <Link
-                    href="/register"
+                    href="/contato"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1150,10 +1200,8 @@ export default function HomePage() {
               </p>
             </div>
             <div className="cta-btns">
-              <a
-                href="https://wa.me/552422353709"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/contato"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -1169,7 +1217,7 @@ export default function HomePage() {
                 }}
               >
                 Solicitar demonstração <IconArrow />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -1206,8 +1254,8 @@ export default function HomePage() {
                   maxWidth: 320,
                 }}
               >
-                Plataforma inteligente de governança de dados com LGPD, IA e ESG em um único ambiente.
-                Conformidade contínua e segura para empresas brasileiras.
+                Plataforma inteligente de governança de dados. Conformidade contínua e segura para
+                empresas brasileiras.
               </p>
               <div style={{ display: 'flex', gap: 10 }}>
                 {[
@@ -1267,25 +1315,27 @@ export default function HomePage() {
                 title: 'Produto',
                 links: [
                   { label: 'Funcionalidades', href: '#features' },
-                  { label: 'Módulos', href: '#modulos' },
-                  { label: 'Integrações', href: '#modulos' },
-                  { label: 'Roadmap', href: '#modulos' },
+                  { label: 'Gestão ESG', href: '#features' },
+                  { label: 'Governança de IA', href: '#features' },
                 ],
               },
               {
                 title: 'Soluções',
                 links: [
                   { label: 'Para DPOs', href: '#modulos' },
-                  { label: 'Para Empresas', href: '#features' },
+                  { label: 'Para Empresas', href: '#modulos' },
                   { label: 'DPO as a Service', href: '#modulos' },
+                  { label: 'Governo', href: '#modulos' },
+                  { label: 'NR-1', href: '#modulos' },
                 ],
               },
               {
                 title: 'Empresa',
                 links: [
                   { label: 'Sobre nós', href: '#sobre' },
-                  { label: 'Cases de sucesso', href: '#contato' },
-                  { label: 'Contato', href: '#contato' },
+                  { label: 'Cases de sucesso', href: '/contato' },
+                  { label: 'Contato', href: '/contato' },
+                  { label: 'E-books e Materiais', href: '/contato' },
                 ],
               },
             ].map((col) => (
@@ -1314,12 +1364,21 @@ export default function HomePage() {
                 >
                   {col.links.map(({ label, href }) => (
                     <li key={label}>
-                      <a
-                        href={href}
-                        style={{ color: '#B7C2DA', fontSize: 14, textDecoration: 'none' }}
-                      >
-                        {label}
-                      </a>
+                      {href.startsWith('/') ? (
+                        <Link
+                          href={href}
+                          style={{ color: '#B7C2DA', fontSize: 14, textDecoration: 'none' }}
+                        >
+                          {label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={href}
+                          style={{ color: '#B7C2DA', fontSize: 14, textDecoration: 'none' }}
+                        >
+                          {label}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
