@@ -1,3 +1,4 @@
+import { logAuditEvent } from '@/lib/audit'
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
@@ -8,8 +9,16 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
+      if (data.user) {
+        await logAuditEvent(supabase, request, {
+          userId: data.user.id,
+          userEmail: data.user.email ?? '',
+          action: 'ACCESS',
+          resource: 'login',
+        })
+      }
       return NextResponse.redirect(`${origin}${next}`)
     }
   }

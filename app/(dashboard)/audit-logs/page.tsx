@@ -97,6 +97,9 @@ export default async function AuditLogsPage({
                       <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">
                         IP
                       </th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">
+                        Dispositivo
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -115,6 +118,9 @@ export default async function AuditLogsPage({
                         <td className="py-3 px-4 text-gray-600">{log.resource}</td>
                         <td className="py-3 px-4 text-gray-500">{log.details ?? '—'}</td>
                         <td className="py-3 px-4 text-gray-400">{log.ip ?? '—'}</td>
+                        <td className="py-3 px-4 text-gray-400 max-w-[220px] truncate" title={log.user_agent ?? ''}>
+                          {log.user_agent ?? '—'}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -136,6 +142,9 @@ export default async function AuditLogsPage({
                     <p className="text-xs font-medium text-gray-700">{log.user_email}</p>
                     <p className="text-xs text-gray-500">{log.details ?? log.resource}</p>
                     {log.ip && <p className="text-xs text-gray-400 font-mono">IP: {log.ip}</p>}
+                    {log.user_agent && (
+                      <p className="text-xs text-gray-400 font-mono truncate">{log.user_agent}</p>
+                    )}
                   </div>
                 ))}
               </div>
