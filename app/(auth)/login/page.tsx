@@ -5,7 +5,13 @@ import { Label } from '@/components/ui/label'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error } = await searchParams
+
   return (
     <div
       className="min-h-screen flex"
@@ -64,6 +70,11 @@ export default function LoginPage() {
               <CardDescription>Digite seu email e senha para acessar</CardDescription>
             </CardHeader>
             <CardContent>
+              {error && (
+                <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+                  Email ou senha inválidos
+                </div>
+              )}
               <form className="space-y-4" action="/api/auth/login" method="POST">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
