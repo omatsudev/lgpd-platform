@@ -3,6 +3,14 @@ import type { NextConfig } from 'next'
 const pkg = require('./package.json') as { version: string }
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      // serraprivacy.com redireciona (308) para www.serraprivacy.com — sem
+      // isso, o POST de Server Actions feito a partir do domínio sem "www"
+      // é rejeitado pela checagem de origem (CSRF) do Next.js.
+      allowedOrigins: ['serraprivacy.com', 'www.serraprivacy.com'],
+    },
+  },
   env: {
     NEXT_PUBLIC_SUPABASE_URL: 'https://utesgzaybftosklfuhnt.supabase.co',
     NEXT_PUBLIC_SUPABASE_ANON_KEY:
