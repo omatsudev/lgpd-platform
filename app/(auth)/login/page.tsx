@@ -8,9 +8,9 @@ import Link from 'next/link'
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; reset?: string }>
 }) {
-  const { error } = await searchParams
+  const { error, reset } = await searchParams
 
   return (
     <div
@@ -73,6 +73,11 @@ export default async function LoginPage({
               {error && (
                 <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
                   Email ou senha inválidos
+                </div>
+              )}
+              {reset === 'ok' && (
+                <div className="mb-4 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
+                  Senha redefinida com sucesso. Entre com sua nova senha.
                 </div>
               )}
               <form className="space-y-4" action="/api/auth/login" method="POST">
