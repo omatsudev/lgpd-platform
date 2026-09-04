@@ -28,9 +28,18 @@ export async function POST(request: NextRequest) {
   })
 
   if (authError) {
-    return NextResponse.redirect(new URL(`/invite/${token}?error=1`, request.url), {
-      status: 303,
+    // E-mail já tem conta (ex: tentativa anterior criou o usuário mas não
+    // chegou a aceitar o convite). Tenta logar com a senha informada agora.
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: preview.email,
+      password,
     })
+
+    if (signInError) {
+      return NextResponse.redirect(new URL(`/invite/${token}?error=1`, request.url), {
+        status: 303,
+      })
+    }
   }
 
   const { data: accepted } = await supabase.rpc('accept_company_invite', { p_token: token })
