@@ -53,7 +53,7 @@ export default async function SettingsPage({
 
   const isCollaborator = role === 'collaborator'
   const slug = company?.slug ?? ''
-  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://serraprivacy.com'}/lgpd/${slug}`
+  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.serraprivacy.com'}/lgpd/${slug}`
 
   const { data: pendingInvites } =
     !isCollaborator && companyId
@@ -65,7 +65,7 @@ export default async function SettingsPage({
           .order('created_at', { ascending: false })
       : { data: [] }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://serraprivacy.com'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.serraprivacy.com'
 
   return (
     <div className="space-y-6 max-w-3xl">
