@@ -22,17 +22,29 @@ import Link from 'next/link'
 
 
 export default async function DashboardPage() {
-  const { company, companyId, supabase } = await getUserCompany()
+  const { company, companyId, supabase, hasInactiveCompanies } = await getUserCompany()
 
   if (!companyId) {
     return (
       <div className="flex items-center justify-center h-64">
         <p className="text-gray-500">
-          Nenhuma empresa encontrada. Configure sua empresa em{' '}
-          <a href="/settings" className="text-blue-600 underline">
-            Configurações
-          </a>
-          .
+          {hasInactiveCompanies ? (
+            <>
+              Sua empresa está desativada. Reative em{' '}
+              <Link href="/companies/inactive" className="text-blue-600 underline">
+                Empresas Inativas
+              </Link>
+              .
+            </>
+          ) : (
+            <>
+              Nenhuma empresa encontrada. Configure sua empresa em{' '}
+              <a href="/settings" className="text-blue-600 underline">
+                Configurações
+              </a>
+              .
+            </>
+          )}
         </p>
       </div>
     )

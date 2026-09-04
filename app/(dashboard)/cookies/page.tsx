@@ -6,9 +6,12 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { Cookie } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function CookiesPage() {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="cookies" />
+
 
   const { data: scans } = companyId
     ? await supabase

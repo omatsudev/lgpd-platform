@@ -7,6 +7,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { AlertTriangle, CheckCircle2, Clock, Lock, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const statusIcon: Record<string, any> = {
   regular: CheckCircle2,
@@ -28,7 +29,9 @@ export default async function RetentionDisposalPage({
 }: {
   searchParams: Promise<{ q?: string; status?: string }>
 }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="retention-disposal" />
+
   const { q, status } = await searchParams
 
   let query = supabase

@@ -10,6 +10,7 @@ import { formatDate, formatDateTime } from '@/lib/utils'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const typeMap = DATA_SUBJECT_REQUEST_TYPE_LABELS
 const statusMap: Record<
@@ -24,7 +25,9 @@ const statusMap: Record<
 
 export default async function DataSubjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { supabase } = await getUserCompany()
+  const { role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="data-subjects" />
+
 
   const { data: request } = await supabase
     .from('data_subject_requests')

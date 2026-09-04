@@ -6,6 +6,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { AlertCircle, Globe, Plus, Scale, Truck } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const categoryLabel: Record<string, string> = {
   technology: 'Tecnologia',
@@ -54,7 +55,9 @@ export default async function SuppliersPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="suppliers" />
+
   const { q } = await searchParams
 
   let query = supabase

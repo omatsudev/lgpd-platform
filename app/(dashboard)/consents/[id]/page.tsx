@@ -6,6 +6,7 @@ import { formatDateTime } from '@/lib/utils'
 import { ArrowLeft, CheckCircle2, MinusCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const channelLabel: Record<string, string> = {
   web: 'Web',
@@ -21,7 +22,9 @@ export default async function ConsentDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="consents" />
+
 
   const { data: reg } = await supabase
     .from('consents')

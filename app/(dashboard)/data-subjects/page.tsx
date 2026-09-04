@@ -7,6 +7,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { Clock, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const typeMap = DATA_SUBJECT_REQUEST_TYPE_LABELS
 const statusMap: Record<
@@ -24,7 +25,9 @@ export default async function DataSubjectsPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { company, companyId, supabase } = await getUserCompany()
+  const { company, companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="data-subjects" />
+
   const { q } = await searchParams
 
   let query = supabase

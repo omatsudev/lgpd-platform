@@ -6,14 +6,15 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, company: activeCompany, companyId, role, companies } = await getUserCompany()
+  const { user, company: activeCompany, companyId, role, companies, hasInactiveCompanies } =
+    await getUserCompany()
 
   if (!user) redirect('/login')
 
   // Cria empresa automaticamente para usuários tipo 'company' sem nenhuma vinculada.
   // DPOs não ganham empresa automática — eles adicionam clientes manualmente via /companies.
   const isDpo = (user?.user_metadata?.role as string) === 'dpo'
-  if (user && !isDpo && !companyId && companies.length === 0) {
+  if (user && !isDpo && !companyId && companies.length === 0 && !hasInactiveCompanies) {
     const supabase = await createClient()
     const userName = (user.user_metadata?.name as string) || user.email || 'Usuário'
     const companyFinalName = `Empresa de ${userName.split('@')[0]}`

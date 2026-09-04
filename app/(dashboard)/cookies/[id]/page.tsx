@@ -5,10 +5,13 @@ import { formatDateTime } from '@/lib/utils'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function ScanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="cookies" />
+
 
   const { data: scan } = await supabase.from('site_scans').select('*').eq('id', id).single()
 

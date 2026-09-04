@@ -6,6 +6,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { AlertCircle, FileText, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const typeLabel: Record<string, string> = {
   privacy_policy: 'Política de Privacidade',
@@ -43,7 +44,9 @@ export default async function DocumentosPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="documents" />
+
   const { q } = await searchParams
 
   let query = supabase

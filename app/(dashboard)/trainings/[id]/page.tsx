@@ -10,6 +10,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft, Download, Send } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const statusMap: Record<string, 'success' | 'warning' | 'secondary'> = {
   completed: 'success',
@@ -25,7 +26,9 @@ const statusLabel: Record<string, string> = {
 export default async function TrainingFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'new'
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="trainings" />
+
 
   let training: any = null
   let employees: any[] = []

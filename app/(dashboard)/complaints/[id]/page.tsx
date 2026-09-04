@@ -9,6 +9,7 @@ import { formatDateTime } from '@/lib/utils'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const statusMap: Record<string, { label: string; variant: 'warning' | 'default' | 'success' }> = {
   received: { label: 'Recebido', variant: 'warning' },
@@ -26,7 +27,9 @@ const typeMap: Record<string, string> = {
 
 export default async function ComplaintDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { supabase } = await getUserCompany()
+  const { role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="complaints" />
+
 
   const { data: complaint } = await supabase.from('complaints').select('*').eq('id', id).single()
 

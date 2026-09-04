@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (data.user) {
-    await logAuditEvent(supabase, request, {
+    await logAuditEvent(supabase, request.headers, {
       userId: data.user.id,
       userEmail: data.user.email ?? email,
       action: 'ACCESS',

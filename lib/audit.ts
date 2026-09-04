@@ -7,31 +7,36 @@ function getClientIp(headers: Headers) {
 }
 
 export async function logAuditEvent(
-  supabase: SupabaseClient,
-  request: Request,
+  supabase: SupabaseClient<any, any, any>,
+  requestHeaders: Headers,
   params: {
     userId: string
     userEmail: string
     action: string
     resource: string
     details?: string
+    companyId?: string | null
   },
 ) {
-  const { data: ucRows } = await supabase
-    .from('user_companies')
-    .select('company_id')
-    .eq('user_id', params.userId)
-    .order('created_at')
-    .limit(1)
+  let companyId = params.companyId
+  if (companyId === undefined) {
+    const { data: ucRows } = await supabase
+      .from('user_companies')
+      .select('company_id')
+      .eq('user_id', params.userId)
+      .order('created_at')
+      .limit(1)
+    companyId = ucRows?.[0]?.company_id ?? null
+  }
 
   await supabase.from('audit_logs').insert({
-    company_id: ucRows?.[0]?.company_id ?? null,
+    company_id: companyId,
     user_id: params.userId,
     user_email: params.userEmail,
     action: params.action,
     resource: params.resource,
     details: params.details ?? null,
-    ip: getClientIp(request.headers),
-    user_agent: request.headers.get('user-agent'),
+    ip: getClientIp(requestHeaders),
+    user_agent: requestHeaders.get('user-agent'),
   })
 }

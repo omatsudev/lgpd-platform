@@ -6,6 +6,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { Plus, ShieldAlert } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const severityVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
   low: 'success',
@@ -53,7 +54,9 @@ export default async function IncidentsPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="incidents" />
+
   const { q } = await searchParams
 
   let query = supabase

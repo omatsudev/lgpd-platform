@@ -6,6 +6,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const statusMap: Record<string, { label: string; variant: 'warning' | 'default' | 'success' }> = {
   received: { label: 'Recebido', variant: 'warning' },
@@ -26,7 +27,9 @@ export default async function ComplaintsPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { company, companyId, supabase } = await getUserCompany()
+  const { company, companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="complaints" />
+
   const { q } = await searchParams
 
   let query = supabase

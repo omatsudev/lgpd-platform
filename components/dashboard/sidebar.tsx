@@ -1,5 +1,6 @@
 'use client'
 
+import { hasFullAccess } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import {
   AlertTriangle,
@@ -14,6 +15,7 @@ import {
   FileText,
   GraduationCap,
   LayoutDashboard,
+  Lock,
   LogOut,
   Menu,
   ScrollText,
@@ -34,64 +36,99 @@ const allNavItems = [
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
   {
     href: '/checklist',
     label: 'Checklist LGPD',
     icon: ClipboardList,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
-  { href: '/cookies', label: 'Verificador de Site', icon: Cookie, roles: ['company', 'admin'] },
+  {
+    href: '/cookies',
+    label: 'Verificador de Site',
+    icon: Cookie,
+    roles: ['company', 'admin', 'collaborator'],
+  },
   {
     href: '/inventory',
     label: 'Inventário de Dados',
     icon: Database,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
   {
     href: '/retention-disposal',
     label: 'Retenção e Descarte',
     icon: Clock,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
   {
     href: '/risks',
     label: 'Gestão de Riscos',
     icon: TriangleAlert,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
-  { href: '/report', label: 'Relatório LGPD', icon: BarChart2, roles: ['company', 'admin', 'dpo'] },
+  {
+    href: '/report',
+    label: 'Relatório LGPD',
+    icon: BarChart2,
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
+  },
   {
     href: '/incidents',
     label: 'Gestão de Incidentes',
     icon: ShieldAlert,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
-  { href: '/documents', label: 'Documentos', icon: FileText, roles: ['company', 'admin', 'dpo'] },
-  { href: '/consents', label: 'Consentimentos', icon: ClipboardCheck, roles: ['company', 'admin'] },
-  { href: '/suppliers', label: 'Fornecedores', icon: Truck, roles: ['company', 'admin'] },
-  { href: '/trainings', label: 'Treinamentos', icon: GraduationCap, roles: ['company', 'admin'] },
+  {
+    href: '/documents',
+    label: 'Documentos',
+    icon: FileText,
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
+  },
+  {
+    href: '/consents',
+    label: 'Consentimentos',
+    icon: ClipboardCheck,
+    roles: ['company', 'admin', 'collaborator'],
+  },
+  {
+    href: '/suppliers',
+    label: 'Fornecedores',
+    icon: Truck,
+    roles: ['company', 'admin', 'collaborator'],
+  },
+  {
+    href: '/trainings',
+    label: 'Treinamentos',
+    icon: GraduationCap,
+    roles: ['company', 'admin', 'collaborator'],
+  },
   {
     href: '/complaints',
     label: 'Canal de Denúncias',
     icon: AlertTriangle,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
   {
     href: '/data-subjects',
     label: 'Direitos dos Titulares',
     icon: Users,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
   { href: '/companies', label: 'Empresas (DPO)', icon: Building2, roles: ['dpo'] },
   {
     href: '/audit-logs',
     label: 'Logs de Auditoria',
     icon: ScrollText,
-    roles: ['company', 'admin', 'dpo'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
-  { href: '/settings', label: 'Configurações', icon: Settings, roles: ['company', 'admin', 'dpo'] },
+  {
+    href: '/settings',
+    label: 'Configurações',
+    icon: Settings,
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
+  },
 ]
 
 function NavContent({ onClose, role }: { onClose?: () => void; role?: string | null }) {
@@ -120,6 +157,7 @@ function NavContent({ onClose, role }: { onClose?: () => void; role?: string | n
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+          const locked = !hasFullAccess(role, item.href)
           return (
             <Link
               key={item.href}
@@ -132,7 +170,8 @@ function NavContent({ onClose, role }: { onClose?: () => void; role?: string | n
               style={isActive ? { background: 'linear-gradient(90deg, #00bcd4, #0097a7)' } : {}}
             >
               <Icon className="h-4 w-4 flex-shrink-0" />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {locked && <Lock className="h-3.5 w-3.5 flex-shrink-0 text-blue-300/60" />}
             </Link>
           )
         })}

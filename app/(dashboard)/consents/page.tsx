@@ -6,6 +6,7 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { CheckCircle2, ClipboardList, MinusCircle, Plus, Send, XCircle } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const channelLabel: Record<string, string> = {
   web: 'Web',
@@ -20,7 +21,9 @@ export default async function ConsentsPage({
 }: {
   searchParams: Promise<{ q?: string; tab?: string }>
 }) {
-  const { companyId, company, supabase } = await getUserCompany()
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="consents" />
+
   const { q, tab = 'records' } = await searchParams
 
   // Finalidades

@@ -6,6 +6,7 @@ import type {
   SecurityMeasure,
   SharingRecipient,
 } from '@/app/actions/inventory'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { PrintButton } from '@/components/inventory/print-button'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -54,7 +55,8 @@ function SectionCard({ title, children }: { title: string; children: React.React
 
 export default async function ViewInventoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { companyId, company, supabase } = await getUserCompany()
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="inventory" />
 
   const { data: item } = await supabase
     .from('data_inventory')
@@ -196,7 +198,13 @@ export default async function ViewInventoryPage({ params }: { params: Promise<{ 
                   <Field label="Local armazenamento" value={cat.storageLocation} />
                   <Field label="Categoria do titular" value={cat.dataSubjectCategory} />
                   <Field label="Setor responsável" value={cat.responsibleDepartment} />
-                  <Field label="Necessidade de DPIA" value={{ yes: 'Sim', no: 'Não', to_evaluate: 'A avaliar' }[cat.dpiaRequired] ?? cat.dpiaRequired} />
+                  <Field
+                    label="Necessidade de DPIA"
+                    value={
+                      { yes: 'Sim', no: 'Não', to_evaluate: 'A avaliar' }[cat.dpiaRequired] ??
+                      cat.dpiaRequired
+                    }
+                  />
                 </div>
               </div>
             ))}

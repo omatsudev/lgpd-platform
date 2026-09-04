@@ -9,8 +9,19 @@ import { ArrowLeft, Building2 } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export default async function CompanyFormPage({ params }: { params: Promise<{ id: string }> }) {
+const ERRORS: Record<string, string> = {
+  duplicate_name: 'Você já tem uma empresa ativa com esse nome. Escolha um nome diferente.',
+}
+
+export default async function CompanyFormPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ error?: string }>
+}) {
   const { id } = await params
+  const { error } = await searchParams
   const isNew = id === 'new'
   const { supabase } = await getUserCompany()
 
@@ -38,6 +49,12 @@ export default async function CompanyFormPage({ params }: { params: Promise<{ id
           </p>
         </div>
       </div>
+
+      {error && (
+        <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+          {ERRORS[error] ?? 'Não foi possível salvar. Tente novamente.'}
+        </p>
+      )}
 
       {!isNew && company && (
         <Card className="border-blue-200 bg-blue-50">

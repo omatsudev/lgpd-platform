@@ -2,9 +2,12 @@ import { ChecklistBoard } from '@/components/checklist/checklist-board'
 import { CHECKLIST } from '@/lib/checklist-items'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ClipboardList } from 'lucide-react'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function ChecklistPage() {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="checklist" />
+
 
   const { data: items } = companyId
     ? await supabase

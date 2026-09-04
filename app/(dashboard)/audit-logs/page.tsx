@@ -5,6 +5,7 @@ import { SearchInput } from '@/components/ui/search-input'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { Download, Shield } from 'lucide-react'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const actionMap: Record<string, 'default' | 'success' | 'warning' | 'destructive' | 'secondary'> = {
   CREATE: 'success',
@@ -18,7 +19,9 @@ export default async function AuditLogsPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="audit-logs" />
+
   const { q } = await searchParams
 
   let query = supabase

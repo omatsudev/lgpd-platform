@@ -6,13 +6,16 @@ import { SearchInput } from '@/components/ui/search-input'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { Plus, Send, Users } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function TrainingsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string; tab?: string }>
 }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="trainings" />
+
   const { q, tab = 'trainings' } = await searchParams
 
   let query = supabase

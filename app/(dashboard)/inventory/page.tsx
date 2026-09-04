@@ -6,6 +6,7 @@ import { SearchInput } from '@/components/ui/search-input'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const riskVariant: Record<string, 'destructive' | 'warning' | 'success'> = {
   high: 'destructive',
@@ -40,7 +41,9 @@ export default async function InventoryPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="inventory" />
+
   const { q } = await searchParams
 
   let query = supabase

@@ -12,6 +12,7 @@ import {
 import { getUserCompany } from '@/lib/supabase/queries'
 import { AlertTriangle, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const statusVariant: Record<string, 'secondary' | 'warning' | 'default' | 'success'> = {
   identified: 'secondary',
@@ -25,7 +26,9 @@ export default async function RisksPage({
 }: {
   searchParams: Promise<{ q?: string; tab?: string }>
 }) {
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="risks" />
+
   const { q, tab = 'list' } = await searchParams
 
   let query = supabase

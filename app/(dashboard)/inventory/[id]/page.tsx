@@ -1,12 +1,15 @@
 import { InventoryWizard } from '@/components/inventory/wizard'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { notFound } from 'next/navigation'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function InventoryFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'new'
 
-  const { companyId, supabase } = await getUserCompany()
+  const { companyId, role, supabase } = await getUserCompany()
+  if (role === 'collaborator') return <LockedFeature moduleKey="inventory" />
+
 
   let item: any = null
   if (!isNew && companyId) {

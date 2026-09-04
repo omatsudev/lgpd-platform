@@ -10,21 +10,29 @@ import Link from 'next/link'
 export default async function CompaniesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; deactivated?: string; reactivated?: string }>
 }) {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  const { q } = await searchParams
+  const { q, deactivated, reactivated } = await searchParams
 
   const { data: memberships } = await supabase
     .from('user_companies')
-    .select('company_id, role, companies(id, name, tax_id, sector, slug, compliance_score)')
+    .select('company_id')
     .eq('user_id', user!.id)
     .order('created_at')
 
-  const allCompanies = (memberships ?? []).map((v: any) => v.companies).filter(Boolean)
+  const companyIds = (memberships ?? []).map((m) => m.company_id)
+  const { data: companiesData } = companyIds.length
+    ? await supabase
+        .from('companies')
+        .select('id, name, tax_id, sector, slug, compliance_score, deleted_at')
+        .in('id', companyIds)
+    : { data: [] }
+
+  const allCompanies = (companiesData ?? []).filter((c) => !c.deleted_at)
   const companies = q
     ? allCompanies.filter((e: any) =>
         [e.name, e.tax_id, e.sector].some((f: string | null) =>
@@ -40,12 +48,29 @@ export default async function CompaniesPage({
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">Empresas Gerenciadas</h1>
           <p className="text-sm text-gray-500 mt-0.5">Empresas sob sua responsabilidade como DPO</p>
         </div>
-        <Link href="/companies/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-1" /> Nova Empresa
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/companies/inactive">
+            <Button variant="outline">Empresas Inativas</Button>
+          </Link>
+          <Link href="/companies/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-1" /> Nova Empresa
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      {deactivated && (
+        <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-md px-3 py-2">
+          Empresa desativada com sucesso. Os dados foram mantidos e podem ser reativados a
+          qualquer momento em &quot;Empresas Inativas&quot;.
+        </p>
+      )}
+      {reactivated && (
+        <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-md px-3 py-2">
+          Empresa reativada com sucesso.
+        </p>
+      )}
 
       <SearchInput defaultValue={q ?? ''} placeholder="Buscar por nome, CNPJ, setor..." />
 

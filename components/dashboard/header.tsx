@@ -34,7 +34,7 @@ export function Header({
               name="companyId"
               defaultValue={currentCompanyId ?? ''}
               onChange={(e) => e.currentTarget.form?.requestSubmit()}
-              className="font-semibold text-sm border-none outline-none bg-transparent cursor-pointer pr-1 max-w-[180px] md:max-w-xs truncate"
+              className="appearance-none font-semibold text-sm border-none outline-none bg-transparent cursor-pointer pr-1 max-w-[180px] md:max-w-xs truncate"
               style={{ color: '#0f2d5e' }}
             >
               {companies.map((c) => (

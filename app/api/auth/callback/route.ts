@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
       if (data.user) {
-        await logAuditEvent(supabase, request, {
+        await logAuditEvent(supabase, request.headers, {
           userId: data.user.id,
           userEmail: data.user.email ?? '',
           action: 'ACCESS',
