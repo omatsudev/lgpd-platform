@@ -74,7 +74,7 @@ export const getUserCompany = cache(async function getUserCompany() {
   const { data: company } = await supabase
     .from('companies')
     .select(
-      'id, name, tax_id, slug, sector, owner_id, dpo_name, dpo_email, dpo_phone, compliance_score, privacy_policy_url, created_at, updated_at',
+      'id, name, tax_id, slug, sector, owner_id, dpo_name, dpo_email, dpo_phone, compliance_score, privacy_policy_url, plan, created_at, updated_at',
     )
     .eq('id', targetUc.company_id)
     .single()

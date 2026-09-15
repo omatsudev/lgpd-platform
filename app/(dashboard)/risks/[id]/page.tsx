@@ -1,18 +1,18 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { RiskForm } from '@/components/risks/form'
 import { Button } from '@/components/ui/button'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function RiskFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'new'
 
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="risks" />
-
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="risks" />
 
   let item: any = null
   if (!isNew && companyId) {

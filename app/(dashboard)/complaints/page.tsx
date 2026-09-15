@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -6,7 +7,6 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const statusMap: Record<string, { label: string; variant: 'warning' | 'default' | 'success' }> = {
   received: { label: 'Recebido', variant: 'warning' },
@@ -28,7 +28,8 @@ export default async function ComplaintsPage({
   searchParams: Promise<{ q?: string }>
 }) {
   const { company, companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="complaints" />
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="complaints" />
 
   const { q } = await searchParams
 
@@ -83,7 +84,9 @@ export default async function ComplaintsPage({
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                     <div className="space-y-1.5 flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium text-gray-900">{typeMap[d.type] ?? d.type}</span>
+                        <span className="font-medium text-gray-900">
+                          {typeMap[d.type] ?? d.type}
+                        </span>
                         <Badge variant="secondary">
                           {d.anonymous ? 'Anônimo' : (d.name ?? 'Identificado')}
                         </Badge>

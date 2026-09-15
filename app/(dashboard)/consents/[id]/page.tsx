@@ -1,4 +1,5 @@
 import { RevokeForm } from '@/components/consents/revoke-form'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getUserCompany } from '@/lib/supabase/queries'
@@ -6,7 +7,6 @@ import { formatDateTime } from '@/lib/utils'
 import { ArrowLeft, CheckCircle2, MinusCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const channelLabel: Record<string, string> = {
   web: 'Web',
@@ -16,15 +16,11 @@ const channelLabel: Record<string, string> = {
   api: 'API',
 }
 
-export default async function ConsentDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+export default async function ConsentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="consents" />
-
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="consents" />
 
   const { data: reg } = await supabase
     .from('consents')

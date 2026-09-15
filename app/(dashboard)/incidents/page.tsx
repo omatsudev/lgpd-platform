@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -6,7 +7,6 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { Plus, ShieldAlert } from 'lucide-react'
 import Link from 'next/link'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const severityVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
   low: 'success',
@@ -54,8 +54,9 @@ export default async function IncidentsPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="incidents" />
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="incidents" />
 
   const { q } = await searchParams
 

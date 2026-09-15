@@ -50,3 +50,33 @@ export async function resetPasswordAfterRecovery(formData: FormData) {
 
   redirect('/login?reset=ok')
 }
+
+export async function changeTemporaryPassword(formData: FormData) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const password = formData.get('password') as string
+  const confirmPassword = formData.get('confirm_password') as string
+
+  if (!password || password.length < 6) {
+    redirect('/trocar-senha?error=short')
+  }
+
+  if (password !== confirmPassword) {
+    redirect('/trocar-senha?error=mismatch')
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    password,
+    data: { must_change_password: false },
+  })
+
+  if (error) {
+    redirect('/trocar-senha?error=1')
+  }
+
+  redirect('/dashboard')
+}

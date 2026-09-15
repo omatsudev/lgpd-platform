@@ -1,6 +1,8 @@
 'use client'
 
 import { hasFullAccess } from '@/lib/permissions'
+import type { CompanyPlan } from '@/lib/plans'
+import { isModuleAllowedByPlan } from '@/lib/plans'
 import { cn } from '@/lib/utils'
 import {
   AlertTriangle,
@@ -131,7 +133,15 @@ const allNavItems = [
   },
 ]
 
-function NavContent({ onClose, role }: { onClose?: () => void; role?: string | null }) {
+function NavContent({
+  onClose,
+  role,
+  plan,
+}: {
+  onClose?: () => void
+  role?: string | null
+  plan?: CompanyPlan | null
+}) {
   const pathname = usePathname()
   const navItems = allNavItems.filter((item) => !role || item.roles.includes(role))
   return (
@@ -157,7 +167,7 @@ function NavContent({ onClose, role }: { onClose?: () => void; role?: string | n
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
-          const locked = !hasFullAccess(role, item.href)
+          const locked = !hasFullAccess(role, item.href) || !isModuleAllowedByPlan(plan, item.href)
           return (
             <Link
               key={item.href}
@@ -213,7 +223,7 @@ export function MobileMenuButton({ onClick }: { onClick: () => void }) {
   )
 }
 
-export function Sidebar({ role }: { role?: string | null }) {
+export function Sidebar({ role, plan }: { role?: string | null; plan?: CompanyPlan | null }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const pathname = usePathname()
 
@@ -228,7 +238,7 @@ export function Sidebar({ role }: { role?: string | null }) {
         className="hidden lg:flex fixed inset-y-0 left-0 z-50 w-64 flex-col"
         style={{ background: 'linear-gradient(180deg, #0f2d5e 0%, #0a1f42 100%)' }}
       >
-        <NavContent role={role} />
+        <NavContent role={role} plan={plan} />
       </aside>
 
       {/* Mobile drawer overlay */}
@@ -247,7 +257,7 @@ export function Sidebar({ role }: { role?: string | null }) {
         )}
         style={{ background: 'linear-gradient(180deg, #0f2d5e 0%, #0a1f42 100%)' }}
       >
-        <NavContent onClose={() => setMobileOpen(false)} role={role} />
+        <NavContent onClose={() => setMobileOpen(false)} role={role} plan={plan} />
       </aside>
 
       {/* Floating mobile menu button */}

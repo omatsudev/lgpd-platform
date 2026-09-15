@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -6,15 +7,15 @@ import { SearchInput } from '@/components/ui/search-input'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { Plus, Send, Users } from 'lucide-react'
 import Link from 'next/link'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function TrainingsPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string; tab?: string }>
 }) {
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="trainings" />
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="trainings" />
 
   const { q, tab = 'trainings' } = await searchParams
 
@@ -121,9 +122,7 @@ export default async function TrainingsPage({
       <SearchInput
         defaultValue={q ?? ''}
         placeholder={
-          tab === 'employees'
-            ? 'Buscar por nome ou email...'
-            : 'Buscar por título ou descrição...'
+          tab === 'employees' ? 'Buscar por nome ou email...' : 'Buscar por título ou descrição...'
         }
       />
 
@@ -141,9 +140,7 @@ export default async function TrainingsPage({
           <div className="grid gap-4">
             {trainings.map((t: any) => {
               const progress =
-                t.total_employees > 0
-                  ? Math.round((t.completed / t.total_employees) * 100)
-                  : 0
+                t.total_employees > 0 ? Math.round((t.completed / t.total_employees) * 100) : 0
               return (
                 <Card key={t.id}>
                   <CardContent className="pt-5">

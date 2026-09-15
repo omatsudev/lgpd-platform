@@ -1,18 +1,18 @@
 import { PurposeForm } from '@/components/consents/purpose-form'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Button } from '@/components/ui/button'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function PurposeFormPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'new'
 
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="consents" />
-
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="consents" />
 
   let item: any = null
   if (!isNew && companyId) {

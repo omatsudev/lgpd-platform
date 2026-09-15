@@ -6,10 +6,18 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, company: activeCompany, companyId, role, companies, hasInactiveCompanies } =
-    await getUserCompany()
+  const {
+    user,
+    company: activeCompany,
+    companyId,
+    role,
+    companies,
+    hasInactiveCompanies,
+  } = await getUserCompany()
 
   if (!user) redirect('/login')
+
+  if (user.user_metadata?.must_change_password) redirect('/trocar-senha')
 
   // Cria empresa automaticamente para usuários tipo 'company' sem nenhuma vinculada.
   // DPOs não ganham empresa automática — eles adicionam clientes manualmente via /companies.
@@ -48,7 +56,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar role={role} />
+      <Sidebar role={role} plan={activeCompany?.plan} />
       <div className="flex flex-1 flex-col lg:ml-64 overflow-hidden">
         <Header
           companyName={activeCompany?.name}

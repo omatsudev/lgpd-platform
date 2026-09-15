@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -7,7 +8,6 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { AlertTriangle, CheckCircle2, Clock, Lock, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const statusIcon: Record<string, any> = {
   regular: CheckCircle2,
@@ -29,8 +29,9 @@ export default async function RetentionDisposalPage({
 }: {
   searchParams: Promise<{ q?: string; status?: string }>
 }) {
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="retention-disposal" />
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="retention-disposal" />
 
   const { q, status } = await searchParams
 
@@ -187,9 +188,7 @@ export default async function RetentionDisposalPage({
                           <span className="text-xs text-gray-500 flex items-center gap-1">
                             <Clock className="h-3 w-3" /> {item.retention_period}
                           </span>
-                          <span className="text-xs text-gray-500">
-                            Início: {item.start_event}
-                          </span>
+                          <span className="text-xs text-gray-500">Início: {item.start_event}</span>
                           {item.expiration_date && (
                             <span className="text-xs text-gray-500">
                               Venc.: {formatDate(item.expiration_date)}

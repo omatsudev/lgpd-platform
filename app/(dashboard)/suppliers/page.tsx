@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -6,7 +7,6 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { AlertCircle, Globe, Plus, Scale, Truck } from 'lucide-react'
 import Link from 'next/link'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const categoryLabel: Record<string, string> = {
   technology: 'Tecnologia',
@@ -55,8 +55,9 @@ export default async function SuppliersPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="suppliers" />
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="suppliers" />
 
   const { q } = await searchParams
 
@@ -76,7 +77,9 @@ export default async function SuppliersPage({
   const items = suppliersData ?? []
   const today = new Date()
 
-  const withoutDPA = items.filter((f: any) => f.access_type !== 'no_data_access' && !f.has_dpa).length
+  const withoutDPA = items.filter(
+    (f: any) => f.access_type !== 'no_data_access' && !f.has_dpa,
+  ).length
   const expiredAssessment = items.filter(
     (f: any) => f.next_assessment_date && new Date(f.next_assessment_date) < today,
   ).length
@@ -236,7 +239,9 @@ export default async function SuppliersPage({
                           </td>
                           <td className="py-3 px-4">
                             <Badge
-                              variant={dueDiligenceVariant[item.due_diligence_status] ?? 'secondary'}
+                              variant={
+                                dueDiligenceVariant[item.due_diligence_status] ?? 'secondary'
+                              }
                               className="text-xs"
                             >
                               {dueDiligenceLabel[item.due_diligence_status] ??

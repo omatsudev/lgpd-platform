@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { RiskMatrix } from '@/components/risks/matrix'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -6,13 +7,12 @@ import { SearchInput } from '@/components/ui/search-input'
 import { calculateRiskLevel, RISK_LEVEL_LABELS, RISK_LEVEL_VARIANTS } from '@/lib/risk-scoring'
 import {
   RISK_CATEGORY_LABELS,
-  RISK_STRATEGY_VARIANTS,
   RISK_STATUS_LABELS,
+  RISK_STRATEGY_VARIANTS,
 } from '@/lib/status-labels'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { AlertTriangle, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const statusVariant: Record<string, 'secondary' | 'warning' | 'default' | 'success'> = {
   identified: 'secondary',
@@ -26,8 +26,9 @@ export default async function RisksPage({
 }: {
   searchParams: Promise<{ q?: string; tab?: string }>
 }) {
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="risks" />
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="risks" />
 
   const { q, tab = 'list' } = await searchParams
 
@@ -45,7 +46,9 @@ export default async function RisksPage({
     : { data: [] }
 
   const items = risksData ?? []
-  const criticalItems = items.filter((r: any) => r.inherent_probability * r.inherent_impact >= 15).length
+  const criticalItems = items.filter(
+    (r: any) => r.inherent_probability * r.inherent_impact >= 15,
+  ).length
   const highItems = items.filter((r: any) => {
     const s = r.inherent_probability * r.inherent_impact
     return s >= 9 && s < 15
@@ -154,7 +157,10 @@ export default async function RisksPage({
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {items.map((item: any) => {
-                        const inherentLevel = calculateRiskLevel(item.inherent_probability, item.inherent_impact)
+                        const inherentLevel = calculateRiskLevel(
+                          item.inherent_probability,
+                          item.inherent_impact,
+                        )
                         const residualLevel =
                           item.residual_probability && item.residual_impact
                             ? calculateRiskLevel(item.residual_probability, item.residual_impact)
@@ -174,7 +180,10 @@ export default async function RisksPage({
                             </td>
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-1.5">
-                                <Badge variant={RISK_LEVEL_VARIANTS[inherentLevel]} className="text-xs">
+                                <Badge
+                                  variant={RISK_LEVEL_VARIANTS[inherentLevel]}
+                                  className="text-xs"
+                                >
                                   {RISK_LEVEL_LABELS[inherentLevel]}
                                 </Badge>
                                 <span className="text-xs text-gray-400">
@@ -185,7 +194,10 @@ export default async function RisksPage({
                             <td className="py-3 px-4">
                               {residualLevel ? (
                                 <div className="flex items-center gap-1.5">
-                                  <Badge variant={RISK_LEVEL_VARIANTS[residualLevel]} className="text-xs">
+                                  <Badge
+                                    variant={RISK_LEVEL_VARIANTS[residualLevel]}
+                                    className="text-xs"
+                                  >
                                     {RISK_LEVEL_LABELS[residualLevel]}
                                   </Badge>
                                 </div>
@@ -230,7 +242,10 @@ export default async function RisksPage({
                 {/* Mobile */}
                 <div className="md:hidden divide-y divide-gray-100">
                   {items.map((item: any) => {
-                    const inherentLevel = calculateRiskLevel(item.inherent_probability, item.inherent_impact)
+                    const inherentLevel = calculateRiskLevel(
+                      item.inherent_probability,
+                      item.inherent_impact,
+                    )
                     return (
                       <div key={item.id} className="p-4 space-y-2">
                         <div className="flex items-start justify-between gap-2">

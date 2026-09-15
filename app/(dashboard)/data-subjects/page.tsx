@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -7,7 +8,6 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { Clock, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const typeMap = DATA_SUBJECT_REQUEST_TYPE_LABELS
 const statusMap: Record<
@@ -26,7 +26,8 @@ export default async function DataSubjectsPage({
   searchParams: Promise<{ q?: string }>
 }) {
   const { company, companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="data-subjects" />
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="data-subjects" />
 
   const { q } = await searchParams
 
@@ -54,7 +55,11 @@ export default async function DataSubjectsPage({
         </div>
         {company?.slug && (
           <Button variant="outline" size="sm" asChild>
-            <a href={`/lgpd/${company.slug}#data-subject`} target="_blank" rel="noopener noreferrer">
+            <a
+              href={`/lgpd/${company.slug}#data-subject`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <ExternalLink className="h-4 w-4 mr-1" /> Formulário público
             </a>
           </Button>

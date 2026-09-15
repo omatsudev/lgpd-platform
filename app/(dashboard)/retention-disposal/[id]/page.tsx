@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { RetentionDisposalForm } from '@/components/retention-disposal/form'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -6,7 +7,6 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function RetentionDisposalFormPage({
   params,
@@ -16,9 +16,9 @@ export default async function RetentionDisposalFormPage({
   const { id } = await params
   const isNew = id === 'new'
 
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="retention-disposal" />
-
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="retention-disposal" />
 
   let item: any = null
   if (!isNew && companyId) {

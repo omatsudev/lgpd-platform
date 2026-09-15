@@ -1,4 +1,5 @@
 import { updateDataSubject } from '@/app/actions/data-subjects'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,7 +11,6 @@ import { formatDate, formatDateTime } from '@/lib/utils'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const typeMap = DATA_SUBJECT_REQUEST_TYPE_LABELS
 const statusMap: Record<
@@ -23,11 +23,15 @@ const statusMap: Record<
   rejected: { label: 'Recusado', variant: 'destructive' },
 }
 
-export default async function DataSubjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function DataSubjectDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const { id } = await params
-  const { role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="data-subjects" />
-
+  const { company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="data-subjects" />
 
   const { data: request } = await supabase
     .from('data_subject_requests')

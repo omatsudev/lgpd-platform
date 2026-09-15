@@ -1,17 +1,17 @@
 import { ScanForm } from '@/components/cookies/scan-form'
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Button } from '@/components/ui/button'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 export default async function ScanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="cookies" />
-
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="cookies" />
 
   const { data: scan } = await supabase.from('site_scans').select('*').eq('id', id).single()
 

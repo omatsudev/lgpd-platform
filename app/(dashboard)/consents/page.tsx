@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -6,7 +7,6 @@ import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { CheckCircle2, ClipboardList, MinusCircle, Plus, Send, XCircle } from 'lucide-react'
 import Link from 'next/link'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const channelLabel: Record<string, string> = {
   web: 'Web',
@@ -22,7 +22,8 @@ export default async function ConsentsPage({
   searchParams: Promise<{ q?: string; tab?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="consents" />
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="consents" />
 
   const { q, tab = 'records' } = await searchParams
 
@@ -154,11 +155,7 @@ export default async function ConsentsPage({
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {records.map((reg: any) => {
-                        const status = reg.revoked
-                          ? 'revoked'
-                          : reg.accepted
-                            ? 'active'
-                            : 'refused'
+                        const status = reg.revoked ? 'revoked' : reg.accepted ? 'active' : 'refused'
                         return (
                           <tr key={reg.id} className="hover:bg-gray-50 transition-colors">
                             <td className="py-3 px-4">

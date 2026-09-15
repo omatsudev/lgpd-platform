@@ -1,3 +1,4 @@
+import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -5,7 +6,6 @@ import { SearchInput } from '@/components/ui/search-input'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { Download, Shield } from 'lucide-react'
-import { LockedFeature } from '@/components/dashboard/locked-feature'
 
 const actionMap: Record<string, 'default' | 'success' | 'warning' | 'destructive' | 'secondary'> = {
   CREATE: 'success',
@@ -19,8 +19,9 @@ export default async function AuditLogsPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const { companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator') return <LockedFeature moduleKey="audit-logs" />
+  const { companyId, company, role, supabase } = await getUserCompany()
+  if (role === 'collaborator' || company?.plan === 'basico')
+    return <LockedFeature moduleKey="audit-logs" />
 
   const { q } = await searchParams
 
@@ -121,7 +122,10 @@ export default async function AuditLogsPage({
                         <td className="py-3 px-4 text-gray-600">{log.resource}</td>
                         <td className="py-3 px-4 text-gray-500">{log.details ?? '—'}</td>
                         <td className="py-3 px-4 text-gray-400">{log.ip ?? '—'}</td>
-                        <td className="py-3 px-4 text-gray-400 max-w-[220px] truncate" title={log.user_agent ?? ''}>
+                        <td
+                          className="py-3 px-4 text-gray-400 max-w-[220px] truncate"
+                          title={log.user_agent ?? ''}
+                        >
                           {log.user_agent ?? '—'}
                         </td>
                       </tr>
