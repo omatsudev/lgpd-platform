@@ -28,8 +28,8 @@ export default async function ComplaintsPage({
   searchParams: Promise<{ q?: string }>
 }) {
   const { company, companyId, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="complaints" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="complaints" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="complaints" reason="plan" />
 
   const { q } = await searchParams
 

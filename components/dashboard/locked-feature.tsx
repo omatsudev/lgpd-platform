@@ -2,8 +2,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LOCKED_FEATURE_CONTENT, type LockedFeatureKey } from '@/lib/locked-feature-content'
 import { Lock } from 'lucide-react'
 
-export function LockedFeature({ moduleKey }: { moduleKey: LockedFeatureKey }) {
+export function LockedFeature({
+  moduleKey,
+  reason = 'role',
+}: {
+  moduleKey: LockedFeatureKey
+  reason?: 'role' | 'plan'
+}) {
   const content = LOCKED_FEATURE_CONTENT[moduleKey]
+  const message =
+    reason === 'plan'
+      ? 'Desculpe, mas a sua assinatura atual não inclui acesso a esta área. Fale com o administrador da sua empresa para solicitar um upgrade de plano.'
+      : 'Esse recurso é exclusivo para administradores e DPO. Fale com o administrador da sua empresa para solicitar acesso.'
 
   return (
     <div className="space-y-5 max-w-2xl">
@@ -28,8 +38,7 @@ export function LockedFeature({ moduleKey }: { moduleKey: LockedFeatureKey }) {
             ))}
           </ul>
           <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-500">
-            Esse recurso é exclusivo para administradores e DPO. Fale com o administrador da sua
-            empresa para solicitar acesso.
+            {message}
           </div>
         </CardContent>
       </Card>

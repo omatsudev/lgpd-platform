@@ -22,8 +22,8 @@ export default async function ConsentsPage({
   searchParams: Promise<{ q?: string; tab?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="consents" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="consents" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="consents" reason="plan" />
 
   const { q, tab = 'records' } = await searchParams
 

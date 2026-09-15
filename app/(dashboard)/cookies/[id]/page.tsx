@@ -10,8 +10,8 @@ import { notFound } from 'next/navigation'
 export default async function ScanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="cookies" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="cookies" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="cookies" reason="plan" />
 
   const { data: scan } = await supabase.from('site_scans').select('*').eq('id', id).single()
 

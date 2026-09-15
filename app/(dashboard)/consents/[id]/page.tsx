@@ -19,8 +19,8 @@ const channelLabel: Record<string, string> = {
 export default async function ConsentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="consents" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="consents" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="consents" reason="plan" />
 
   const { data: reg } = await supabase
     .from('consents')

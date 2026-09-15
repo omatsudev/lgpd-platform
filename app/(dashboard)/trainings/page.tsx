@@ -14,8 +14,8 @@ export default async function TrainingsPage({
   searchParams: Promise<{ q?: string; tab?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="trainings" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="trainings" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="trainings" reason="plan" />
 
   const { q, tab = 'trainings' } = await searchParams
 

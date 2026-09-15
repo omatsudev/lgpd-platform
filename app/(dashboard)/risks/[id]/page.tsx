@@ -11,8 +11,8 @@ export default async function RiskFormPage({ params }: { params: Promise<{ id: s
   const isNew = id === 'new'
 
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="risks" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="risks" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="risks" reason="plan" />
 
   let item: any = null
   if (!isNew && companyId) {

@@ -17,8 +17,9 @@ export default async function RetentionDisposalFormPage({
   const isNew = id === 'new'
 
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="retention-disposal" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="retention-disposal" reason="role" />
+  if (company?.plan === 'basico')
+    return <LockedFeature moduleKey="retention-disposal" reason="plan" />
 
   let item: any = null
   if (!isNew && companyId) {

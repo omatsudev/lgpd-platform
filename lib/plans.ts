@@ -3,7 +3,14 @@ export type CompanyPlan = 'basico' | 'completo'
 // Módulos liberados no plano básico. Fora dessa lista, a página mostra o
 // preview bloqueado (mesmo componente usado para o papel "collaborator").
 // Dashboard e Relatório entram em qualquer plano.
-const BASICO_ALLOWED_ROUTES = ['/dashboard', '/report', '/checklist', '/inventory', '/documents']
+const BASICO_ALLOWED_ROUTES = [
+  '/dashboard',
+  '/report',
+  '/checklist',
+  '/inventory',
+  '/documents',
+  '/settings',
+]
 
 export function isModuleAllowedByPlan(
   plan: CompanyPlan | null | undefined,

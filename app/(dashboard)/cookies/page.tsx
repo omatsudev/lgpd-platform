@@ -10,8 +10,8 @@ import Link from 'next/link'
 
 export default async function CookiesPage() {
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="cookies" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="cookies" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="cookies" reason="plan" />
 
   const { data: scans } = companyId
     ? await supabase

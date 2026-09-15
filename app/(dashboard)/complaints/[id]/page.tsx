@@ -28,8 +28,8 @@ const typeMap: Record<string, string> = {
 export default async function ComplaintDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="complaints" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="complaints" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="complaints" reason="plan" />
 
   const { data: complaint } = await supabase.from('complaints').select('*').eq('id', id).single()
 

@@ -56,8 +56,8 @@ export default async function SuppliersPage({
   searchParams: Promise<{ q?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="suppliers" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="suppliers" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="suppliers" reason="plan" />
 
   const { q } = await searchParams
 

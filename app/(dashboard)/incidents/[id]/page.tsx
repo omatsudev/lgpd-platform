@@ -11,8 +11,8 @@ export default async function IncidentFormPage({ params }: { params: Promise<{ i
   const isNew = id === 'new'
 
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="incidents" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="incidents" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="incidents" reason="plan" />
 
   let item: any = null
   if (!isNew && companyId) {

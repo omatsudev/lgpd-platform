@@ -27,8 +27,8 @@ export default async function TrainingFormPage({ params }: { params: Promise<{ i
   const { id } = await params
   const isNew = id === 'new'
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="trainings" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="trainings" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="trainings" reason="plan" />
 
   let training: any = null
   let employees: any[] = []

@@ -55,8 +55,8 @@ export default async function IncidentsPage({
   searchParams: Promise<{ q?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
-  if (role === 'collaborator' || company?.plan === 'basico')
-    return <LockedFeature moduleKey="incidents" />
+  if (role === 'collaborator') return <LockedFeature moduleKey="incidents" reason="role" />
+  if (company?.plan === 'basico') return <LockedFeature moduleKey="incidents" reason="plan" />
 
   const { q } = await searchParams
 
