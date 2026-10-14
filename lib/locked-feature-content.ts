@@ -106,9 +106,9 @@ export const LOCKED_FEATURE_CONTENT: Record<
     title: 'Treinamentos',
     description: 'Organiza treinamentos de conscientização sobre LGPD para os colaboradores.',
     bullets: [
-      'Criação de treinamentos e materiais',
-      'Convite de colaboradores por e-mail/WhatsApp',
-      'Acompanhamento de conclusão por colaborador',
+      'Trilha LGPD com 12 vídeos curtos, quizzes e avaliação final',
+      'Certificado com código de verificação para cada colaborador aprovado',
+      'Acompanhamento de progresso e notas com exportação CSV',
     ],
   },
   complaints: {

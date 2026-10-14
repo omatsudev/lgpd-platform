@@ -1,0 +1,1416 @@
+{
+  "modules": [
+    {
+      "position": 1,
+      "title": "Fundamentos da LGPD",
+      "objective": "Ensinar os conceitos essenciais para que qualquer colaborador compreenda a proteção de dados.",
+      "finalExamQuestionCount": 5
+    },
+    {
+      "position": 2,
+      "title": "Consciência e comportamento seguro",
+      "objective": "Transformar os conceitos jurídicos em atitudes concretas no trabalho e na vida digital.",
+      "finalExamQuestionCount": 4
+    },
+    {
+      "position": 3,
+      "title": "Adequação à LGPD na prática",
+      "objective": "Explicar como a empresa organiza sua adequação e quais responsabilidades os colaboradores precisam observar.",
+      "finalExamQuestionCount": 6
+    }
+  ],
+  "videos": [
+    {
+      "position": 1,
+      "module": 1,
+      "title": "O que é a LGPD e por que ela existe?",
+      "durationSeconds": 90,
+      "keyMessage": "A LGPD não proíbe o uso de dados; exige uso responsável, com finalidade, segurança e transparência."
+    },
+    {
+      "position": 2,
+      "module": 1,
+      "title": "O que são dados pessoais?",
+      "durationSeconds": 90,
+      "keyMessage": "Um dado aparentemente simples também pode identificar uma pessoa."
+    },
+    {
+      "position": 3,
+      "module": 1,
+      "title": "O que são dados pessoais sensíveis?",
+      "durationSeconds": 90,
+      "keyMessage": "Quanto maior o impacto potencial sobre a pessoa, maior o cuidado com acesso e segurança."
+    },
+    {
+      "position": 4,
+      "module": 1,
+      "title": "Quem são os agentes de tratamento?",
+      "durationSeconds": 120,
+      "keyMessage": "Saber quem decide, quem executa e quem orienta ajuda a encaminhar dúvidas e incidentes às pessoas certas."
+    },
+    {
+      "position": 5,
+      "module": 2,
+      "title": "Como seus dados são utilizados no dia a dia?",
+      "durationSeconds": 90,
+      "keyMessage": "Ter acesso a uma informação não significa ter liberdade para usá-la de qualquer maneira."
+    },
+    {
+      "position": 6,
+      "module": 2,
+      "title": "Cuidados com crianças e dados de saúde",
+      "durationSeconds": 90,
+      "keyMessage": "Dados de crianças e dados sensíveis exigem acesso restrito e respeito às condições legais."
+    },
+    {
+      "position": 7,
+      "module": 2,
+      "title": "Senhas, e-mails e compartilhamento de informações",
+      "durationSeconds": 90,
+      "keyMessage": "Segurança da informação é uma prática diária de todos, não só da equipe de TI."
+    },
+    {
+      "position": 8,
+      "module": 3,
+      "title": "O que são os documentos de adequação à LGPD?",
+      "durationSeconds": 120,
+      "keyMessage": "A documentação organiza as regras; a aplicação delas é que transforma a adequação em prática."
+    },
+    {
+      "position": 9,
+      "module": 3,
+      "title": "Medidas de segurança da informação",
+      "durationSeconds": 120,
+      "keyMessage": "Segurança é a combinação de tecnologia, processos e comportamento humano."
+    },
+    {
+      "position": 10,
+      "module": 3,
+      "title": "Como agir diante de um incidente de segurança?",
+      "durationSeconds": 90,
+      "keyMessage": "Comunicar rapidamente não é admitir culpa; é permitir que a organização aja."
+    },
+    {
+      "position": 11,
+      "module": 3,
+      "title": "Direitos dos titulares de dados",
+      "durationSeconds": 90,
+      "keyMessage": "Pedidos de titulares devem ser encaminhados ao responsável, com seriedade e dentro dos requisitos legais."
+    },
+    {
+      "position": 12,
+      "module": 3,
+      "title": "O papel de cada colaborador na adequação",
+      "durationSeconds": 90,
+      "keyMessage": "Proteger dados é respeitar pessoas."
+    }
+  ],
+  "videoQuestions": [
+    {
+      "code": "1.1",
+      "video": 1,
+      "prompt": "Qual é o principal objetivo da LGPD?",
+      "options": [
+        "Proibir as empresas de utilizarem dados pessoais",
+        "Proteger a privacidade, a liberdade e os direitos fundamentais das pessoas no tratamento de dados",
+        "Regular apenas dados coletados pela internet",
+        "Substituir o Código de Defesa do Consumidor"
+      ],
+      "answer": "B",
+      "explanation": "A LGPD protege direitos fundamentais no tratamento de dados pessoais. Ela não proíbe o uso; exige regras."
+    },
+    {
+      "code": "1.2",
+      "video": 1,
+      "prompt": "Qual afirmação sobre a LGPD está correta?",
+      "options": [
+        "Só se aplica a empresas de tecnologia",
+        "Permite o tratamento de dados pessoais, desde que siga as regras legais, com finalidade adequada, segurança e transparência",
+        "Só vale para dados em meio digital",
+        "Aplica-se somente a grandes empresas"
+      ],
+      "answer": "B",
+      "explanation": "A lei vale para qualquer tratamento de dados pessoais, digital ou físico, por organizações de qualquer porte."
+    },
+    {
+      "code": "1.3",
+      "video": 1,
+      "prompt": "Qual é a lei que instituiu a LGPD?",
+      "options": [
+        "Lei nº 12.965, de 2014",
+        "Lei nº 8.078, de 1990",
+        "Lei nº 13.709, de 2018",
+        "Lei nº 12.527, de 2011"
+      ],
+      "answer": "C",
+      "explanation": "A LGPD é a Lei nº 13.709/2018. As outras são o Marco Civil da Internet, o Código de Defesa do Consumidor e a Lei de Acesso à Informação."
+    },
+    {
+      "code": "1.4",
+      "video": 1,
+      "prompt": "Quem é responsável pela proteção de dados dentro da empresa?",
+      "options": [
+        "Apenas o departamento de TI",
+        "Apenas a direção",
+        "Apenas o setor jurídico",
+        "Todos os colaboradores, pois isso faz parte das atividades de cada um"
+      ],
+      "answer": "D",
+      "explanation": "A responsabilidade não é só da TI ou da direção. Cada colaborador que lida com dados participa da proteção."
+    },
+    {
+      "code": "2.1",
+      "video": 2,
+      "prompt": "O que são dados pessoais?",
+      "options": [
+        "Informações de empresas (pessoas jurídicas)",
+        "Informações relacionadas a uma pessoa natural identificada ou identificável",
+        "Apenas documentos oficiais, como CPF e RG",
+        "Somente informações sigilosas"
+      ],
+      "answer": "B",
+      "explanation": "Dado pessoal é qualquer informação que identifique ou possa identificar uma pessoa natural."
+    },
+    {
+      "code": "2.2",
+      "video": 2,
+      "prompt": "Qual alternativa traz exemplos de dados pessoais?",
+      "options": [
+        "Apenas CPF e RG",
+        "Apenas dados de saúde",
+        "Apenas dados bancários",
+        "Nome, telefone, e-mail, endereço, fotografia e localização"
+      ],
+      "answer": "D",
+      "explanation": "Dados pessoais vão além de documentos oficiais e incluem informações do dia a dia."
+    },
+    {
+      "code": "2.3",
+      "video": 2,
+      "prompt": "Um endereço IP ou um identificador digital:",
+      "options": [
+        "Pode ser dado pessoal, dependendo do contexto",
+        "Nunca é dado pessoal",
+        "É sempre dado sensível",
+        "Só é dado pessoal se estiver impresso"
+      ],
+      "answer": "A",
+      "explanation": "Informações que identificam alguém, sozinhas ou combinadas com outros dados, podem ser dados pessoais."
+    },
+    {
+      "code": "2.4",
+      "video": 2,
+      "prompt": "Antes de compartilhar uma planilha com dados de clientes, qual é o hábito correto?",
+      "options": [
+        "Enviar pelo WhatsApp pessoal para ser mais rápido",
+        "Enviar a todos, pois são dados simples",
+        "Avaliar se a informação é necessária e se o destinatário está autorizado",
+        "Aguardar o titular pedir"
+      ],
+      "answer": "C",
+      "explanation": "Antes de coletar, consultar, compartilhar ou armazenar, avalie a necessidade e a autorização."
+    },
+    {
+      "code": "3.1",
+      "video": 3,
+      "prompt": "Qual é um exemplo de dado pessoal sensível?",
+      "options": [
+        "Nome completo",
+        "Endereço de e-mail",
+        "Informação sobre a saúde de uma pessoa",
+        "CEP"
+      ],
+      "answer": "C",
+      "explanation": "Dados de saúde são sensíveis e exigem cuidado especial."
+    },
+    {
+      "code": "3.2",
+      "video": 3,
+      "prompt": "Qual item NÃO consta na lista de dados sensíveis da LGPD?",
+      "options": [
+        "Convicção religiosa",
+        "Dado biométrico vinculado a uma pessoa",
+        "Filiação a sindicato",
+        "Número de telefone"
+      ],
+      "answer": "D",
+      "explanation": "O telefone é dado pessoal comum. Os demais itens são sensíveis."
+    },
+    {
+      "code": "3.3",
+      "video": 3,
+      "prompt": "Como devem ser tratados os exames médicos ocupacionais de colaboradores?",
+      "options": [
+        "Com acesso restrito a quem precisa deles para uma finalidade legítima",
+        "Com acesso livre a todos os funcionários",
+        "Divulgados em grupos de mensagens",
+        "Guardados em pasta compartilhada aberta"
+      ],
+      "answer": "A",
+      "explanation": "Dados de saúde não podem ser acessados livremente por todos."
+    },
+    {
+      "code": "3.4",
+      "video": 3,
+      "prompt": "Qual é a orientação para dados sensíveis na rotina profissional?",
+      "options": [
+        "Presumir que há autorização se o dado já está na empresa",
+        "Não consultar, copiar, divulgar ou compartilhar sem necessidade e autorização adequada",
+        "Compartilhar com a equipe do mesmo setor",
+        "Copiar para o dispositivo pessoal para trabalhar em casa"
+      ],
+      "answer": "B",
+      "explanation": "Os dados sensíveis têm hipóteses legais próprias. Não basta presumir autorização."
+    },
+    {
+      "code": "4.1",
+      "video": 4,
+      "prompt": "Quem é o titular dos dados?",
+      "options": [
+        "A empresa que decide as finalidades do tratamento",
+        "O prestador que processa os dados em nome da empresa",
+        "A pessoa natural a quem os dados se referem",
+        "A Autoridade Nacional de Proteção de Dados"
+      ],
+      "answer": "C",
+      "explanation": "O titular pode ser cliente, colaborador, fornecedor ou candidato."
+    },
+    {
+      "code": "4.2",
+      "video": 4,
+      "prompt": "O que faz o controlador?",
+      "options": [
+        "Realiza o tratamento em nome de outra empresa",
+        "Toma as decisões referentes ao tratamento dos dados pessoais",
+        "Fiscaliza o cumprimento da LGPD em todo o país",
+        "Recebe e responde a todas as solicitações dos titulares"
+      ],
+      "answer": "B",
+      "explanation": "O controlador define, por exemplo, quais dados serão coletados e para quais finalidades."
+    },
+    {
+      "code": "4.3",
+      "video": 4,
+      "prompt": "Quem é o operador?",
+      "options": [
+        "Quem realiza o tratamento em nome do controlador, seguindo suas instruções legítimas",
+        "Quem decide as finalidades do tratamento",
+        "A pessoa a quem os dados se referem",
+        "O órgão que aplica as sanções"
+      ],
+      "answer": "A",
+      "explanation": "Um prestador que processa cadastros para a empresa contratante é um exemplo de operador."
+    },
+    {
+      "code": "4.4",
+      "video": 4,
+      "prompt": "Como se define se uma parte é controladora ou operadora?",
+      "options": [
+        "Apenas pelo nome que consta no contrato",
+        "Pelo tamanho da empresa",
+        "Pela quantidade de dados que trata",
+        "Pelas atividades efetivamente realizadas por cada parte"
+      ],
+      "answer": "D",
+      "explanation": "Os papéis não se definem só pelo contrato; é preciso observar o que cada parte realmente faz."
+    },
+    {
+      "code": "5.1",
+      "video": 5,
+      "prompt": "Quando um dado pode ser usado para outras finalidades, além da inicial?",
+      "options": [
+        "Desde que exista base legal adequada e as regras aplicáveis sejam respeitadas",
+        "Sempre que o dado já estiver no sistema",
+        "Nunca, em nenhuma hipótese",
+        "Apenas se o cliente não reclamar"
+      ],
+      "answer": "A",
+      "explanation": "O uso depende de base legal adequada e de respeito às regras aplicáveis."
+    },
+    {
+      "code": "5.2",
+      "video": 5,
+      "prompt": "Segundo o vídeo, quando o problema começa?",
+      "options": [
+        "Quando o cliente informa o CPF em uma compra",
+        "Quando a empresa mantém um cadastro de clientes",
+        "Quando os dados são coletados sem necessidade, usados de forma incompatível com a finalidade ou compartilhados sem avaliação",
+        "Quando a empresa emite uma nota fiscal"
+      ],
+      "answer": "C",
+      "explanation": "Coletar sem necessidade, desviar a finalidade e compartilhar sem avaliação geram risco."
+    },
+    {
+      "code": "5.3",
+      "video": 5,
+      "prompt": "Um colaborador recebe uma lista de contatos de clientes para uma atividade. Ele pode usá-la para fins pessoais?",
+      "options": [
+        "Sim, pois já tem acesso à lista",
+        "Sim, desde que ocasionalmente",
+        "Sim, se avisar um colega",
+        "Não. Ter acesso a uma informação não significa liberdade para usá-la de qualquer maneira"
+      ],
+      "answer": "D",
+      "explanation": "O acesso é concedido para uma atividade. Usar fora dela é uso indevido."
+    },
+    {
+      "code": "5.4",
+      "video": 5,
+      "prompt": "Qual pergunta ajuda a reduzir riscos antes de usar um dado pessoal?",
+      "options": [
+        "O dado é antigo?",
+        "Preciso dessa informação para minha atividade, estou autorizado a acessá-la e posso compartilhá-la com esse destinatário?",
+        "O dado está salvo na minha área de trabalho?",
+        "Outros colegas também usam esse dado?"
+      ],
+      "answer": "B",
+      "explanation": "São as três perguntas do vídeo: necessidade, autorização e destinatário."
+    },
+    {
+      "code": "6.1",
+      "video": 6,
+      "prompt": "O tratamento de dados de crianças e adolescentes deve observar:",
+      "options": [
+        "A conveniência da empresa",
+        "O interesse do responsável financeiro",
+        "O melhor interesse da criança ou do adolescente",
+        "O volume de dados disponível"
+      ],
+      "answer": "C",
+      "explanation": "A LGPD determina que o tratamento observe o melhor interesse da criança e do adolescente."
+    },
+    {
+      "code": "6.2",
+      "video": 6,
+      "prompt": "Para tratar dados de crianças com base no consentimento, a LGPD exige:",
+      "options": [
+        "Consentimento específico e em destaque de pelo menos um dos pais ou responsável legal, ressalvadas as exceções legais",
+        "Consentimento da própria criança",
+        "Nenhum consentimento, pois são dados públicos",
+        "Consentimento de qualquer funcionário da escola"
+      ],
+      "answer": "A",
+      "explanation": "Existem exceções legais, mas a regra é o consentimento específico e em destaque de um dos pais ou responsável."
+    },
+    {
+      "code": "6.3",
+      "video": 6,
+      "prompt": "Você viu o atestado médico de um colega. Qual é a conduta correta?",
+      "options": [
+        "Comentar no grupo para a equipe se organizar",
+        "Compartilhar com gestores de outras áreas",
+        "Guardar em pasta aberta a todos",
+        "Não comentar nem compartilhar com quem não precisa conhecer a informação para uma finalidade legítima"
+      ],
+      "answer": "D",
+      "explanation": "Dados de saúde exigem acesso restrito e respeito à dignidade e à privacidade."
+    },
+    {
+      "code": "6.4",
+      "video": 6,
+      "prompt": "Como são classificados exames, diagnósticos e informações médicas?",
+      "options": [
+        "Dados comuns",
+        "Dados pessoais sensíveis, com regras próprias",
+        "Dados públicos",
+        "Dados anônimos"
+      ],
+      "answer": "B",
+      "explanation": "São dados sensíveis e têm regras próprias de tratamento."
+    },
+    {
+      "code": "7.1",
+      "video": 7,
+      "prompt": "Qual é uma boa prática para senhas?",
+      "options": [
+        "Usar a mesma senha em todos os sistemas",
+        "Compartilhar com um colega de confiança",
+        "Usar senhas fortes e exclusivas, não compartilhá-las e ativar a autenticação multifator",
+        "Anotar a senha em um papel junto ao monitor"
+      ],
+      "answer": "C",
+      "explanation": "Senhas fracas ou compartilhadas abrem caminho para acessos indevidos."
+    },
+    {
+      "code": "7.2",
+      "video": 7,
+      "prompt": "Você recebe um e-mail inesperado pedindo atualização de cadastro. O que fazer?",
+      "options": [
+        "Verificar o remetente e confirmar a solicitação por um canal confiável antes de agir",
+        "Clicar no link para conferir",
+        "Responder pedindo mais informações",
+        "Encaminhar a colegas"
+      ],
+      "answer": "A",
+      "explanation": "E-mails inesperados podem ser tentativas de golpe. Confirme por outro canal confiável."
+    },
+    {
+      "code": "7.3",
+      "video": 7,
+      "prompt": "Antes de enviar documentos e planilhas, o que se deve fazer?",
+      "options": [
+        "Usar uma conta pessoal para agilizar",
+        "Enviar a lista inteira a todos",
+        "Conferir apenas o assunto",
+        "Conferir o destinatário e os anexos e usar os canais aprovados pela empresa"
+      ],
+      "answer": "D",
+      "explanation": "Erros de envio são causa comum de incidentes."
+    },
+    {
+      "code": "7.4",
+      "video": 7,
+      "prompt": "Você percebe que enviou informações para a pessoa errada. O que fazer?",
+      "options": [
+        "Apagar tudo e não comentar com ninguém",
+        "Comunicar imediatamente pelo canal interno, sem esconder o problema nem apagar evidências",
+        "Aguardar para ver se alguém reclama",
+        "Avisar apenas um amigo da equipe"
+      ],
+      "answer": "B",
+      "explanation": "A comunicação rápida ajuda a reduzir os danos."
+    },
+    {
+      "code": "8.1",
+      "video": 8,
+      "prompt": "O que envolve a adequação à LGPD?",
+      "options": [
+        "Apenas publicar uma política de privacidade no site",
+        "Compreender como a empresa usa dados pessoais, identificar riscos e estabelecer regras e procedimentos, com medidas efetivas",
+        "Apenas contratar um software",
+        "Apenas nomear um responsável"
+      ],
+      "answer": "B",
+      "explanation": "A adequação vai além de um documento: envolve entender o uso dos dados, avaliar riscos e aplicar medidas."
+    },
+    {
+      "code": "8.2",
+      "video": 8,
+      "prompt": "Para que serve o inventário de dados pessoais?",
+      "options": [
+        "Para cadastrar clientes",
+        "Para divulgar a empresa",
+        "Para calcular impostos",
+        "Para identificar quais dados são tratados, de onde vêm, para que são usados, onde ficam armazenados e com quem são compartilhados"
+      ],
+      "answer": "D",
+      "explanation": "O inventário é a base para entender o tratamento realizado pela empresa."
+    },
+    {
+      "code": "8.3",
+      "video": 8,
+      "prompt": "Que característica um documento de adequação deve ter?",
+      "options": [
+        "Refletir a realidade da empresa, estar atualizado e ser acompanhado de medidas efetivas",
+        "Ser o mais longo possível",
+        "Ser copiado de outra empresa, sem adaptações",
+        "Ficar guardado apenas com a diretoria"
+      ],
+      "answer": "A",
+      "explanation": "Os documentos não são peças isoladas e precisam refletir a prática."
+    },
+    {
+      "code": "8.4",
+      "video": 8,
+      "prompt": "Por que a participação dos colaboradores é essencial quando a empresa levanta informações para a adequação?",
+      "options": [
+        "Porque substitui a necessidade de contratos",
+        "Porque o RH exige presença",
+        "Porque conhecem muitas das atividades realizadas no dia a dia",
+        "Porque só eles podem assinar os documentos"
+      ],
+      "answer": "C",
+      "explanation": "Os colaboradores conhecem as rotinas reais com dados pessoais."
+    },
+    {
+      "code": "9.1",
+      "video": 9,
+      "prompt": "Qual é um exemplo de medida de segurança técnica?",
+      "options": [
+        "Política interna",
+        "Treinamento de colaboradores",
+        "Autenticação multifator",
+        "Definição de responsabilidades"
+      ],
+      "answer": "C",
+      "explanation": "Autenticação multifator, criptografia, backup e controle de acesso são medidas técnicas. As demais são administrativas."
+    },
+    {
+      "code": "9.2",
+      "video": 9,
+      "prompt": "Qual prática de controle de acesso é mais adequada?",
+      "options": [
+        "Cada pessoa acessa apenas as informações necessárias para suas funções",
+        "Todos os funcionários acessam todas as pastas",
+        "O acesso é liberado por antiguidade",
+        "O acesso é liberado para quem pedir primeiro"
+      ],
+      "answer": "A",
+      "explanation": "Acesso irrestrito aumenta o risco de consulta, alteração ou compartilhamento inadequado."
+    },
+    {
+      "code": "9.3",
+      "video": 9,
+      "prompt": "O que se espera das cópias de segurança (backups)?",
+      "options": [
+        "Que não precisem de proteção",
+        "Que existam, mesmo sem teste",
+        "Que fiquem em qualquer dispositivo",
+        "Que sejam planejadas, protegidas e testadas"
+      ],
+      "answer": "D",
+      "explanation": "Backups ajudam na recuperação, mas precisam de planejamento, proteção e testes."
+    },
+    {
+      "code": "9.4",
+      "video": 9,
+      "prompt": "Qual é um cuidado de segurança física?",
+      "options": [
+        "Deixar documentos impressos sobre a mesa",
+        "Não deixar documentos expostos e descartar informações confidenciais de forma adequada",
+        "Descartar documentos no lixo comum",
+        "Levar documentos para casa"
+      ],
+      "answer": "B",
+      "explanation": "Segurança também envolve documentos impressos."
+    },
+    {
+      "code": "10.1",
+      "video": 10,
+      "prompt": "Qual situação pode ser um incidente de segurança?",
+      "options": [
+        "Uma reunião cancelada",
+        "A perda de um notebook com dados pessoais",
+        "A troca de uma cadeira",
+        "Uma atualização de software agendada"
+      ],
+      "answer": "B",
+      "explanation": "Perda de equipamento, envio ao destinatário errado, acesso indevido e exposição de planilhas são exemplos."
+    },
+    {
+      "code": "10.2",
+      "video": 10,
+      "prompt": "Qual é a primeira atitude ao perceber um incidente?",
+      "options": [
+        "Investigar sozinho toda a extensão do problema",
+        "Esperar para ver se alguém percebe",
+        "Esconder o ocorrido por medo de consequências",
+        "Comunicar imediatamente pelo canal definido pela empresa"
+      ],
+      "answer": "D",
+      "explanation": "Não espere nem esconda. A comunicação rápida permite que a organização aja."
+    },
+    {
+      "code": "10.3",
+      "video": 10,
+      "prompt": "O que fazer com mensagens, arquivos e registros relacionados ao incidente?",
+      "options": [
+        "Preservá-los, pois podem ajudar na investigação",
+        "Apagá-los para evitar problemas",
+        "Editá-los para corrigir erros",
+        "Enviá-los a colegas para opinarem"
+      ],
+      "answer": "A",
+      "explanation": "Não se deve apagar evidências."
+    },
+    {
+      "code": "10.4",
+      "video": 10,
+      "prompt": "Quem faz comunicações externas sobre o incidente em nome da empresa?",
+      "options": [
+        "Qualquer colaborador, imediatamente",
+        "Quem perceber o incidente, pelas redes sociais",
+        "Apenas quem tiver autorização da empresa; o controlador avalia as obrigações de comunicação",
+        "O colaborador que causou o incidente"
+      ],
+      "answer": "C",
+      "explanation": "Quando há risco ou dano relevante, o controlador avalia a comunicação à ANPD e aos titulares."
+    },
+    {
+      "code": "11.1",
+      "video": 11,
+      "prompt": "Qual é um direito do titular previsto na LGPD?",
+      "options": [
+        "Receber desconto em produtos",
+        "Obter cópia dos dados de outras pessoas",
+        "Alterar cláusulas de contratos",
+        "Confirmar a existência de tratamento e solicitar acesso aos seus dados"
+      ],
+      "answer": "D",
+      "explanation": "O titular pode confirmar o tratamento e acessar seus dados."
+    },
+    {
+      "code": "11.2",
+      "video": 11,
+      "prompt": "Um titular pede a eliminação de seus dados. Como a empresa deve agir?",
+      "options": [
+        "Atender sempre imediatamente, sem análise",
+        "Avaliar o pedido conforme as circunstâncias e as hipóteses legais aplicáveis",
+        "Ignorar o pedido",
+        "Atender apenas se o titular for menor de idade"
+      ],
+      "answer": "B",
+      "explanation": "O direito não significa que todo dado deve ser apagado de imediato."
+    },
+    {
+      "code": "11.3",
+      "video": 11,
+      "prompt": "Um cliente pergunta a um funcionário quais informações a empresa mantém sobre ele. O que fazer?",
+      "options": [
+        "Informar tudo por telefone, na hora",
+        "Ignorar a pergunta",
+        "Seguir o procedimento interno e encaminhar ao responsável, sem fornecer dados antes de verificar a identidade",
+        "Orientar o cliente a procurar a ANPD"
+      ],
+      "answer": "C",
+      "explanation": "O pedido deve ser tratado com seriedade, segurança e dentro dos requisitos legais."
+    },
+    {
+      "code": "11.4",
+      "video": 11,
+      "prompt": "O que o titular pode pedir em relação a dados incompletos, inexatos ou desatualizados?",
+      "options": [
+        "A correção desses dados",
+        "A demissão do colaborador",
+        "A venda dos dados",
+        "Nada, pois a empresa decide"
+      ],
+      "answer": "A",
+      "explanation": "A correção é um direito do titular, nas condições legais."
+    },
+    {
+      "code": "12.1",
+      "video": 12,
+      "prompt": "De que depende a proteção de dados?",
+      "options": [
+        "Apenas de documentos",
+        "Apenas de ferramentas tecnológicas",
+        "Também das decisões tomadas todos os dias por quem trabalha com as informações",
+        "Apenas do encarregado"
+      ],
+      "answer": "C",
+      "explanation": "Documentos e tecnologia ajudam, mas as atitudes diárias fazem a diferença."
+    },
+    {
+      "code": "12.2",
+      "video": 12,
+      "prompt": "O que fazer antes de compartilhar um arquivo?",
+      "options": [
+        "Verificar o destinatário",
+        "Compartilhar com todos por precaução",
+        "Compartilhar e verificar depois",
+        "Compartilhar apenas por conta pessoal"
+      ],
+      "answer": "A",
+      "explanation": "Conferir o destinatário evita incidentes."
+    },
+    {
+      "code": "12.3",
+      "video": 12,
+      "prompt": "O que fazer antes de acessar um cadastro?",
+      "options": [
+        "Verificar se é de alguém conhecido",
+        "Acessar por curiosidade",
+        "Acessar e fechar rapidamente",
+        "Confirmar se existe necessidade profissional"
+      ],
+      "answer": "D",
+      "explanation": "O acesso deve ter relação com a atividade profissional."
+    },
+    {
+      "code": "12.4",
+      "video": 12,
+      "prompt": "Diante de um incidente ou de uma dúvida, qual é a atitude correta?",
+      "options": [
+        "Resolver sozinho e não avisar",
+        "Procurar o canal interno responsável",
+        "Aguardar que alguém note",
+        "Comentar com colegas de outra área"
+      ],
+      "answer": "B",
+      "explanation": "Os canais internos existem para encaminhar dúvidas e incidentes às pessoas certas."
+    }
+  ],
+  "examQuestions": [
+    {
+      "code": "B1",
+      "module": 1,
+      "prompt": "Qual situação está dentro do alcance da LGPD?",
+      "options": [
+        "Tratamento de dados pessoais por uma empresa, inclusive em arquivos físicos",
+        "Apenas bancos de dados em nuvem",
+        "Apenas dados de menores",
+        "Apenas dados de empresas de tecnologia"
+      ],
+      "answer": "A",
+      "explanation": "A LGPD se aplica a qualquer operação de tratamento de dados pessoais, em meio físico ou digital.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B2",
+      "module": 1,
+      "prompt": "O que é tratamento de dados pessoais?",
+      "options": [
+        "Apenas a coleta",
+        "Apenas o armazenament o",
+        "Qualquer operação com dados pessoais, como coleta, uso, compartilhamento, armazenament o e eliminação",
+        "Apenas o envio a terceiros"
+      ],
+      "answer": "C",
+      "explanation": "Tratamento abrange todo o ciclo de vida do dado, da coleta à eliminação.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B3",
+      "module": 1,
+      "prompt": "Qual princípio da LGPD determina limitar o tratamento ao mínimo necessário para atingir a finalidade?",
+      "options": ["Transparência", "Qualidade dos dados", "Prevenção", "Necessidade"],
+      "answer": "D",
+      "explanation": "O princípio da necessidade (art. 6º, III) orienta a coletar e usar apenas o indispensável.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B4",
+      "module": 1,
+      "prompt": "O princípio da finalidade exige que o tratamento tenha propósitos:",
+      "options": [
+        "Genéricos, para permitir qualquer uso futuro",
+        "Legítimos, específicos, explícitos e informados ao titular, sem tratamento posterior incompatível",
+        "Definidos somente pelo operador",
+        "Definidos apenas após a coleta"
+      ],
+      "answer": "B",
+      "explanation": "A finalidade deve ser clara desde a coleta e não pode ser desviada (art. 6º, I).",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B5",
+      "module": 1,
+      "prompt": "O princípio da transparência garante ao titular:",
+      "options": [
+        "Informações claras, precisas e facilmente acessíveis sobre o tratamento e os agentes envolvidos",
+        "Sigilo absoluto sobre tudo o que a empresa faz",
+        "Acesso aos dados de outros titulares",
+        "Gratuidade de todos os serviços da empresa"
+      ],
+      "answer": "A",
+      "explanation": "O titular tem direito a saber como seus dados são tratados (art. 6º, VI).",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B6",
+      "module": 1,
+      "prompt": "Em regra, um dado anonimizado:",
+      "options": [
+        "Continua sendo dado pessoal em qualquer hipótese",
+        "Não é considerado dado pessoal, salvo se a anonimização puder ser revertida com esforços razoáveis",
+        "É sempre dado sensível",
+        "Só pode ser tratado com consentiment o"
+      ],
+      "answer": "B",
+      "explanation": "O art. 12 prevê essa regra e a ressalva da reversão.",
+      "difficulty": "hard"
+    },
+    {
+      "code": "B7",
+      "module": 1,
+      "prompt": "A LGPD protege os dados de:",
+      "options": [
+        "Apenas consumidores",
+        "Empresas e outras pessoas jurídicas",
+        "Qualquer pessoa natural, titular dos dados",
+        "Apenas brasileiros residentes no país"
+      ],
+      "answer": "C",
+      "explanation": "A proteção é das pessoas naturais, independente mente de serem clientes, colaboradores ou fornecedores.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B8",
+      "module": 1,
+      "prompt": "O e-mail corporativo nome.sobrenome@empresa. com.br de um colaborador é:",
+      "options": [
+        "Dado pessoal, pois identifica ou torna identificável uma pessoa natural",
+        "Dado da empresa, nunca pessoal",
+        "Dado sensível",
+        "Dado anonimizado"
+      ],
+      "answer": "A",
+      "explanation": "Informação que leva a uma pessoa natural pode ser dado pessoal, mesmo em contexto profissional.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B9",
+      "module": 1,
+      "prompt": "Qual alternativa traz apenas dados pessoais sensíveis?",
+      "options": [
+        "CPF e endereço",
+        "Nome e e-mail",
+        "Placa do veículo e telefone",
+        "Opinião política e filiação a sindicato"
+      ],
+      "answer": "D",
+      "explanation": "Esses dois itens constam na lista de dados sensíveis (art. 5º, II). Os demais são dados comuns.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B10",
+      "module": 1,
+      "prompt": "A biometria usada para identificar colaboradores no controle de acesso é:",
+      "options": [
+        "Dado pessoal sensível",
+        "Dado comum, sem restrições",
+        "Dado público",
+        "Dado anonimizado"
+      ],
+      "answer": "A",
+      "explanation": "Dado biométrico vinculado a uma pessoa natural é sensível.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B11",
+      "module": 1,
+      "prompt": "Sobre os dados pessoais sensíveis, é correto afirmar que:",
+      "options": [
+        "Podem ser tratados pelas mesmas hipóteses dos dados comuns",
+        "Nunca podem ser tratados",
+        "Dispensam qualquer base legal",
+        "Têm hipóteses legais próprias, e não basta presumir autorização"
+      ],
+      "answer": "D",
+      "explanation": "O art. 11 traz hipóteses específicas, mais restritas.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B12",
+      "module": 1,
+      "prompt": "Quem toma as decisões referentes ao tratamento dos dados pessoais?",
+      "options": ["O operador", "O controlador", "A ANPD", "O titular"],
+      "answer": "B",
+      "explanation": "O controlador define, por exemplo, quais dados coletar e para que fins.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B13",
+      "module": 1,
+      "prompt": "Uma empresa contrata um prestador para processar a folha de pagamento, seguindo as instruções dela. Em regra, o prestador atua como:",
+      "options": ["Controlador", "Titular", "Encarregado", "Operador"],
+      "answer": "D",
+      "explanation": "O operador trata dados em nome do controlador, seguindo suas instruções.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B14",
+      "module": 1,
+      "prompt": "Qual é o papel do encarregado (DPO)?",
+      "options": [
+        "Decidir sozinho as finalidades do tratamento",
+        "Ser o titular dos dados da empresa",
+        "Atuar como canal de comunicação entre a organização, os titulares e a ANPD",
+        "Auditar as contas da empresa"
+      ],
+      "answer": "C",
+      "explanation": "O encarregado é o canal de comunicação e exerce as atribuições previstas na regulamentação.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B15",
+      "module": 1,
+      "prompt": "Quando um operador descumpre a legislação ou as instruções lícitas do controlador e causa dano, em regra:",
+      "options": [
+        "Não pode ser responsabiliza do",
+        "Responde solidariamente pelos danos causados",
+        "Só responde se houver contrato escrito",
+        "Responde apenas administrativa mente"
+      ],
+      "answer": "B",
+      "explanation": "O art. 42, § 1º, prevê a responsabilidade solidária do operador nessas hipóteses.",
+      "difficulty": "hard"
+    },
+    {
+      "code": "B16",
+      "module": 1,
+      "prompt": "Qual é o papel da ANPD?",
+      "options": [
+        "Zelar pela proteção de dados pessoais, implementar e fiscalizar o cumprimento da LGPD",
+        "Certificar empresas privadas mediante pagamento",
+        "Julgar todas as ações judiciais sobre dados",
+        "Representar sindicatos de trabalhadores"
+      ],
+      "answer": "A",
+      "explanation": "A ANPD é a autoridade nacional responsável por fiscalizar e orientar sobre a LGPD.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B17",
+      "module": 1,
+      "prompt": "Qual é o limite da multa simples prevista na LGPD?",
+      "options": [
+        "Até R$ 5 mil por infração",
+        "Até 10% do patrimônio da empresa",
+        "Até 2% do faturamento da pessoa jurídica no último exercício, limitada a R$ 50 milhões por infração",
+        "Até 20% do faturamento, sem limite"
+      ],
+      "answer": "C",
+      "explanation": "O art. 52 estabelece esse limite. Há também outras sanções, como advertência e publicização da infração.",
+      "difficulty": "hard"
+    },
+    {
+      "code": "B18",
+      "module": 1,
+      "prompt": "Para saber se uma empresa é controladora ou operadora, deve-se observar principalmente:",
+      "options": [
+        "O nome que consta no contrato",
+        "O porte da empresa",
+        "O setor de atuação",
+        "Quem efetivamente decide sobre o tratamento e quem o executa em nome de outro"
+      ],
+      "answer": "D",
+      "explanation": "Os papéis dependem das atividades realmente exercidas.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B19",
+      "module": 2,
+      "prompt": "Qual situação representa uso incompatível com a finalidade informada ao titular?",
+      "options": [
+        "Usar o CPF informado para emitir a nota fiscal da compra",
+        "Usar o e-mail fornecido para receber a nota fiscal para enviar publicidade de parceiros, sem base legal adequada",
+        "Guardar o contrato pelo prazo exigido em lei",
+        "Usar o endereço para entregar a compra"
+      ],
+      "answer": "B",
+      "explanation": "O dado foi coletado para uma finalidade e usado para outra, incompatível com a primeira.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B20",
+      "module": 2,
+      "prompt": "Em um formulário de cadastro para receber uma newsletter, quais dados devem ser solicitados?",
+      "options": [
+        "Nome, e-mail, CPF, renda e religião",
+        "Todos os dados que a empresa possa vir a usar no futuro",
+        "Apenas os dados necessários, como nome e e-mail",
+        "Apenas dados sensíveis"
+      ],
+      "answer": "C",
+      "explanation": "O princípio da necessidade orienta a coletar o mínimo indispensável.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B21",
+      "module": 2,
+      "prompt": "Um colaborador usa a lista de contatos de clientes para divulgar seu negócio pessoal. Essa conduta:",
+      "options": [
+        "É permitida, pois ele tem acesso à lista",
+        "É permitida se enviar poucas mensagens",
+        "É permitida fora do expediente",
+        "Viola a finalidade e o dever de usar os dados apenas nas atividades autorizadas"
+      ],
+      "answer": "D",
+      "explanation": "Ter acesso não significa poder usar para qualquer fim.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B22",
+      "module": 2,
+      "prompt": "Uma escola pretende publicar a foto de um aluno de 8 anos nas redes sociais. Qual é o cuidado adequado?",
+      "options": [
+        "Nenhum, pois fotos são sempre públicas",
+        "Verificar a base legal e, se for consentimento, obter consentimento específico e em destaque de um dos pais ou responsável, observando o melhor interesse da criança",
+        "Bastar a autorização verbal de qualquer funcionário",
+        "Avisar em um mural"
+      ],
+      "answer": "B",
+      "explanation": "Dados de crianças exigem atenção redobrada (art. 14).",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B23",
+      "module": 2,
+      "prompt": "O consentimento dos pais para dados de crianças pode ser dispensado:",
+      "options": [
+        "Quando a coleta for necessária para contatar os pais ou para a proteção da criança, nas hipóteses legais, sem repasse a terceiros",
+        "Sempre que a empresa preferir",
+        "Quando a criança disser que concorda",
+        "Quando a empresa for pequena"
+      ],
+      "answer": "A",
+      "explanation": "O art. 14, § 3º, prevê essas exceções.",
+      "difficulty": "hard"
+    },
+    {
+      "code": "B24",
+      "module": 2,
+      "prompt": "Um colega pergunta no grupo da equipe por que outro faltou, e você viu o atestado. Qual é a melhor conduta?",
+      "options": [
+        "Informar o diagnóstico",
+        "Enviar uma foto do atestado",
+        "Não divulgar a informação e orientar que o assunto seja tratado com o RH ou o gestor",
+        "Comentar apenas o período de afastamento"
+      ],
+      "answer": "C",
+      "explanation": "Informações de saúde são sensíveis e não devem ser comentadas em grupos.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B25",
+      "module": 2,
+      "prompt": "Qual senha é a mais adequada?",
+      "options": [
+        "Uma frase longa e exclusiva, combinada com autenticação multifator",
+        "A data de nascimento",
+        "O nome da empresa",
+        "A mesma senha usada em outros serviços"
+      ],
+      "answer": "A",
+      "explanation": "Senhas fortes, exclusivas e com MFA reduzem o risco de acesso indevido.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B26",
+      "module": 2,
+      "prompt": "Qual é um sinal de e-mail suspeito?",
+      "options": [
+        "Remetente conhecido e assunto de rotina",
+        "Urgência incomum, pedido de senha ou pagamento e link para endereço estranho",
+        "Assinatura institucional padrão",
+        "Mensagem enviada no horário comercial"
+      ],
+      "answer": "B",
+      "explanation": "Esses sinais são comuns em golpes de phishing. Confirme por um canal confiável.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B27",
+      "module": 2,
+      "prompt": "Qual é a orientação sobre armazenar arquivos profissionais em contas pessoais?",
+      "options": [
+        "Recomendado, para ter backup",
+        "Aceitável nos fins de semana",
+        "Aceitável em nuvem gratuita",
+        "Deve ser evitado; use apenas contas e dispositivos autorizados pela empresa"
+      ],
+      "answer": "D",
+      "explanation": "Dispositivos e contas não autorizados escapam dos controles de segurança da empresa.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B28",
+      "module": 2,
+      "prompt": "Você enviou uma planilha ao destinatário errado. O que NÃO se deve fazer?",
+      "options": [
+        "Comunicar o canal interno",
+        "Guardar o e-mail enviado",
+        "Tentar apagar tudo e não contar a ninguém",
+        "Anotar o horário e o destinatário"
+      ],
+      "answer": "C",
+      "explanation": "Esconder o problema e apagar evidências atrapalha a resposta ao incidente.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B29",
+      "module": 2,
+      "prompt": "Por que a autenticação multifator aumenta a segurança?",
+      "options": [
+        "Dispensa o uso de senha",
+        "Exige mais de um fator, mesmo se a senha for descoberta",
+        "Criptografa todos os e-mails",
+        "Impede qualquer tentativa de golpe"
+      ],
+      "answer": "B",
+      "explanation": "O segundo fator dificulta o acesso indevido, mas não elimina todos os riscos.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B30",
+      "module": 2,
+      "prompt": "Ao trabalhar fora do escritório, qual cuidado é adequado?",
+      "options": [
+        "Evitar acessar dados pessoais em redes públicas sem proteção e usar apenas recursos autorizados pela empresa",
+        "Usar qualquer Wi-Fi aberto",
+        "Deixar o notebook com um desconhecido",
+        "Compartilhar a senha com quem estiver por perto"
+      ],
+      "answer": "A",
+      "explanation": "Redes e ambientes não confiáveis aumentam o risco de exposição.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B31",
+      "module": 2,
+      "prompt": "Você precisa enviar exames de um colaborador ao médico do trabalho. Qual é o procedimento adequado?",
+      "options": [
+        "Enviar pelo WhatsApp pessoal",
+        "Deixar uma cópia sobre a mesa da equipe",
+        "Usar apenas canal aprovado pela empresa, com envio ao destinatário autorizado",
+        "Enviar a todos para agilizar"
+      ],
+      "answer": "C",
+      "explanation": "Dados de saúde exigem canais seguros e acesso restrito.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B32",
+      "module": 2,
+      "prompt": "Qual afirmação descreve corretamente a diferença entre ter acesso a um dado e poder usá-lo?",
+      "options": [
+        "Quem tem acesso pode usar para qualquer fim",
+        "O acesso implica autorização para compartilhar",
+        "O acesso a dados dispensa registro",
+        "O acesso é concedido para uma atividade; usar fora dela exige base e autorização"
+      ],
+      "answer": "D",
+      "explanation": "O acesso tem finalidade definida. Usos fora dela devem ser avaliados.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B33",
+      "module": 3,
+      "prompt": "Para que serve o inventário de dados pessoais?",
+      "options": [
+        "Identificar quais dados são tratados, de onde vêm, para que são usados, onde ficam armazenados e com quem são compartilhados",
+        "Registrar as vendas da empresa",
+        "Substituir a política de privacidade",
+        "Medir o desempenho dos sistemas"
+      ],
+      "answer": "A",
+      "explanation": "O inventário mostra como a empresa trata dados e embasa as demais medidas de adequação.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B34",
+      "module": 3,
+      "prompt": "A política de privacidade publicada no site, isoladamente:",
+      "options": [
+        "Conclui a adequação à LGPD",
+        "Dispensa contratos com fornecedores",
+        "Não esgota a adequação; é um dos documentos e precisa refletir a realidade da empresa",
+        "Substitui o treinamento dos colaboradores"
+      ],
+      "answer": "C",
+      "explanation": "A adequação envolve diagnóstico, regras, procedimentos e medidas efetivas.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B35",
+      "module": 3,
+      "prompt": "Por que um documento de adequação copiado de outra empresa, sem adaptações, é problemático?",
+      "options": [
+        "Porque a lei proíbe qualquer modelo",
+        "Porque fica mais caro",
+        "Porque o layout pode ser diferente",
+        "Porque precisa refletir as atividades, os riscos e a realidade da própria empresa"
+      ],
+      "answer": "D",
+      "explanation": "Documentos desconectados da prática não protegem os dados nem demonstram conformidade.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B36",
+      "module": 3,
+      "prompt": "Quais documentos podem ser necessários na adequação?",
+      "options": [
+        "Apenas balanços contábeis",
+        "Inventário de dados, políticas internas, contratos com fornecedores, procedimento para solicitações de titulares e plano de resposta a incidentes",
+        "Apenas o contrato de trabalho",
+        "Apenas o manual de marca"
+      ],
+      "answer": "B",
+      "explanation": "Os documentos variam conforme atividades, porte e riscos.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B37",
+      "module": 3,
+      "prompt": "Qual é o papel do colaborador quando a empresa levanta informações para a adequação?",
+      "options": [
+        "Informar com precisão como realiza suas atividades com dados pessoais",
+        "Aguardar sem participar",
+        "Informar apenas o que for conveniente",
+        "Delegar a resposta a terceiros"
+      ],
+      "answer": "A",
+      "explanation": "Os colaboradores conhecem as rotinas reais. Sem a participação deles, os documentos não refletem a prática.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B38",
+      "module": 3,
+      "prompt": "Qual é um exemplo de medida administrativa de segurança?",
+      "options": [
+        "Criptografia",
+        "Backup",
+        "Autenticação multifator",
+        "Política interna e treinamento de colaboradores"
+      ],
+      "answer": "D",
+      "explanation": "Políticas, treinamentos e definição de responsabilidades são medidas administrativas. As demais são técnicas.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B39",
+      "module": 3,
+      "prompt": "Qual prática de controle de acesso é mais adequada?",
+      "options": [
+        "Todos acessam todas as pastas",
+        "O acesso é definido por antiguidade",
+        "Cada pessoa acessa apenas o que precisa para suas funções, conforme as autorizações",
+        "Compartilhar um login entre a equipe"
+      ],
+      "answer": "C",
+      "explanation": "Acesso restrito reduz o risco de consulta, alteração ou compartilhamento inadequado.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B40",
+      "module": 3,
+      "prompt": "Sobre cópias de segurança (backups), é correto afirmar que:",
+      "options": [
+        "Dispensam outras medidas de segurança",
+        "Ajudam na recuperação em certas situações, mas precisam ser planejadas, protegidas e testadas",
+        "Podem ficar sem proteção",
+        "Não são medida de segurança"
+      ],
+      "answer": "B",
+      "explanation": "Um backup não testado ou desprotegido pode falhar ou gerar novos riscos.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B41",
+      "module": 3,
+      "prompt": "Não existe uma única medida capaz de eliminar todos os riscos. Isso significa que:",
+      "options": [
+        "A proteção depende de um conjunto de controles proporcionais ao contexto e aos riscos",
+        "A segurança é impossível",
+        "Basta instalar um antivírus",
+        "Só sistemas de pagamento precisam de proteção"
+      ],
+      "answer": "A",
+      "explanation": "A segurança combina tecnologia, processos e comportamento humano.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B42",
+      "module": 3,
+      "prompt": "Qual situação NÃO configura, por si só, um incidente de segurança com dados pessoais?",
+      "options": [
+        "Planilha enviada a destinatário errado",
+        "Acesso estranho a uma conta",
+        "Reunião remarcada, sem relação com dados pessoais",
+        "Perda de notebook com dados de clientes"
+      ],
+      "answer": "C",
+      "explanation": "As demais situações podem comprometer a confidencialidade, a integridade ou a disponibilidade dos dados.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B43",
+      "module": 3,
+      "prompt": "Ao perceber um incidente, o que o colaborador NÃO deve fazer?",
+      "options": [
+        "Comunicar pelo canal definido",
+        "Interromper a ação indevida, se for seguro",
+        "Preservar os registros",
+        "Apagar mensagens e arquivos para limpar evidências"
+      ],
+      "answer": "D",
+      "explanation": "Apagar registros prejudica a investigação e a resposta.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B44",
+      "module": 3,
+      "prompt": "Quem avalia as obrigações de comunicar o incidente à ANPD e aos titulares, quando há risco ou dano relevante?",
+      "options": [
+        "Qualquer colaborador",
+        "O controlador, observados os requisitos e prazos aplicáveis",
+        "Apenas o operador",
+        "O próprio titular"
+      ],
+      "answer": "B",
+      "explanation": "O controlador responde pela avaliação e pela comunicação (art. 48). O colaborador não deve fazer comunicações externas sem autorização.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B45",
+      "module": 3,
+      "prompt": "O que significa comunicar rapidamente um incidente?",
+      "options": [
+        "Contribuir para que a organização aja e reduza os impactos, sem que isso signifique admitir culpa",
+        "Assumir a culpa pelo ocorrido",
+        "Dispensar a investigação",
+        "Expor o caso publicamente"
+      ],
+      "answer": "A",
+      "explanation": "A comunicação rápida protege as pessoas e permite a resposta da empresa.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B46",
+      "module": 3,
+      "prompt": "Qual é um direito do titular previsto na LGPD?",
+      "options": [
+        "Ser contratado pela empresa",
+        "Exigir a exclusão de qualquer dado, em qualquer circunstância",
+        "Obter a confirmação da existência de tratamento e o acesso aos seus dados",
+        "Definir o preço dos produtos"
+      ],
+      "answer": "C",
+      "explanation": "O art. 18 lista os direitos, como confirmação, acesso, correção e eliminação, nas condições legais.",
+      "difficulty": "easy"
+    },
+    {
+      "code": "B47",
+      "module": 3,
+      "prompt": "Um titular pede a eliminação de todos os seus dados. Qual é a resposta correta?",
+      "options": [
+        "Atender sempre, de imediato, sem análise",
+        "Negar sempre",
+        "Ignorar o pedido",
+        "Avaliar o pedido conforme as hipóteses legais, pois nem todo dado pode ser eliminado de imediato"
+      ],
+      "answer": "D",
+      "explanation": "Algumas informações precisam ser mantidas, por exemplo, por obrigação legal.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B48",
+      "module": 3,
+      "prompt": "Para pedidos de acesso, a LGPD prevê resposta imediata em formato simplificado ou declaração clara e completa em até:",
+      "options": ["5 dias", "10 dias", "15 dias", "30 dias"],
+      "answer": "C",
+      "explanation": "O art. 19 prevê o prazo de até 15 dias, contado do requerimento do titular, para a declaração completa.",
+      "difficulty": "hard"
+    },
+    {
+      "code": "B49",
+      "module": 3,
+      "prompt": "Um cliente liga e pede ao colaborador que informe quais dados a empresa mantém sobre ele. O que fazer?",
+      "options": [
+        "Encaminhar ao responsável, seguindo o procedimento interno, sem fornecer dados antes de verificar a identidade",
+        "Informar na hora, por telefone",
+        "Pedir que ligue em outro dia",
+        "Orientar o cliente a procurar a ANPD"
+      ],
+      "answer": "A",
+      "explanation": "Os pedidos precisam de verificação de identidade e de tratamento seguro.",
+      "difficulty": "medium"
+    },
+    {
+      "code": "B50",
+      "module": 3,
+      "prompt": "Qual afirmação resume melhor o papel dos colaboradores na adequação?",
+      "options": [
+        "Só a equipe de TI é responsável",
+        "A proteção depende também das decisões diárias: verificar destinatários, confirmar a necessidade de acesso, seguir as regras de segurança e usar o canal interno",
+        "Basta a empresa ter documentos",
+        "Apenas o encarregado precisa conhecer a LGPD"
+      ],
+      "answer": "B",
+      "explanation": "Documentos, controles e treinamentos só funcionam com atitudes diárias responsáveis.",
+      "difficulty": "easy"
+    }
+  ]
+}
