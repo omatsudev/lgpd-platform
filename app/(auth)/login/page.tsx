@@ -72,7 +72,9 @@ export default async function LoginPage({
             <CardContent>
               {error && (
                 <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-                  Email ou senha inválidos
+                  {error === 'connection'
+                    ? 'Não foi possível conectar ao servidor agora. Tente novamente em instantes.'
+                    : 'Email ou senha inválidos'}
                 </div>
               )}
               {reset === 'ok' && (

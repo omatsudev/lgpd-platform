@@ -11,7 +11,12 @@ export async function POST(request: NextRequest) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
-    return NextResponse.redirect(new URL('/login?error=invalid_credentials', request.url), {
+    // status 400 da API do Supabase = credenciais realmente rejeitadas.
+    // Qualquer outro caso (status 0/undefined, timeout, DNS, etc.) é falha de
+    // rede/infra, não senha errada — mostrar isso como "senha inválida"
+    // confunde quem está depurando um problema de conectividade.
+    const errorCode = error.status === 400 ? 'invalid_credentials' : 'connection'
+    return NextResponse.redirect(new URL(`/login?error=${errorCode}`, request.url), {
       status: 303,
     })
   }
