@@ -38,18 +38,26 @@ export const getUserCompany = cache(async function getUserCompany() {
   }
 
   // Só empresas ativas (não desativadas via soft delete) contam para a navegação atual.
-  const { data: activeCompanies } = await supabase
-    .from('companies')
-    .select('id, name')
-    .in(
-      'id',
-      ucRows.map((uc) => uc.company_id),
-    )
-    .is('deleted_at', null)
+  // Busca os dados completos de todas de uma vez (evita uma segunda consulta
+  // depois só para a empresa selecionada).
+  const [{ data: activeCompanyRows }, cookieStore] = await Promise.all([
+    supabase
+      .from('companies')
+      .select(
+        'id, name, tax_id, slug, sector, owner_id, dpo_name, dpo_email, dpo_phone, compliance_score, privacy_policy_url, plan, trainings_early_access, created_at, updated_at',
+      )
+      .in(
+        'id',
+        ucRows.map((uc) => uc.company_id),
+      )
+      .is('deleted_at', null),
+    cookies(),
+  ])
 
-  const activeIds = new Set((activeCompanies ?? []).map((c) => c.id))
+  const activeIds = new Set((activeCompanyRows ?? []).map((c) => c.id))
   const activeUcRows = ucRows.filter((uc) => activeIds.has(uc.company_id))
   const hasInactiveCompanies = activeUcRows.length < ucRows.length
+  const allCompanies = (activeCompanyRows ?? []).map((c) => ({ id: c.id, name: c.name }))
 
   if (!activeUcRows.length) {
     const fallbackRole = (user.user_metadata?.role as string | undefined) ?? null
@@ -58,28 +66,19 @@ export const getUserCompany = cache(async function getUserCompany() {
       company: null,
       companyId: null,
       role: fallbackRole,
-      companies: (activeCompanies ?? []) as { id: string; name: string }[],
+      companies: allCompanies,
       hasInactiveCompanies,
       supabase,
     }
   }
 
   // Lê empresa selecionada via cookie (para DPOs que gerenciam múltiplas empresas)
-  const cookieStore = await cookies()
   const selectedId = cookieStore.get('selected_company_id')?.value
 
   const targetUc =
     (selectedId && activeUcRows.find((uc) => uc.company_id === selectedId)) || activeUcRows[0]
 
-  const { data: company } = await supabase
-    .from('companies')
-    .select(
-      'id, name, tax_id, slug, sector, owner_id, dpo_name, dpo_email, dpo_phone, compliance_score, privacy_policy_url, plan, trainings_early_access, created_at, updated_at',
-    )
-    .eq('id', targetUc.company_id)
-    .single()
-
-  const allCompanies = activeCompanies
+  const company = (activeCompanyRows ?? []).find((c) => c.id === targetUc.company_id) ?? null
 
   // user_metadata.role (definido no cadastro: 'dpo' | 'company') tem precedência
   // sobre user_companies.role ('admin') para determinar o perfil de navegação
@@ -88,10 +87,10 @@ export const getUserCompany = cache(async function getUserCompany() {
 
   return {
     user,
-    company: company ?? null,
+    company,
     companyId: targetUc.company_id,
     role: effectiveRole,
-    companies: (allCompanies ?? []) as { id: string; name: string }[],
+    companies: allCompanies,
     hasInactiveCompanies,
     supabase,
   }
