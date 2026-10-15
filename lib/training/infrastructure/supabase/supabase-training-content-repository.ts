@@ -3,7 +3,12 @@ import type { TrainingContentRepository } from '../../application/ports'
 import type { AnswerKey, Question, TrainingTrack } from '../../domain/types'
 import { toQuestion, toTrack } from './row-mappers'
 
-const QUESTION_COLUMNS = '*, training_question_options(*)'
+// Qualifica a constraint explicitamente: além da relação direta, existe um
+// caminho many-to-many indireto via training_answer_keys (question_id +
+// option_id), o que deixa "training_question_options(*)" sem qualificação
+// ambíguo pro PostgREST (erro PGRST201).
+const QUESTION_COLUMNS =
+  '*, training_question_options!training_question_options_question_id_fkey(*)'
 
 export class SupabaseTrainingContentRepository implements TrainingContentRepository {
   constructor(private readonly client: SupabaseClient) {}
