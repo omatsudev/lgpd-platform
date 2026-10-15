@@ -12,6 +12,7 @@ export type LockedFeatureKey =
   | 'complaints'
   | 'data-subjects'
   | 'audit-logs'
+  | 'notifications'
 
 export const LOCKED_FEATURE_CONTENT: Record<
   LockedFeatureKey,
@@ -137,6 +138,15 @@ export const LOCKED_FEATURE_CONTENT: Record<
       'Trilha de auditoria de criações, edições e exclusões',
       'Identificação de usuário, data e hora',
       'Consulta e filtro por módulo',
+    ],
+  },
+  notifications: {
+    title: 'Notificações',
+    description: 'Reúne incidentes, denúncias, solicitações e prazos que precisam de atenção.',
+    bullets: [
+      'Aviso imediato de novos incidentes, denúncias e solicitações de titulares',
+      'Alerta de documentos e prazos de retenção vencendo ou vencidos',
+      'Histórico com marcação de lida/não lida',
     ],
   },
 }

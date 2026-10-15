@@ -13,6 +13,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     role,
     companies,
     hasInactiveCompanies,
+    supabase: supabaseForHeader,
   } = await getUserCompany()
 
   if (!user) redirect('/login')
@@ -54,6 +55,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
     // Se criação falhou, renderiza sem activeCompany
   }
 
+  const { data: unreadNotifications, count: unreadCount } =
+    companyId && role !== 'collaborator'
+      ? await supabaseForHeader
+          .from('notifications')
+          .select('id, type, severity, title, message, link, created_at', { count: 'exact' })
+          .eq('company_id', companyId)
+          .is('read_at', null)
+          .order('created_at', { ascending: false })
+          .limit(6)
+      : { data: [], count: 0 }
+
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar
@@ -68,6 +80,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           companies={companies}
           currentCompanyId={companyId}
           switchCompanyAction={switchCompany}
+          notifications={unreadNotifications ?? []}
+          unreadCount={unreadCount ?? 0}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
       </div>
