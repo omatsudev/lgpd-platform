@@ -18,7 +18,8 @@ import Link from 'next/link'
 
 export default async function TrainingTrackPage() {
   const { company } = await getUserCompany()
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="trainings" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="trainings" reason="plan" />
+  if (!company?.trainings_early_access) return <LockedFeature moduleKey="trainings" reason="soon" />
 
   const context = await requireLearnerContext()
   const training = await createTrainingModule()

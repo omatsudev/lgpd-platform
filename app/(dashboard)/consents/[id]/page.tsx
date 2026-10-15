@@ -20,7 +20,7 @@ export default async function ConsentDetailPage({ params }: { params: Promise<{ 
   const { id } = await params
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="consents" reason="role" />
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="consents" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="consents" reason="plan" />
 
   const { data: reg } = await supabase
     .from('consents')

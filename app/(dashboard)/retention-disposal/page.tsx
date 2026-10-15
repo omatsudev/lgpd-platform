@@ -31,7 +31,7 @@ export default async function RetentionDisposalPage({
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="retention-disposal" reason="role" />
-  if (company?.plan === 'basico')
+  if (company?.plan === 'basic')
     return <LockedFeature moduleKey="retention-disposal" reason="plan" />
 
   const { q, status } = await searchParams

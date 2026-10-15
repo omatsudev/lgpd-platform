@@ -29,7 +29,7 @@ export default async function ComplaintDetailPage({ params }: { params: Promise<
   const { id } = await params
   const { company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="complaints" reason="role" />
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="complaints" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="complaints" reason="plan" />
 
   const { data: complaint } = await supabase.from('complaints').select('*').eq('id', id).single()
 

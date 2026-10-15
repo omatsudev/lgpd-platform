@@ -1,9 +1,9 @@
-export type CompanyPlan = 'basico' | 'completo'
+export type CompanyPlan = 'basic' | 'full'
 
 // Módulos liberados no plano básico. Fora dessa lista, a página mostra o
-// preview bloqueado (mesmo componente usado para o papel "collaborator").
+// preview bloqueado (mesmo componente já usado para o papel "collaborator").
 // Dashboard e Relatório entram em qualquer plano.
-const BASICO_ALLOWED_ROUTES = [
+const BASIC_ALLOWED_ROUTES = [
   '/dashboard',
   '/report',
   '/checklist',
@@ -16,8 +16,8 @@ export function isModuleAllowedByPlan(
   plan: CompanyPlan | null | undefined,
   pathname: string,
 ): boolean {
-  if (plan !== 'basico') return true
-  return BASICO_ALLOWED_ROUTES.some(
+  if (plan !== 'basic') return true
+  return BASIC_ALLOWED_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   )
 }

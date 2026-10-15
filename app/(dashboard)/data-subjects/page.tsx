@@ -27,7 +27,7 @@ export default async function DataSubjectsPage({
 }) {
   const { company, companyId, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="data-subjects" reason="role" />
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="data-subjects" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="data-subjects" reason="plan" />
 
   const { q } = await searchParams
 

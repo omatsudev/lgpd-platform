@@ -21,7 +21,7 @@ export default async function AuditLogsPage({
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="audit-logs" reason="role" />
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="audit-logs" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="audit-logs" reason="plan" />
 
   const { q } = await searchParams
 

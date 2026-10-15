@@ -12,7 +12,7 @@ export default async function PurposeFormPage({ params }: { params: Promise<{ id
 
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="consents" reason="role" />
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="consents" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="consents" reason="plan" />
 
   let item: any = null
   if (!isNew && companyId) {

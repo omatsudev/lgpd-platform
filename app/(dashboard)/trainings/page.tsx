@@ -11,7 +11,8 @@ import { redirect } from 'next/navigation'
 
 export default async function TrainingsPage() {
   const { companyId, company, role } = await getUserCompany()
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="trainings" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="trainings" reason="plan" />
+  if (!company?.trainings_early_access) return <LockedFeature moduleKey="trainings" reason="soon" />
   if (!isTrainingManager(role)) redirect('/trainings/track')
   if (!companyId) redirect('/dashboard')
 

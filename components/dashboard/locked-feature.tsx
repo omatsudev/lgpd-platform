@@ -7,13 +7,15 @@ export function LockedFeature({
   reason = 'role',
 }: {
   moduleKey: LockedFeatureKey
-  reason?: 'role' | 'plan'
+  reason?: 'role' | 'plan' | 'soon'
 }) {
   const content = LOCKED_FEATURE_CONTENT[moduleKey]
   const message =
     reason === 'plan'
       ? 'Desculpe, mas a sua assinatura atual não inclui acesso a esta área. Fale com o administrador da sua empresa para solicitar um upgrade de plano.'
-      : 'Esse recurso é exclusivo para administradores e DPO. Fale com o administrador da sua empresa para solicitar acesso.'
+      : reason === 'soon'
+        ? 'Esse recurso está em fase de testes e ainda não foi liberado para todas as empresas. Em breve estará disponível.'
+        : 'Esse recurso é exclusivo para administradores e DPO. Fale com o administrador da sua empresa para solicitar acesso.'
 
   return (
     <div className="space-y-5 max-w-2xl">

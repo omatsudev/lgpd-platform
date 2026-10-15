@@ -137,10 +137,12 @@ function NavContent({
   onClose,
   role,
   plan,
+  trainingsEarlyAccess,
 }: {
   onClose?: () => void
   role?: string | null
   plan?: CompanyPlan | null
+  trainingsEarlyAccess?: boolean
 }) {
   const pathname = usePathname()
   const navItems = allNavItems.filter((item) => !role || item.roles.includes(role))
@@ -167,7 +169,10 @@ function NavContent({
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
-          const locked = !hasFullAccess(role, item.href) || !isModuleAllowedByPlan(plan, item.href)
+          const locked =
+            !hasFullAccess(role, item.href) ||
+            !isModuleAllowedByPlan(plan, item.href) ||
+            (item.href === '/trainings' && !trainingsEarlyAccess)
           return (
             <Link
               key={item.href}
@@ -223,7 +228,15 @@ export function MobileMenuButton({ onClick }: { onClick: () => void }) {
   )
 }
 
-export function Sidebar({ role, plan }: { role?: string | null; plan?: CompanyPlan | null }) {
+export function Sidebar({
+  role,
+  plan,
+  trainingsEarlyAccess,
+}: {
+  role?: string | null
+  plan?: CompanyPlan | null
+  trainingsEarlyAccess?: boolean
+}) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const pathname = usePathname()
 
@@ -238,7 +251,7 @@ export function Sidebar({ role, plan }: { role?: string | null; plan?: CompanyPl
         className="hidden lg:flex fixed inset-y-0 left-0 z-50 w-64 flex-col"
         style={{ background: 'linear-gradient(180deg, #0f2d5e 0%, #0a1f42 100%)' }}
       >
-        <NavContent role={role} plan={plan} />
+        <NavContent role={role} plan={plan} trainingsEarlyAccess={trainingsEarlyAccess} />
       </aside>
 
       {/* Mobile drawer overlay */}
@@ -257,7 +270,12 @@ export function Sidebar({ role, plan }: { role?: string | null; plan?: CompanyPl
         )}
         style={{ background: 'linear-gradient(180deg, #0f2d5e 0%, #0a1f42 100%)' }}
       >
-        <NavContent onClose={() => setMobileOpen(false)} role={role} plan={plan} />
+        <NavContent
+          onClose={() => setMobileOpen(false)}
+          role={role}
+          plan={plan}
+          trainingsEarlyAccess={trainingsEarlyAccess}
+        />
       </aside>
 
       {/* Floating mobile menu button */}

@@ -31,7 +31,7 @@ export default async function DataSubjectDetailPage({
   const { id } = await params
   const { company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="data-subjects" reason="role" />
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="data-subjects" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="data-subjects" reason="plan" />
 
   const { data: request } = await supabase
     .from('data_subject_requests')

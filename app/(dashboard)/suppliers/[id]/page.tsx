@@ -12,7 +12,7 @@ export default async function SupplierFormPage({ params }: { params: Promise<{ i
 
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="suppliers" reason="role" />
-  if (company?.plan === 'basico') return <LockedFeature moduleKey="suppliers" reason="plan" />
+  if (company?.plan === 'basic') return <LockedFeature moduleKey="suppliers" reason="plan" />
 
   let item: any = null
   if (!isNew && companyId) {

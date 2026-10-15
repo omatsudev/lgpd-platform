@@ -6,7 +6,12 @@ import { createTrainingModule } from '@/lib/training/infrastructure/training-mod
 export async function GET() {
   const { user, companyId, company, role } = await getUserCompany()
   if (!user) return new Response('Unauthorized', { status: 401 })
-  if (!companyId || !isTrainingManager(role) || company?.plan === 'basico') {
+  if (
+    !companyId ||
+    !isTrainingManager(role) ||
+    company?.plan === 'basic' ||
+    !company?.trainings_early_access
+  ) {
     return new Response('Forbidden', { status: 403 })
   }
 

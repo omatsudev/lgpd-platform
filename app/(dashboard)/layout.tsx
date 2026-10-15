@@ -56,7 +56,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar role={role} plan={activeCompany?.plan} />
+      <Sidebar
+        role={role}
+        plan={activeCompany?.plan}
+        trainingsEarlyAccess={activeCompany?.trainings_early_access}
+      />
       <div className="flex flex-1 flex-col lg:ml-64 overflow-hidden">
         <Header
           companyName={activeCompany?.name}
