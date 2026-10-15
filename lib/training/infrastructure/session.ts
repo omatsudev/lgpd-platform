@@ -11,6 +11,20 @@ export function isTrainingManager(role: string | null | undefined): boolean {
   return role != null && MANAGER_ROLES.has(role)
 }
 
+// O conteúdo da trilha (módulos, vídeos, perguntas) é global — compartilhado
+// por todas as empresas. Por enquanto só a Serra Privacy tem acesso ao módulo
+// de treinamentos (trainings_early_access), então restringe a edição de
+// conteúdo a ela, e não a qualquer empresa que venha a ganhar early access no
+// futuro (o que daria a qualquer gestor edição sobre a trilha de todo mundo).
+const SERRA_PRIVACY_COMPANY_ID = '87a2b5b7-d4b2-4f52-9d7a-7703f74e2860'
+
+export function isTrainingContentAdmin(
+  companyId: string | null | undefined,
+  role: string | null | undefined,
+): boolean {
+  return companyId === SERRA_PRIVACY_COMPANY_ID && isTrainingManager(role)
+}
+
 export async function requireLearnerContext(): Promise<LearnerContext> {
   const { user, company } = await getUserCompany()
   if (!user) redirect('/login')

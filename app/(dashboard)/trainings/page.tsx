@@ -3,9 +3,9 @@ import { TrainingReportTable } from '@/components/training/training-report-table
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { getUserCompany } from '@/lib/supabase/queries'
-import { isTrainingManager } from '@/lib/training/infrastructure/session'
+import { isTrainingContentAdmin, isTrainingManager } from '@/lib/training/infrastructure/session'
 import { createTrainingModule } from '@/lib/training/infrastructure/training-module'
-import { Download, GraduationCap, UserPlus } from 'lucide-react'
+import { Download, GraduationCap, Pencil, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -40,6 +40,13 @@ export default async function TrainingsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          {isTrainingContentAdmin(companyId, role) && (
+            <Link href="/trainings/admin">
+              <Button variant="outline">
+                <Pencil className="h-4 w-4" /> Editar conteúdo
+              </Button>
+            </Link>
+          )}
           <Link href="/collaborators">
             <Button variant="outline">
               <UserPlus className="h-4 w-4" /> Convidar colaboradores
