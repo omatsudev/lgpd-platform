@@ -1,4 +1,5 @@
-export const COLLABORATOR_FULL_ACCESS_ROUTES = ['/dashboard', '/report', '/settings']
+// Treinamentos: o colaborador é o aluno da trilha LGPD.
+export const COLLABORATOR_FULL_ACCESS_ROUTES = ['/dashboard', '/report', '/settings', '/trainings']
 
 export function isCollaborator(role: string | null | undefined): boolean {
   return role === 'collaborator'

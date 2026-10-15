@@ -104,7 +104,7 @@ const allNavItems = [
     href: '/trainings',
     label: 'Treinamentos',
     icon: GraduationCap,
-    roles: ['company', 'admin', 'collaborator'],
+    roles: ['company', 'admin', 'dpo', 'collaborator'],
   },
   {
     href: '/complaints',

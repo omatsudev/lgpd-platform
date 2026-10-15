@@ -27,11 +27,13 @@ as mesmas chaves duas vezes, cada uma com um escopo diferente:
 - **Production**: aponta para o projeto Supabase real
   - `NEXT_PUBLIC_SUPABASE_URL` = URL do projeto de produção
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = anon key de produção
+  - `SUPABASE_SERVICE_ROLE_KEY` = service role key de produção (só servidor; usada pelo módulo de treinamentos)
   - `NEXT_PUBLIC_APP_URL` = domínio de produção
 
 - **Preview**: aponta para o projeto Supabase de staging
   - `NEXT_PUBLIC_SUPABASE_URL` = URL do projeto de staging
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = anon key de staging
+  - `SUPABASE_SERVICE_ROLE_KEY` = service role key de staging
   - `NEXT_PUBLIC_APP_URL` = deixe em branco ou aponte para a URL de preview
 
 A Vercel aplica automaticamente o conjunto certo de variáveis dependendo se o
