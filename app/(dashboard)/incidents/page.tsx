@@ -2,7 +2,9 @@ import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { Plus, ShieldAlert } from 'lucide-react'
@@ -52,30 +54,43 @@ const typeLabel: Record<string, string> = {
 export default async function IncidentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; page?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="incidents" reason="role" />
   if (company?.plan === 'basic') return <LockedFeature moduleKey="incidents" reason="plan" />
 
-  const { q } = await searchParams
+  const { q, page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
-  let query = supabase
-    .from('incidents')
-    .select('*')
-    .eq('company_id', companyId ?? '')
-  if (q)
-    query = query.or(
+  const applyFilter = <T,>(query: T): T => {
+    if (!q) return query
+    return (query as any).or(
       `title.ilike.%${q}%,type.ilike.%${q}%,description.ilike.%${q}%,responsible.ilike.%${q}%`,
     )
+  }
 
-  const { data: incidentsData } = companyId
-    ? await query.order('created_at', { ascending: false })
+  // Contagens dos alertas ("em aberto"/"críticos") cobrem todo o filtro atual.
+  const { data: statusRows } = companyId
+    ? await applyFilter(
+        supabase.from('incidents').select('status, severity').eq('company_id', companyId),
+      )
     : { data: [] }
 
+  const [from, to] = pageRange(page)
+  const { data: incidentsData, count } = companyId
+    ? await applyFilter(
+        supabase.from('incidents').select('*', { count: 'exact' }).eq('company_id', companyId),
+      )
+        .order('created_at', { ascending: false })
+        .range(from, to)
+    : { data: [], count: 0 }
+
   const items = incidentsData ?? []
-  const open = items.filter((i: any) => !['resolved', 'closed'].includes(i.status)).length
-  const critical = items.filter((i: any) => i.severity === 'critical').length
+  const totalPages = countTotalPages(count)
+  const allStatusRows = statusRows ?? []
+  const open = allStatusRows.filter((i: any) => !['resolved', 'closed'].includes(i.status)).length
+  const critical = allStatusRows.filter((i: any) => i.severity === 'critical').length
 
   return (
     <div className="space-y-5">
@@ -240,6 +255,7 @@ export default async function IncidentsPage({
             </>
           )}
         </CardContent>
+        <Pagination page={page} totalPages={totalPages} basePath="/incidents" params={{ q }} />
       </Card>
     </div>
   )

@@ -1,7 +1,9 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { AlertCircle, FileText, Plus } from 'lucide-react'
@@ -42,32 +44,45 @@ const statusLabel: Record<string, string> = {
 export default async function DocumentosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; page?: string }>
 }) {
   const { companyId, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="documents" />
 
-  const { q } = await searchParams
+  const { q, page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
-  let query = supabase
-    .from('documents')
-    .select('*')
-    .eq('company_id', companyId ?? '')
-  if (q)
-    query = query.or(
+  const applyFilter = <T,>(query: T): T => {
+    if (!q) return query
+    return (query as any).or(
       `title.ilike.%${q}%,type.ilike.%${q}%,description.ilike.%${q}%,responsible.ilike.%${q}%`,
     )
+  }
 
-  const { data: documents } = companyId
-    ? await query.order('created_at', { ascending: false })
+  // Alertas de vencimento cobrem todo o filtro atual, não só a página visível.
+  const { data: expirationRows } = companyId
+    ? await applyFilter(
+        supabase.from('documents').select('expiration_date').eq('company_id', companyId),
+      )
     : { data: [] }
 
+  const [from, to] = pageRange(page)
+  const { data: documents, count } = companyId
+    ? await applyFilter(
+        supabase.from('documents').select('*', { count: 'exact' }).eq('company_id', companyId),
+      )
+        .order('created_at', { ascending: false })
+        .range(from, to)
+    : { data: [], count: 0 }
+
   const items = documents ?? []
+  const totalPages = countTotalPages(count)
   const today = new Date()
-  const expired = items.filter(
+  const allExpirationRows = expirationRows ?? []
+  const expired = allExpirationRows.filter(
     (d: any) => d.expiration_date && new Date(d.expiration_date) < today,
   ).length
-  const expiringIn30 = items.filter((d: any) => {
+  const expiringIn30 = allExpirationRows.filter((d: any) => {
     if (!d.expiration_date) return false
     const diff = (new Date(d.expiration_date).getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
     return diff >= 0 && diff <= 30
@@ -239,6 +254,7 @@ export default async function DocumentosPage({
             </>
           )}
         </CardContent>
+        <Pagination page={page} totalPages={totalPages} basePath="/documents" params={{ q }} />
       </Card>
     </div>
   )

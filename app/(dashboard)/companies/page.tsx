@@ -1,8 +1,10 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { Progress } from '@/components/ui/progress'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { createClient } from '@/lib/supabase/server'
 import { Building2, ExternalLink, Plus } from 'lucide-react'
 import Link from 'next/link'
@@ -10,13 +12,19 @@ import Link from 'next/link'
 export default async function CompaniesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; deactivated?: string; reactivated?: string }>
+  searchParams: Promise<{
+    q?: string
+    deactivated?: string
+    reactivated?: string
+    page?: string
+  }>
 }) {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  const { q, deactivated, reactivated } = await searchParams
+  const { q, deactivated, reactivated, page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
   const { data: memberships } = await supabase
     .from('user_companies')
@@ -25,21 +33,21 @@ export default async function CompaniesPage({
     .order('created_at')
 
   const companyIds = (memberships ?? []).map((m) => m.company_id)
-  const { data: companiesData } = companyIds.length
-    ? await supabase
-        .from('companies')
-        .select('id, name, tax_id, sector, slug, compliance_score, deleted_at')
-        .in('id', companyIds)
-    : { data: [] }
 
-  const allCompanies = (companiesData ?? []).filter((c) => !c.deleted_at)
-  const companies = q
-    ? allCompanies.filter((e: any) =>
-        [e.name, e.tax_id, e.sector].some((f: string | null) =>
-          f?.toLowerCase().includes(q.toLowerCase()),
-        ),
-      )
-    : allCompanies
+  let query = supabase
+    .from('companies')
+    .select('id, name, tax_id, sector, slug, compliance_score, deleted_at', { count: 'exact' })
+    .in('id', companyIds.length ? companyIds : [''])
+    .is('deleted_at', null)
+  if (q) query = query.or(`name.ilike.%${q}%,tax_id.ilike.%${q}%,sector.ilike.%${q}%`)
+
+  const [from, to] = pageRange(page)
+  const { data: companiesData, count } = companyIds.length
+    ? await query.order('name').range(from, to)
+    : { data: [], count: 0 }
+
+  const companies = companiesData ?? []
+  const totalPages = countTotalPages(count)
 
   return (
     <div className="space-y-5">
@@ -128,6 +136,12 @@ export default async function CompaniesPage({
             </Card>
           ))}
         </div>
+      )}
+
+      {companies.length > 0 && (
+        <Card>
+          <Pagination page={page} totalPages={totalPages} basePath="/companies" params={{ q }} />
+        </Card>
       )}
     </div>
   )

@@ -2,7 +2,9 @@ import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { Download, Shield } from 'lucide-react'
@@ -17,28 +19,31 @@ const actionMap: Record<string, 'default' | 'success' | 'warning' | 'destructive
 export default async function AuditLogsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; page?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="audit-logs" reason="role" />
   if (company?.plan === 'basic') return <LockedFeature moduleKey="audit-logs" reason="plan" />
 
-  const { q } = await searchParams
+  const { q, page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
   let query = supabase
     .from('audit_logs')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId ?? '')
   if (q)
     query = query.or(
       `user_email.ilike.%${q}%,action.ilike.%${q}%,resource.ilike.%${q}%,details.ilike.%${q}%`,
     )
 
-  const { data: logs } = companyId
-    ? await query.order('created_at', { ascending: false }).limit(200)
-    : { data: [] }
+  const [from, to] = pageRange(page)
+  const { data: logs, count } = companyId
+    ? await query.order('created_at', { ascending: false }).range(from, to)
+    : { data: [], count: 0 }
 
   const items = logs ?? []
+  const totalPages = countTotalPages(count)
 
   return (
     <div className="space-y-5">
@@ -158,6 +163,7 @@ export default async function AuditLogsPage({
             </>
           )}
         </CardContent>
+        <Pagination page={page} totalPages={totalPages} basePath="/audit-logs" params={{ q }} />
       </Card>
     </div>
   )

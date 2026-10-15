@@ -3,28 +3,40 @@ import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { Cookie } from 'lucide-react'
 import Link from 'next/link'
 
-export default async function CookiesPage() {
+export default async function CookiesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="cookies" reason="role" />
   if (company?.plan === 'basic') return <LockedFeature moduleKey="cookies" reason="plan" />
 
-  const { data: scans } = companyId
+  const { page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
+
+  const [from, to] = pageRange(page)
+  const { data: scans, count } = companyId
     ? await supabase
         .from('site_scans')
         .select(
           'id, url, domain, status, compliance_score, has_cookie_banner, has_privacy_policy, created_at',
+          { count: 'exact' },
         )
         .eq('company_id', companyId)
         .order('created_at', { ascending: false })
-        .limit(20)
-    : { data: [] }
+        .range(from, to)
+    : { data: [], count: 0 }
 
   const history = scans ?? []
+  const totalPages = countTotalPages(count)
 
   return (
     <div className="space-y-5">
@@ -94,6 +106,12 @@ export default async function CookiesPage() {
             })}
           </div>
         </div>
+      )}
+
+      {history.length > 0 && (
+        <Card>
+          <Pagination page={page} totalPages={totalPages} basePath="/cookies" />
+        </Card>
       )}
     </div>
   )

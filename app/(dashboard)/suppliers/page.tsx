@@ -2,7 +2,9 @@ import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
 import { AlertCircle, Globe, Plus, Scale, Truck } from 'lucide-react'
@@ -53,37 +55,56 @@ const dueDiligenceLabel: Record<string, string> = {
 export default async function SuppliersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; page?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="suppliers" reason="role" />
   if (company?.plan === 'basic') return <LockedFeature moduleKey="suppliers" reason="plan" />
 
-  const { q } = await searchParams
+  const { q, page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
-  let query = supabase
-    .from('suppliers')
-    .select('*')
-    .eq('company_id', companyId ?? '')
-  if (q)
-    query = query.or(
+  const applyFilter = <T,>(query: T): T => {
+    if (!q) return query
+    return (query as any).or(
       `name.ilike.%${q}%,tax_id.ilike.%${q}%,category.ilike.%${q}%,contact_email.ilike.%${q}%`,
     )
+  }
 
+  // Cards de resumo cobrem todo o filtro atual, não só a página visível.
+  const { data: summaryRows, count } = companyId
+    ? await applyFilter(
+        supabase
+          .from('suppliers')
+          .select('access_type, has_dpa, next_assessment_date, international_transfer', {
+            count: 'exact',
+          })
+          .eq('company_id', companyId),
+      )
+    : { data: [], count: 0 }
+
+  const [from, to] = pageRange(page)
   const { data: suppliersData } = companyId
-    ? await query.order('created_at', { ascending: false })
+    ? await applyFilter(
+        supabase.from('suppliers').select('*').eq('company_id', companyId),
+      )
+        .order('created_at', { ascending: false })
+        .range(from, to)
     : { data: [] }
 
   const items = suppliersData ?? []
+  const totalPages = countTotalPages(count)
   const today = new Date()
+  const allSummaryRows = summaryRows ?? []
+  const totalItems = count ?? 0
 
-  const withoutDPA = items.filter(
+  const withoutDPA = allSummaryRows.filter(
     (f: any) => f.access_type !== 'no_data_access' && !f.has_dpa,
   ).length
-  const expiredAssessment = items.filter(
+  const expiredAssessment = allSummaryRows.filter(
     (f: any) => f.next_assessment_date && new Date(f.next_assessment_date) < today,
   ).length
-  const international = items.filter((f: any) => f.international_transfer).length
+  const international = allSummaryRows.filter((f: any) => f.international_transfer).length
 
   return (
     <div className="space-y-5">
@@ -126,7 +147,7 @@ export default async function SuppliersPage({
       <div className="grid grid-cols-3 gap-3">
         <Card>
           <CardContent className="pt-4 pb-3 text-center">
-            <p className="text-2xl font-bold text-gray-900">{items.length}</p>
+            <p className="text-2xl font-bold text-gray-900">{totalItems}</p>
             <p className="text-xs text-gray-500 mt-0.5">Total</p>
           </CardContent>
         </Card>
@@ -347,6 +368,7 @@ export default async function SuppliersPage({
             </>
           )}
         </CardContent>
+        <Pagination page={page} totalPages={totalPages} basePath="/suppliers" params={{ q }} />
       </Card>
     </div>
   )

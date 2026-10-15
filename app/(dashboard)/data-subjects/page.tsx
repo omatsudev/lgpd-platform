@@ -2,7 +2,9 @@ import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { DATA_SUBJECT_REQUEST_TYPE_LABELS } from '@/lib/status-labels'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
@@ -23,26 +25,31 @@ const statusMap: Record<
 export default async function DataSubjectsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; page?: string }>
 }) {
   const { company, companyId, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="data-subjects" reason="role" />
   if (company?.plan === 'basic') return <LockedFeature moduleKey="data-subjects" reason="plan" />
 
-  const { q } = await searchParams
+  const { q, page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
   let query = supabase
     .from('data_subject_requests')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('company_id', companyId ?? '')
   if (q)
     query = query.or(
       `name.ilike.%${q}%,email.ilike.%${q}%,description.ilike.%${q}%,type.ilike.%${q}%`,
     )
 
-  const { data } = companyId ? await query.order('created_at', { ascending: false }) : { data: [] }
+  const [from, to] = pageRange(page)
+  const { data, count } = companyId
+    ? await query.order('created_at', { ascending: false }).range(from, to)
+    : { data: [], count: 0 }
 
   const requests = data ?? []
+  const totalPages = countTotalPages(count)
 
   return (
     <div className="space-y-5">
@@ -126,6 +133,17 @@ export default async function DataSubjectsPage({
             )
           })}
         </div>
+      )}
+
+      {requests.length > 0 && (
+        <Card>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            basePath="/data-subjects"
+            params={{ q }}
+          />
+        </Card>
       )}
     </div>
   )

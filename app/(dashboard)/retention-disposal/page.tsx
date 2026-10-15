@@ -2,7 +2,9 @@ import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { RETENTION_STATUS_LABELS, RETENTION_STATUS_VARIANTS } from '@/lib/status-labels'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDate } from '@/lib/utils'
@@ -27,35 +29,55 @@ const STATUS_FILTERS = [
 export default async function RetentionDisposalPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string }>
+  searchParams: Promise<{ q?: string; status?: string; page?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="retention-disposal" reason="role" />
   if (company?.plan === 'basic')
     return <LockedFeature moduleKey="retention-disposal" reason="plan" />
 
-  const { q, status } = await searchParams
+  const { q, status, page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
-  let query = supabase
-    .from('retention_disposals')
-    .select('*')
-    .eq('company_id', companyId ?? '')
-
-  if (q) {
-    query = query.or(`data_type.ilike.%${q}%,category.ilike.%${q}%`)
-  }
-  if (status) {
-    query = query.eq('calculated_status', status)
+  const applyFilters = <T,>(query: T): T => {
+    let q2 = query as any
+    if (q) q2 = q2.or(`data_type.ilike.%${q}%,category.ilike.%${q}%`)
+    if (status) q2 = q2.eq('calculated_status', status)
+    return q2
   }
 
-  const { data: retentionData } = companyId
-    ? await query.order('created_at', { ascending: false })
+  const [from, to] = pageRange(page)
+
+  const { data: retentionData, count } = companyId
+    ? await applyFilters(
+        supabase
+          .from('retention_disposals')
+          .select('*', { count: 'exact' })
+          .eq('company_id', companyId),
+      )
+        .order('created_at', { ascending: false })
+        .range(from, to)
+    : { data: [], count: 0 }
+
+  // Contagens dos cards de resumo cobrem todo o filtro atual, não só a página visível.
+  const { data: statusRows } = companyId
+    ? await applyFilters(
+        supabase
+          .from('retention_disposals')
+          .select('calculated_status')
+          .eq('company_id', companyId),
+      )
     : { data: [] }
 
   const items = retentionData ?? []
-  const overdueItems = items.filter((i: any) => i.calculated_status === 'overdue').length
-  const expiringSoon = items.filter((i: any) => i.calculated_status === 'expiring_soon').length
-  const holdItems = items.filter((i: any) => i.calculated_status === 'hold').length
+  const totalPages = countTotalPages(count)
+  const allStatusRows = statusRows ?? []
+  const totalItems = allStatusRows.length
+  const overdueItems = allStatusRows.filter((i: any) => i.calculated_status === 'overdue').length
+  const expiringSoon = allStatusRows.filter(
+    (i: any) => i.calculated_status === 'expiring_soon',
+  ).length
+  const holdItems = allStatusRows.filter((i: any) => i.calculated_status === 'hold').length
 
   return (
     <div className="space-y-5">
@@ -110,10 +132,10 @@ export default async function RetentionDisposalPage({
       {/* Resumo */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Total', value: items.length, color: 'text-gray-900' },
+          { label: 'Total', value: totalItems, color: 'text-gray-900' },
           {
             label: 'Regulares',
-            value: items.filter((i: any) => i.calculated_status === 'regular').length,
+            value: allStatusRows.filter((i: any) => i.calculated_status === 'regular').length,
             color: 'text-green-700',
           },
           { label: 'Vencidos', value: overdueItems, color: 'text-red-700' },
@@ -211,6 +233,17 @@ export default async function RetentionDisposalPage({
             )
           })}
         </div>
+      )}
+
+      {items.length > 0 && (
+        <Card>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            basePath="/retention-disposal"
+            params={{ q, status }}
+          />
+        </Card>
       )}
     </div>
   )

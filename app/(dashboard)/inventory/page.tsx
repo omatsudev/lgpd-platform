@@ -2,7 +2,9 @@ import { ExportButton } from '@/components/inventory/export-button'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
@@ -39,27 +41,43 @@ const statusLabel: Record<string, string> = {
 export default async function InventoryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; page?: string }>
 }) {
   const { companyId, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="inventory" />
 
-  const { q } = await searchParams
+  const { q, page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
-  let query = supabase
-    .from('data_inventory')
-    .select('*')
-    .eq('company_id', companyId ?? '')
-  if (q)
-    query = query.or(
+  const applyFilter = <T,>(query: T): T => {
+    if (!q) return query
+    return (query as any).or(
       `process_name.ilike.%${q}%,data_type.ilike.%${q}%,purpose.ilike.%${q}%,legal_basis.ilike.%${q}%,responsible_department.ilike.%${q}%`,
     )
+  }
 
-  const { data: inventoryData } = companyId
-    ? await query.order('created_at', { ascending: false })
+  const [from, to] = pageRange(page)
+
+  const { data: inventoryData, count } = companyId
+    ? await applyFilter(
+        supabase
+          .from('data_inventory')
+          .select('*', { count: 'exact' })
+          .eq('company_id', companyId),
+      )
+        .order('created_at', { ascending: false })
+        .range(from, to)
+    : { data: [], count: 0 }
+
+  // Para exportação (CSV/PDF), busca todos os registros que batem com o filtro, sem paginação.
+  const { data: exportData } = companyId
+    ? await applyFilter(
+        supabase.from('data_inventory').select('*').eq('company_id', companyId),
+      ).order('created_at', { ascending: false })
     : { data: [] }
 
   const items = inventoryData ?? []
+  const totalPages = countTotalPages(count)
 
   return (
     <div className="space-y-5">
@@ -71,7 +89,7 @@ export default async function InventoryPage({
           </p>
         </div>
         <div className="flex gap-2">
-          <ExportButton items={items} />
+          <ExportButton items={exportData ?? []} />
           <Link href="/inventory/new">
             <Button size="sm">
               <Plus className="h-4 w-4 mr-1" /> Novo
@@ -218,6 +236,7 @@ export default async function InventoryPage({
             </>
           )}
         </CardContent>
+        <Pagination page={page} totalPages={totalPages} basePath="/inventory" params={{ q }} />
       </Card>
     </div>
   )

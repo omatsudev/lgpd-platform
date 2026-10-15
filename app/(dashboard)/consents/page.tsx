@@ -2,7 +2,9 @@ import { LockedFeature } from '@/components/dashboard/locked-feature'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Pagination } from '@/components/ui/pagination'
 import { SearchInput } from '@/components/ui/search-input'
+import { countTotalPages, pageRange, parsePage } from '@/lib/pagination'
 import { getUserCompany } from '@/lib/supabase/queries'
 import { formatDateTime } from '@/lib/utils'
 import { CheckCircle2, ClipboardList, MinusCircle, Plus, Send, XCircle } from 'lucide-react'
@@ -19,13 +21,14 @@ const channelLabel: Record<string, string> = {
 export default async function ConsentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; tab?: string }>
+  searchParams: Promise<{ q?: string; tab?: string; page?: string }>
 }) {
   const { companyId, company, role, supabase } = await getUserCompany()
   if (role === 'collaborator') return <LockedFeature moduleKey="consents" reason="role" />
   if (company?.plan === 'basic') return <LockedFeature moduleKey="consents" reason="plan" />
 
-  const { q, tab = 'records' } = await searchParams
+  const { q, tab = 'records', page: pageParam } = await searchParams
+  const page = parsePage(pageParam)
 
   // Finalidades
   const { data: purposes } = companyId
@@ -36,25 +39,44 @@ export default async function ConsentsPage({
         .order('created_at', { ascending: false })
     : { data: [] }
 
-  // Consentimentos com join de finalidade
-  let consentsQuery = supabase
-    .from('consents')
-    .select('*, consent_purposes(name)')
-    .eq('company_id', companyId ?? '')
-  if (q)
-    consentsQuery = consentsQuery.or(
+  const applyFilter = <T,>(query: T): T => {
+    if (!q) return query
+    return (query as any).or(
       `subject_email.ilike.%${q}%,subject_name.ilike.%${q}%,subject_tax_id.ilike.%${q}%`,
     )
+  }
 
+  // Contagens dos cards de resumo cobrem todo o filtro atual, não só a página visível.
+  const { data: statusRows, count: totalCount } = companyId
+    ? await applyFilter(
+        supabase
+          .from('consents')
+          .select('accepted, revoked', { count: 'exact' })
+          .eq('company_id', companyId),
+      )
+    : { data: [], count: 0 }
+
+  // Consentimentos com join de finalidade, paginados
+  const [from, to] = pageRange(page)
   const { data: consentsData } = companyId
-    ? await consentsQuery.order('created_at', { ascending: false }).limit(200)
+    ? await applyFilter(
+        supabase
+          .from('consents')
+          .select('*, consent_purposes(name)')
+          .eq('company_id', companyId),
+      )
+        .order('created_at', { ascending: false })
+        .range(from, to)
     : { data: [] }
 
   const items = purposes ?? []
   const records = consentsData ?? []
-  const activeCount = records.filter((r: any) => r.accepted && !r.revoked).length
-  const revokedCount = records.filter((r: any) => r.revoked).length
-  const refusedCount = records.filter((r: any) => !r.accepted).length
+  const totalPages = countTotalPages(totalCount)
+  const allStatusRows = statusRows ?? []
+  const totalRecords = totalCount ?? 0
+  const activeCount = allStatusRows.filter((r: any) => r.accepted && !r.revoked).length
+  const revokedCount = allStatusRows.filter((r: any) => r.revoked).length
+  const refusedCount = allStatusRows.filter((r: any) => !r.accepted).length
 
   return (
     <div className="space-y-5">
@@ -75,7 +97,7 @@ export default async function ConsentsPage({
       {/* Métricas */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Total', value: records.length, icon: ClipboardList, color: 'text-gray-600' },
+          { label: 'Total', value: totalRecords, icon: ClipboardList, color: 'text-gray-600' },
           { label: 'Ativos', value: activeCount, icon: CheckCircle2, color: 'text-green-600' },
           { label: 'Revogados', value: revokedCount, icon: XCircle, color: 'text-red-600' },
           { label: 'Recusados', value: refusedCount, icon: MinusCircle, color: 'text-yellow-600' },
@@ -97,7 +119,7 @@ export default async function ConsentsPage({
       {/* Abas */}
       <div className="flex gap-1 border-b border-gray-200">
         {[
-          { key: 'records', label: `Registros (${records.length})` },
+          { key: 'records', label: `Registros (${totalRecords})` },
           { key: 'purposes', label: `Finalidades (${items.length})` },
         ].map((navTab) => (
           <Link
@@ -244,6 +266,12 @@ export default async function ConsentsPage({
               </>
             )}
           </CardContent>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            basePath="/consents"
+            params={{ q }}
+          />
         </Card>
       )}
 
